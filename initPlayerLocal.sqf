@@ -1,57 +1,80 @@
-if (isServer && !isNull (findDisplay 70)) then {
+if (str(profileNamespace getVariable ["Tyrants", "VarCheck"]) == "VarCheck") then {
+
+	// Save Var to namespace to create save file
+      
+	GameData = [
+		
+		[
+			[
+				0 // server started
+			], 
+			[ 
+				0, // west base pos
+			    0,  // resources
+				0,  
+				0 
+			],
+			[ 
+				0,  // east base pos
+			    0,  // resources
+				0,  
+				0
+			],
+			[
+				[""] // player Location
+			]
+			
+		],
+		   0 // location data
+	];
+
+	TyrantsMain = [[name player,"Private",1],GameData,[                ]];
+				// 0 PFP                         1 Tyrants   2 SniperShootout
+	profileNamespace setVariable ["Tyrants", TyrantsMain];
+	saveProfileNamespace;
+};
+
+// loads GameData from namespace
+
+TyrantsMain = profileNamespace getVariable ["Tyrants", False];
+TyrantsPFP = TyrantsMain # 0;
+
+
+switch (playerSide) do {
+	case WEST: {Pside = 0;PColor = "ColorWest";PlayerOverlayColor =  [0.00, 0.30, 0.60, 1.00]};
+	case EAST: {Pside = 1;PColor = "ColorEast";PlayerOverlayColor =  [0.50, 0.00, 0.00, 1.00]};
+};
+
+{
+	if (_x # 0 == getPlayerUID player) exitwith {
+
+		PFPID = _forEachIndex;
+		gameData # 0 # 3 set[PFPID,[
+
+			getPlayerUID player,
+			getPos player,
+
+			[backpack player,backpackItems player],
+
+			[vest player,vestItems player],
+
+			[uniform player,uniformItems player],
+
+			weaponsItems [player, true]]
+
+
+		];
+
+	};
 	
-	sleep 1;
+} forEach gameData # 0 # 3;
 
-	createDialog "ServerGameModeSelect";
+publicVariable "gameData";
 
-	_display = findDisplay 1000;
+waitUntil {(GameData # 0 # 0 # 0 isNotEqualTo 0)};
 
-	_display displayCtrl 1 lbAdd "Tyrants";
-	_display displayCtrl 1 lbAdd "Sniper Shootout";
-	_display displayCtrl 1 lbAdd "Air Interdiction";
+execVM "Player\PlayerInit\PlayerMapCreation.sqf";
 
-	_display displayCtrl 31 ctrlSetText (TyrantsMain # 0 # 0);
-	_display displayCtrl 32 ctrlSetText (TyrantsMain # 0 # 1);
-	_display displayCtrl 33 progressSetPosition (TyrantsMain # 0 # 2);
+waitUntil {(GameData # 0 # 0 # 0 isNotEqualTo 0)};
 
-	_display displayCtrl 41 ctrlSetText (name CommanderWest);
-	_display displayCtrl 42 ctrlSetText (name CommanderEast);
-
-	{
-		if ((str _x find "West") != -1) then {
-			_display displayCtrl 43 lbAdd (name _X);
-		}
-		else
-		{
-			_display displayCtrl 44 lbAdd (name _X);
-		};
-	} forEach allPlayers;
-};
-
-if (!isServer && !isNull (findDisplay 70)) then {
-	
-	sleep 2;
-
-	createDialog "PlayerWaiting";
-
-	_display = findDisplay 1001;
-
-	_display displayCtrl 31 ctrlSetText (TyrantsMain # 0 # 0);
-	_display displayCtrl 32 ctrlSetText (TyrantsMain # 0 # 1);
-	_display displayCtrl 33 progressSetPosition (TyrantsMain # 0 # 2);
-
-	_display displayCtrl 41 ctrlSetText (name CommanderWest);
-	_display displayCtrl 42 ctrlSetText (name CommanderEast);
-};
-
-waitUntil {GameMode != "NotSelected"};
-
-systemChat GameMode;
-
-switch (GameMode) do {
-
-	case "Tyrants": { };
-	case "SniperShootout": {execVM "SniperShootout\PlayerSetup.sqf"};
-	case "AirInterdiction": {execVM "AirInterdiction\PlayerSetup.sqf"};
-	default { };
-};
+execVM "Player\PlayerInit\PlayerSetLocation.sqf";
