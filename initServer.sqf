@@ -4,6 +4,9 @@
 // if "Tyrants" does exist
 // 		GameData checked for False or True
 
+serverInit = false;
+publicVariable "serverInit";
+
 if (str(profileNamespace getVariable ["Tyrants", "VarCheck"]) == "VarCheck") then {
 
 	// Save Var to namespace to create save file
@@ -51,40 +54,35 @@ publicVariable "GameData";
 waitUntil {!isNull (findDisplay 70)};
 sleep 1;
 
-switch (GameData # 0 # 0 # 0) do {
+switch ((GameData # 0 # 0 # 0)) do {
     case 0: {
-		
-		createDialog "SetupMenu";
+        while {GameData # 0 # 0 # 0 isEqualTo 0} do {
+            sleep 0.5;
+            if (isNull findDisplay 1000) then {
+                execVM "Setup\GameSetup.sqf";
+            };
+        };
+    };
 
-		_display = findDisplay 1000;
+    default {
+        if (GameData # 0 # 2 # 0 isNotEqualTo 0) then {
+            execVM "init\EastBaseInit.sqf";
+        };
 
-		_display displayCtrl 31 ctrlSetText (TyrantsMain # 0 # 0);
-		_display displayCtrl 32 ctrlSetText (TyrantsMain # 0 # 1);
-		_display displayCtrl 33 progressSetPosition (TyrantsMain # 0 # 2);
-
-		if (!isNil "commanderWest") then {
-		_display displayCtrl 41 ctrlSetText (name commanderWest);
-		};
-
-		if (!isNil "commanderEast") then {
-			_display displayCtrl 42 ctrlSetText (name commanderEast);
-		};
-
-		{
-			if ((str _x find "West") != -1) then {
-				_display displayCtrl 43 lbAdd (name _X);
-			}
-			else
-			{
-				_display displayCtrl 44 lbAdd (name _X);
-			};
-		} forEach allPlayers;
-	};
+        if (GameData # 0 # 1 # 0 isNotEqualTo 0) then {
+            execVM "init\WestBaseInit.sqf"; 
+        };
+    };
 };
+
+
 switch (GameData # 1) do {
     case 0: {execVM "Setup\LocationSetup.sqf";};
 };
 
 waitUntil {gameData # 0 # 0 # 0 isNotEqualTo 0};
+
+serverInit = true;
+publicVariable "serverInit";
 
 execVM "GameUpdate\GameLoop.sqf";

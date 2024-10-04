@@ -247,6 +247,166 @@ class SetupMenu
 			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1);
 			
 		};
+		class CaptureControls
+		{
+			type = 0;
+			idc = -1;
+			x = safeZoneX + safeZoneW * 0.08375;
+			y = safeZoneY + safeZoneH * 0.16777778;
+			w = safeZoneW * 0.2925;
+			h = safeZoneH * 0.03;
+			style = 0+2;
+			text = "Capture Options";
+			colorBackground[] = {0,0,0,1};
+			colorText[] = {1,1,1,1};
+			font = "PuristaMedium";
+			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1);
+			
+		};
+		class _cb1d
+		{
+			type = 0;
+			idc = -1;
+			x = safeZoneX + safeZoneW * 0.08375;
+			y = safeZoneY + safeZoneH * 0.20333334;
+			w = safeZoneW * 0.1425;
+			h = safeZoneH * 0.02555556;
+			style = 0+2;
+			text = "Capture Time";
+			colorBackground[] = {0,0,0,0.65};
+			colorText[] = {1,1,1,1};
+			font = "PuristaMedium";
+			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1);
+			
+		};
+		class _cb1d_copy1
+		{
+			type = 0;
+			idc = -1;
+			x = safeZoneX + safeZoneW * 0.08375;
+			y = safeZoneY + safeZoneH * 0.23333334;
+			w = safeZoneW * 0.1425;
+			h = safeZoneH * 0.02555556;
+			style = 0+2;
+			text = "Capture Range";
+			colorBackground[] = {0,0,0,0.65};
+			colorText[] = {1,1,1,1};
+			font = "PuristaMedium";
+			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1);
+			
+		};
+		class _cb1d_copy1_copy1
+		{
+			type = 0;
+			idc = -1;
+			x = safeZoneX + safeZoneW * 0.08375;
+			y = safeZoneY + safeZoneH * 0.31333334;
+			w = safeZoneW * 0.1425;
+			h = safeZoneH * 0.02555556;
+			style = 0+2;
+			text = "Starting Steel";
+			colorBackground[] = {0,0,0,0.65};
+			colorText[] = {1,1,1,1};
+			font = "PuristaMedium";
+			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1);
+			
+		};
+		class _cb1d_copy1_copy1_copy1
+		{
+			type = 0;
+			idc = -1;
+			x = safeZoneX + safeZoneW * 0.08375;
+			y = safeZoneY + safeZoneH * 0.34333334;
+			w = safeZoneW * 0.1425;
+			h = safeZoneH * 0.02555556;
+			style = 0+2;
+			text = "Starting Ammo";
+			colorBackground[] = {0,0,0,0.65};
+			colorText[] = {1,1,1,1};
+			font = "PuristaMedium";
+			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1);
+			
+		};
+		class _cb1d_copy1_copy1_copy1_copy1
+		{
+			type = 0;
+			idc = -1;
+			x = safeZoneX + safeZoneW * 0.08375;
+			y = safeZoneY + safeZoneH * 0.37333334;
+			w = safeZoneW * 0.1425;
+			h = safeZoneH * 0.02555556;
+			style = 0+2;
+			text = "Starting Fuel";
+			colorBackground[] = {0,0,0,0.65};
+			colorText[] = {1,1,1,1};
+			font = "PuristaMedium";
+			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1);
+			
+		};
+		class CaptureControls_copy1
+		{
+			type = 0;
+			idc = -1;
+			x = safeZoneX + safeZoneW * 0.08375;
+			y = safeZoneY + safeZoneH * 0.27777778;
+			w = safeZoneW * 0.2925;
+			h = safeZoneH * 0.03;
+			style = 0+2;
+			text = "Starting Resources";
+			colorBackground[] = {0,0,0,1};
+			colorText[] = {1,1,1,1};
+			font = "PuristaMedium";
+			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1);
+			
+		};
+		class CaptureControls_copy1_copy1
+		{
+			type = 0;
+			idc = -1;
+			x = safeZoneX + safeZoneW * 0.08375;
+			y = safeZoneY + safeZoneH * 0.41777778;
+			w = safeZoneW * 0.2925;
+			h = safeZoneH * 0.03;
+			style = 0+2;
+			text = "Multiplier";
+			colorBackground[] = {0,0,0,1};
+			colorText[] = {1,1,1,1};
+			font = "PuristaMedium";
+			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1);
+			
+		};
+		class _cb1d_copy1_copy1_copy2
+		{
+			type = 0;
+			idc = -1;
+			x = safeZoneX + safeZoneW * 0.08375;
+			y = safeZoneY + safeZoneH * 0.45333334;
+			w = safeZoneW * 0.1425;
+			h = safeZoneH * 0.02555556;
+			style = 0+2;
+			text = "Factory Production";
+			colorBackground[] = {0,0,0,0.65};
+			colorText[] = {1,1,1,1};
+			font = "PuristaMedium";
+			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1);
+			
+		};
+		class _cb1d_copy1_copy1_copy2_copy1
+		{
+			type = 0;
+			idc = -1;
+			x = safeZoneX + safeZoneW * 0.08375;
+			y = safeZoneY + safeZoneH * 0.48333334;
+			w = safeZoneW * 0.1425;
+			h = safeZoneH * 0.02555556;
+			style = 0+2;
+			text = "Vehicle Costs";
+			colorBackground[] = {0,0,0,0.65};
+			colorText[] = {1,1,1,1};
+			font = "PuristaMedium";
+			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1);
+			
+		};
 		
 	};
 	class Controls
@@ -262,7 +422,7 @@ class SetupMenu
 			style = 16;
 			colorBackground[] = {0.851,0.5647,0.0863,1};
 			colorDisabled[] = {0.2,0.2,0.2,1};
-			colorSelect[] = {0.851,0.5647,0.0863,1};
+			colorSelect[] = {0,0,0,1};
 			colorText[] = {0,0,0,1};
 			font = "PuristaMedium";
 			maxHistoryDelay = 0;
@@ -283,7 +443,7 @@ class SetupMenu
 		class StartGamemode
 		{
 			type = 1;
-			idc = 2;
+			idc = 20;
 			x = safeZoneX + safeZoneW * 0.51875;
 			y = safeZoneY + safeZoneH * 0.15777778;
 			w = safeZoneW * 0.1325;
@@ -309,7 +469,7 @@ class SetupMenu
 			soundEnter[] = {"\A3\ui_f\data\sound\RscButton\soundEnter",0.09,1.0};
 			soundEscape[] = {"\A3\ui_f\data\sound\RscButton\soundEscape",0.09,1.0};
 			soundPush[] = {"\A3\ui_f\data\sound\RscButton\soundPush",0.09,1.0};
-			onButtonClick[] = {"GameData # 0 # 0 set [0,1];publicVariable 'GameData'"};
+			onButtonClick = "[lbCurSel 1,lbCurSel 2,lbCurSel 3,lbCurSel 4,lbCurSel 5,lbCurSel 6,lbCurSel 7]execVM 'Setup\settingsSetup.sqf';closeDialog IDC_OK";
 			
 		};
 		class PlayerList_copy1
@@ -323,7 +483,7 @@ class SetupMenu
 			style = 16;
 			colorBackground[] = {0.851,0.5647,0.0863,1};
 			colorDisabled[] = {0.2,0.2,0.2,1};
-			colorSelect[] = {0.851,0.5647,0.0863,1};
+			colorSelect[] = {0,0,0,1};
 			colorText[] = {0,0,0,1};
 			font = "PuristaMedium";
 			maxHistoryDelay = 0;
@@ -359,8 +519,8 @@ class SetupMenu
 		{
 			type = 4;
 			idc = 1;
-			x = safeZoneX + safeZoneW * 0.08375;
-			y = safeZoneY + safeZoneH * 0.16444445;
+			x = safeZoneX + safeZoneW * 0.23375;
+			y = safeZoneY + safeZoneH * 0.20333334;
 			w = safeZoneW * 0.1425;
 			h = safeZoneH * 0.02555556;
 			style = 16;
@@ -393,8 +553,8 @@ class SetupMenu
 		{
 			type = 4;
 			idc = 2;
-			x = safeZoneX + safeZoneW * 0.08375;
-			y = safeZoneY + safeZoneH * 0.19444445;
+			x = safeZoneX + safeZoneW * 0.23375;
+			y = safeZoneY + safeZoneH * 0.23333334;
 			w = safeZoneW * 0.1425;
 			h = safeZoneH * 0.02555556;
 			style = 16;
@@ -427,8 +587,8 @@ class SetupMenu
 		{
 			type = 4;
 			idc = 3;
-			x = safeZoneX + safeZoneW * 0.08375;
-			y = safeZoneY + safeZoneH * 0.22444445;
+			x = safeZoneX + safeZoneW * 0.23375;
+			y = safeZoneY + safeZoneH * 0.31333334;
 			w = safeZoneW * 0.1425;
 			h = safeZoneH * 0.02555556;
 			style = 16;
@@ -460,9 +620,9 @@ class SetupMenu
 		class FactoryLimit
 		{
 			type = 4;
-			idc = 3;
-			x = safeZoneX + safeZoneW * 0.08375;
-			y = safeZoneY + safeZoneH * 0.27444445;
+			idc = 4;
+			x = safeZoneX + safeZoneW * 0.23375;
+			y = safeZoneY + safeZoneH * 0.34333334;
 			w = safeZoneW * 0.1425;
 			h = safeZoneH * 0.02555556;
 			style = 16;
@@ -494,9 +654,77 @@ class SetupMenu
 		class FactoryMulti
 		{
 			type = 4;
-			idc = 3;
-			x = safeZoneX + safeZoneW * 0.08375;
-			y = safeZoneY + safeZoneH * 0.30444445;
+			idc = 5;
+			x = safeZoneX + safeZoneW * 0.23375;
+			y = safeZoneY + safeZoneH * 0.37333334;
+			w = safeZoneW * 0.1425;
+			h = safeZoneH * 0.02555556;
+			style = 16;
+			arrowEmpty = "\A3\ui_f\data\GUI\RscCommon\RscCombo\arrow_combo_ca.paa";
+			arrowFull = "\A3\ui_f\data\GUI\RscCommon\RscCombo\arrow_combo_active_ca.paa";
+			colorBackground[] = {0.851,0.5647,0.0863,1};
+			colorDisabled[] = {0.2,0.2,0.2,1};
+			colorSelect[] = {1,1,1,1};
+			colorSelectBackground[] = {1,0.6636,0.1014,1};
+			colorText[] = {1,1,1,1};
+			font = "PuristaMedium";
+			maxHistoryDelay = 0;
+			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1);
+			soundCollapse[] = {"\A3\ui_f\data\sound\RscCombo\soundCollapse",0.1,1.0};
+			soundExpand[] = {"\A3\ui_f\data\sound\RscCombo\soundExpand",0.1,1.0};
+			soundSelect[] = {"\A3\ui_f\data\sound\RscCombo\soundSelect",0.1,1.0};
+			wholeHeight = 0.3;
+			class ComboScrollBar
+			{
+				color[] = {1,1,1,1};
+				thumb = "\A3\ui_f\data\gui\cfg\scrollbar\thumb_ca.paa";
+				arrowFull = "\A3\ui_f\data\gui\cfg\scrollbar\arrowFull_ca.paa";
+				arrowEmpty = "\A3\ui_f\data\gui\cfg\scrollbar\arrowEmpty_ca.paa";
+				border = "\A3\ui_f\data\gui\cfg\scrollbar\border_ca.paa";
+				
+			};
+			
+		};
+		class ResourceAmmo_copy1
+		{
+			type = 4;
+			idc = 6;
+			x = safeZoneX + safeZoneW * 0.23375;
+			y = safeZoneY + safeZoneH * 0.45333334;
+			w = safeZoneW * 0.1425;
+			h = safeZoneH * 0.02555556;
+			style = 16;
+			arrowEmpty = "\A3\ui_f\data\GUI\RscCommon\RscCombo\arrow_combo_ca.paa";
+			arrowFull = "\A3\ui_f\data\GUI\RscCommon\RscCombo\arrow_combo_active_ca.paa";
+			colorBackground[] = {0.851,0.5647,0.0863,1};
+			colorDisabled[] = {0.2,0.2,0.2,1};
+			colorSelect[] = {1,1,1,1};
+			colorSelectBackground[] = {1,0.6636,0.1014,1};
+			colorText[] = {1,1,1,1};
+			font = "PuristaMedium";
+			maxHistoryDelay = 0;
+			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1);
+			soundCollapse[] = {"\A3\ui_f\data\sound\RscCombo\soundCollapse",0.1,1.0};
+			soundExpand[] = {"\A3\ui_f\data\sound\RscCombo\soundExpand",0.1,1.0};
+			soundSelect[] = {"\A3\ui_f\data\sound\RscCombo\soundSelect",0.1,1.0};
+			wholeHeight = 0.3;
+			class ComboScrollBar
+			{
+				color[] = {1,1,1,1};
+				thumb = "\A3\ui_f\data\gui\cfg\scrollbar\thumb_ca.paa";
+				arrowFull = "\A3\ui_f\data\gui\cfg\scrollbar\arrowFull_ca.paa";
+				arrowEmpty = "\A3\ui_f\data\gui\cfg\scrollbar\arrowEmpty_ca.paa";
+				border = "\A3\ui_f\data\gui\cfg\scrollbar\border_ca.paa";
+				
+			};
+			
+		};
+		class ResourceAmmo_copy1_copy1
+		{
+			type = 4;
+			idc = 7;
+			x = safeZoneX + safeZoneW * 0.23375;
+			y = safeZoneY + safeZoneH * 0.48333334;
 			w = safeZoneW * 0.1425;
 			h = safeZoneH * 0.02555556;
 			style = 16;

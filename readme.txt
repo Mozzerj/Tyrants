@@ -1,0 +1,1 @@
+diag_exportConfig ["C:\Users\Ethan\Documents\Arma 3\mpmissions\TyrantMapTest.Altis/config.cpp", configFile];
