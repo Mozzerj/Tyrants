@@ -1,10 +1,10 @@
-_Towns = nearestLocations [[0,0,0], ["NameCity", "NameVillage"], worldSize];
-_Cities = nearestLocations [[0,0,0], ["NameCityCapital"], worldSize];
-_factory = nearestObjects [[0,0,0], ["Land_dp_mainFactory_F", "Land_Factory_Main_F","Land_DPP_01_smallFactory_F"], worldSize];
-_Hangers = nearestObjects [[0,0,0], ["Land_Hangar_F","Land_TentHangar_V1_F","Land_Airport_01_hangar_F"], worldSize];
-_Helipads = nearestObjects [[0,0,0], ["Land_HelipadCircle_F","Land_HelipadSquare_F"], worldSize];
-_LargeTowers = nearestObjects [[0,0,0], ["Land_Cargo_Tower_V1_F", "Land_Cargo_Tower_V3_F","Land_Cargo_Tower_V4_F","Land_Cargo_HQ_V1_F","Land_Cargo_HQ_V3_F","Land_Cargo_HQ_V4_F"], worldSize];
-_SmallTowers = nearestObjects [[0,0,0], ["Land_Cargo_Patrol_V4_F", "Land_Cargo_House_V4_F", "Land_Cargo_House_V1_F", "Land_Cargo_House_V3_F","Land_Cargo_Patrol_V1_F",""], worldSize];
+_Towns = nearestLocations [[0,0,0], ["NameCity", "NameVillage"], 999999];
+_Cities = nearestLocations [[0,0,0], ["NameCityCapital"], 999999];
+_factory = nearestObjects [[0,0,0], ["Land_dp_mainFactory_F", "Land_Factory_Main_F","Land_DPP_01_smallFactory_F"], 999999];
+_Hangers = nearestObjects [[0,0,0], ["Land_Hangar_F","Land_TentHangar_V1_F","Land_Airport_01_hangar_F"], 999999];
+_Helipads = nearestObjects [[0,0,0], ["Land_HelipadCircle_F","Land_HelipadSquare_F"], 999999];
+_LargeTowers = nearestObjects [[0,0,0], ["Land_Cargo_Tower_V1_F", "Land_Cargo_Tower_V3_F","Land_Cargo_Tower_V4_F","Land_Cargo_HQ_V1_F","Land_Cargo_HQ_V3_F","Land_Cargo_HQ_V4_F"], 999999];
+_SmallTowers = nearestObjects [[0,0,0], ["Land_Cargo_Patrol_V4_F", "Land_Cargo_House_V4_F", "Land_Cargo_House_V1_F", "Land_Cargo_House_V3_F","Land_Cargo_Patrol_V1_F",""], 999999];
 _Towers = _LargeTowers + _SmallTowers;
 
 // Town/City Data [_Town, _WSide, _ESide, _ASide ,Position, _popcount]
@@ -120,6 +120,6 @@ for "_i" from 0 to (count factories) do {
 LocationData set [2, factories];
 
 GameData set [1, LocationData];	
-GameData # 0 # 0 set [0,1];
+
 publicVariable "GameData";
 

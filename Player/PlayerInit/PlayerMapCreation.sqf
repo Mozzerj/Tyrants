@@ -1,3 +1,5 @@
+sleep 2;
+
 _map = findDisplay 12;
 _mapCtrl = _map displayCtrl 51;
 marks = [];
@@ -114,3 +116,4 @@ _map displayAddEventHandler ["MouseHolding", {
 
 execVM "player\PlayerLoops\mapUpdate.sqf"
 execVM "player\PlayerLoops\mapCapture.sqf"
+execVM "player\PlayerLoops\LoadoutSave.sqf"

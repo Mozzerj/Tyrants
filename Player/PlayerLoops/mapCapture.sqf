@@ -2,8 +2,8 @@ _OverlayBackground = (findDisplay 46) displayCtrl 3000;
 _OverlayHeader = (findDisplay 46) displayCtrl 3001;
 
 
-captureTime = 90;
-
+CaptureTime = gameData # 0 # 0 # 0 # 0;
+CaptureRange = gameData # 0 # 0 # 0 # 1;
 
 RegionUpdate = {
 	
@@ -21,7 +21,7 @@ RegionUpdate = {
 				CountEast = 0;
 				CountWest = 0;
 				
-				if ((((getPos player) distance (_regionPos)) < 250) && ((_region # 3) != Pcolor)) then {
+				if ((((getPos player) distance (_regionPos)) < CaptureRange) && ((_region # 3) != Pcolor)) then {
 
                     lbClear _OverlayBackground;
 
@@ -30,7 +30,7 @@ RegionUpdate = {
 
                     for "_i" from 0 to captureTime do { // change capture time to game data settings
                         
-                        if  (((getPos player) distance (_regionPos)) > 250) exitWith {
+                        if  (((getPos player) distance (_regionPos)) > CaptureRange) exitWith {
 
                             _OverlayHeader ctrlSetBackgroundColor PlayerOverlayColor;
                             _OverlayBackground ctrlSetBackgroundColor [0,0,0,0.7];
@@ -54,7 +54,7 @@ RegionUpdate = {
                         lbClear _OverlayBackground;
                     };
 
-                    if  (((getPos player) distance (_regionPos)) < 250) then {
+                    if  (((getPos player) distance (_regionPos)) < CaptureRange) then {
                         
                         _OverlayBackground lbAdd "";
                         _OverlayBackground lbAdd ("Captured");
@@ -65,7 +65,7 @@ RegionUpdate = {
                         _OverlayHeader ctrlSetBackgroundColor [0,0,0,0];
                         _OverlayBackground ctrlSetBackgroundColor [0,0,0,0];
 
-                        _RegionEntities = nearestObjects [_regionPos, ["man","car","tank"], 250];
+                        _RegionEntities = nearestObjects [_regionPos, ["man","car","tank"], CaptureRange];
                         
                         {
                         

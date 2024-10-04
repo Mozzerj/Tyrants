@@ -1,9 +1,10 @@
-FactoryData  = ((GameData select 1) select 2);
+FactoryData  = ((GameData # 1) # 2);
+FactoryMultiplier = gameData # 0 # 0 # 0 # 5;
 
 {
-    FactoryPartGroupResourceData = (_x select 6);
+    FactoryPartGroupResourceData = (_x # 6);
 
-    FactoryPartGroup = (_x select 5);
+    FactoryPartGroup = (_x # 5);
     {
         
         FactoryPart = _x;
@@ -40,6 +41,8 @@ FactoryData  = ((GameData select 1) select 2);
         };
         
     }forEach FactoryPartGroup;
+
+    FactoryPartGroupResourceData = (FactoryPartGroupResourceData * FactoryMultiplier);
     
     if (FactoryPartGroupResourceData > 50000) then {
     
@@ -47,11 +50,11 @@ FactoryData  = ((GameData select 1) select 2);
     
     };
     
-    (FactoryData select _forEachIndex) set [6, FactoryPartGroupResourceData];
+    (FactoryData # _forEachIndex) set [6, FactoryPartGroupResourceData];
     
 }forEach FactoryData;
 
-(GameData select 1) set [2, FactoryData];
+(GameData # 1) set [2, FactoryData];
 publicVariable "GameData";
 
 
