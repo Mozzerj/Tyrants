@@ -1,5 +1,7 @@
 LocationChosen = false;
 
+openMap [true,false];
+
 pos = [0,0,0];
 _lineY = 0;
 _pointY = 1;
@@ -48,4 +50,5 @@ switch (Pside) do {
 deleteMarkerLocal divederMarker;
 deleteMarkerLocal divederMarker1;
 
+openMap [false,false];
 publicVariable "GameData";

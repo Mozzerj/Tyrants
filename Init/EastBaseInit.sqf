@@ -1,5 +1,5 @@
 EastAccGrp = createGroup East;
-basePos = (GameData # 0 # 1 # 0);
+basePos = (GameData # 0 # 2 # 0);
 EastAccountant = EastAccGrp createUnit ["C_man_polo_4_F", (basePos), [], 0, "NONE"];
 EastBox = createVehicle ["virtualReammoBox_camonet_F", (basePos vectorAdd [1,0,0]), [], 0, "NONE"];
 

@@ -1,6 +1,5 @@
 // Extract Points and Calculate Regression Line
 
-hint "asd";
 GraphPoints = [];
 {
 	_regionType = _x;

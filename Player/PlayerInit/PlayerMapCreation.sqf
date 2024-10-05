@@ -5,6 +5,7 @@ _mapCtrl = _map displayCtrl 51;
 marks = [];
 ctrlCount = 0;
 MapLB = missionConfigFile >> "myMissionConfig" >> "RscMapListbox";
+BaseMapLB = missionConfigFile >> "myMissionConfig" >> "RscBaseMapListbox";
 
 waitUntil {!isNull (findDisplay 46)};
 
@@ -21,6 +22,32 @@ _OverlayHeader ctrlCommit 0;
 
 _OverlayBackground ctrlSetBackgroundColor [0,0,0,0];
 _OverlayHeader ctrlSetBackgroundColor [0,0,0,0];
+
+
+
+
+// base mark
+_BaseBackGround = _map ctrlCreate [BaseMapLB, 3002]; // id 2000 - 2999 for map ctrls
+_BaseHeader = _map ctrlCreate ["RscText", 3003];
+
+_BaseHeader ctrlSetText "Hideout";
+
+_screenPos = _mapCtrl ctrlMapWorldToScreen (gamedata # 0 # (pside + 1) # 0); 
+
+_BaseBackGround ctrlSetPosition [_screenPos select 0, _screenPos select 1, 0.1, 0.05];
+_BaseHeader ctrlSetPosition [_screenPos select 0, _screenPos select 1, 0.1, 0.05];
+
+_BaseBackGround ctrlCommit 0;
+_BaseHeader ctrlCommit 0;
+
+switch (Pside ) do {
+    case 0: { _BaseHeader ctrlSetBackgroundColor [0.00, 0.30, 0.60, 1.00]};
+    case 1: { _BaseHeader ctrlSetBackgroundColor [0.50, 0.00, 0.00, 1.00]};
+};
+_BaseBackGround ctrlSetBackgroundColor [0,0,0,0.7];
+
+marks pushBack [_BaseHeader,_BaseBackGround, (gamedata # 0 # (pside + 1) # 0)];
+
 
 //(findDisplay 12) displayCtrl 3001
 
