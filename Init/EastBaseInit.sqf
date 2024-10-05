@@ -2,33 +2,16 @@ EastAccGrp = createGroup East;
 basePos = (GameData # 0 # 2 # 0);
 EastAccountant = EastAccGrp createUnit ["C_man_polo_4_F", (basePos), [], 0, "NONE"];
 EastBox = createVehicle ["virtualReammoBox_camonet_F", (basePos vectorAdd [1,0,0]), [], 0, "NONE"];
+publicVariable "EastBox";
+
+markerOPFOR = createMarker ["respawn_east", gameData # 0 # 2 # 0];
+
+EastAccountant addEventHandler ["HandleDamage", {
+	params ["_unit", "_selection", "_damage", "_source", "_projectile", "_hitIndex", "_instigator", "_hitPoint", "_directHit", "_context"];
+
+    if ((isPlayer _instigator) and (side _instigator == west) and (_directHit)) then {_unit setDamage _damage} else {_unit setDamage 0;}
+
+}];
 
 EastAccountant disableAI "MOVE";
 
-AccountantMove = {
-    EastMoveAccID = EastAccountant addAction ["Move Accountant", {
-        EastAccountant removeAction EastMoveAccID;
-        EastAccountant attachTo [player, [0, 3, 0]];
-
-        EastDropAccID = player addAction ['Drop Accountant', {
-            GameData # 0 # (Pside + 1) set [0, getPos EastAccountant];
-            publicVariable "GameData";
-            detach EastAccountant;
-            EastAccountant setPos (player modelToWorld [0, 3, 0]);
-            player removeAction EastDropAccID;
-            call AccountantMove;
-        },
-        nil,
-        1.5,
-        true,
-        true,
-        "",
-        "true",
-        10
-    ];
-    }];
-};
-
-publicVariable "EastBox";
-
-call AccountantMove;

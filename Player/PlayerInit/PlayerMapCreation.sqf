@@ -46,9 +46,7 @@ switch (Pside ) do {
 };
 _BaseBackGround ctrlSetBackgroundColor [0,0,0,0.7];
 
-marks pushBack [_BaseHeader,_BaseBackGround, (gamedata # 0 # (pside + 1) # 0)];
-
-
+baseMarks = [_BaseHeader,_BaseBackGround];
 //(findDisplay 12) displayCtrl 3001
 
 CreateTownInfo = {
@@ -128,6 +126,8 @@ _map displayAddEventHandler ["MouseMoving", {
 
         
     } forEach marks;
+
+    [baseMarks # 0, baseMarks # 1, (gamedata # 0 # (pside + 1) # 0)]call UpdateMarks;
 }];
 _map displayAddEventHandler ["MouseHolding", {
     {
@@ -139,6 +139,8 @@ _map displayAddEventHandler ["MouseHolding", {
         [_Header, _BackGround, _pos]call UpdateMarks;
 
     } forEach marks;
+
+    [baseMarks # 0, baseMarks # 1, (gamedata # 0 # (pside + 1) # 0)]call UpdateMarks;
 }];
 
 execVM "player\PlayerLoops\mapUpdate.sqf"

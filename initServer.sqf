@@ -4,6 +4,16 @@
 // if "Tyrants" does exist
 // 		GameData checked for False or True
 
+addMissionEventHandler ["BuildingChanged", {
+	params ["_from", "_to", "_isRuin"];
+
+	if (_isRuin) then {(gameData # 2 # 0)pushBack _from; publicVariable "gameData"};
+
+	
+}];
+
+execVM "init\destroyedObjects.sqf";
+
 if (str(profileNamespace getVariable ["Tyrants", "VarCheck"]) == "VarCheck") then {
 
 	// Save Var to namespace to create save file
@@ -31,7 +41,15 @@ if (str(profileNamespace getVariable ["Tyrants", "VarCheck"]) == "VarCheck") the
 			]
 			
 		],
-		   0 // location data
+		   0, // location data
+		[
+			[
+				// destroyed buildings
+			],
+			[
+				// destroyed vehicles
+			]
+		]
 	];
 
 	TyrantsMain = [[name player,"Private",1],GameData,[                ]];

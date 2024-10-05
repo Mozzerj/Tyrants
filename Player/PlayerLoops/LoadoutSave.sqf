@@ -4,7 +4,7 @@ while {true} do {
     (gameData # 0 # 3) set [PFPID,[
 
         getPlayerUID player,
-        getPos player,
+        getPosATL player,
 
         [backpack player,backpackItems player],
 
