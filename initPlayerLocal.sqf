@@ -35,8 +35,6 @@ if ((profileNamespace getVariable ["Tyrants", "VarCheck"]) isEqualTo "VarCheck")
 	saveProfileNamespace;
 };
 
-waitUntil {(serverInit)};
-
 TyrantsMain = profileNamespace getVariable ["Tyrants", False];
 TyrantsPFP = TyrantsMain # 0;
 
@@ -48,8 +46,7 @@ switch (playerSide) do {
 
 _PIDFound = false;
 
-waitUntil {(GameData # 0 # 0 # 0 isNotEqualTo 0)};
-waitUntil {(GameData # 1 isNotEqualTo 0)};
+waitUntil {(GameData # 0 # 0 # 0 isNotEqualTo 0) and (GameData # 1 isNotEqualTo 0)};
 
 if (!isNil "commanderWest") then {
 
@@ -63,6 +60,8 @@ if (!isNil "commanderEast") then {
 
 };
 
+waitUntil {(GameData # 0 # 1 # 0 isNotEqualTo 0) and (GameData # 0 # 2 # 0 isNotEqualTo 0)};
+
 {
 	if (_x # 0 == getPlayerUID player) exitwith {
 		
@@ -74,6 +73,7 @@ if (!isNil "commanderEast") then {
 			removeAllWeapons player; // clears deafualt inventory
 			removeVest player;
 			removeBackpack player;
+			removeHeadgear player;
 
 			_PFP = gameData # 0 # 3 # PFPID;
 
@@ -82,6 +82,7 @@ if (!isNil "commanderEast") then {
 			player AddBackpack (_PFP # 2 # 0); // adds backpack
 			player addVest (_PFP # 3 # 0); // adds vest
 			player addUniform (_PFP # 4 # 0); // adds uniform
+			player addHeadgear (_PFP # 8 # 0); // adds uniform
 
 			removeAllItems player; // clears deafualt inventory
 			removeAllWeapons player; // clears deafualt inventory
@@ -123,53 +124,89 @@ if (_PIDFound == false) then {
 		getPlayerUID player,
 		getPos player,
 
-		[backpack player,backpackItems player],
-
-		[vest player,vestItems player],
-
-		[uniform player,uniformItems player],
-
-		[primaryWeapon player,primaryWeaponItems player],
-		[secondaryWeapon player,secondaryWeaponItems player],
-		[handgunWeapon player,handgunItems player]
+		[backpack player, backpackItems player],
+		[vest player, vestItems player],
+		[uniform player, uniformItems player],
+		[primaryWeapon player, primaryWeaponItems player],
+		[secondaryWeapon player, secondaryWeaponItems player],
+		[handgunWeapon player, handgunItems player],
+		[headgear player]
 
 	];
 
 };
 
-westBox addAction ["Open Arsenal", { 
-    ["Open", [true]] call BIS_fnc_arsenal;
+switch (Pside) do {
+	case 0: {
 
-	playerLoadout = [
-		
-		[backpack player,backpackItems player],
+		westBox addAction ["Open Arsenal", { 
+		["Open", [true]] call BIS_fnc_arsenal;
 
-        [vest player,vestItems player],
+		playerLoadout = [
+			
+			[backpack player, backpackItems player],
+			[vest player, vestItems player],
+			[uniform player, uniformItems player],
+			[primaryWeapon player, primaryWeaponItems player],
+			[secondaryWeapon player, secondaryWeaponItems player],
+			[handgunWeapon player, handgunItems player],
+			[headgear player]
+			
+		];
 
-        [uniform player,uniformItems player],
+		aresenalCloseID = addUserActionEventHandler ["ingamePause", "Activate", {
+			
+			removeUserActionEventHandler ["ingamePause", "Activate", aresenalCloseID];
+			[playerLoadout]execVM "Functions\exitArsenal.sqf";
 
-        [primaryWeapon player,primaryWeaponItems player],
-        [secondaryWeapon player,secondaryWeaponItems player],
-        [handgunWeapon player,handgunItems player]
-		
-	];
+		}];
 
-	aresenalCloseID = addUserActionEventHandler ["ingamePause", "Activate", {
-		
-		removeUserActionEventHandler ["ingamePause", "Activate", aresenalCloseID];
-		execVM "Functions\exitArsenal.sqf";
+		},
+		nil,
+		1.5,
+		true,
+		true,
+		"",
+		"true",
+		10
+		];
 
-	}];
+	};
+	case 1: {
 
-	},
-	nil,
-	1.5,
-	true,
-	true,
-	"",
-	"true",
-	10
-];
+		EastBox addAction ["Open Arsenal", { 
+		["Open", [true]] call BIS_fnc_arsenal;
+
+		playerLoadout = [
+			
+			[backpack player, backpackItems player],
+			[vest player, vestItems player],
+			[uniform player, uniformItems player],
+			[primaryWeapon player, primaryWeaponItems player],
+			[secondaryWeapon player, secondaryWeaponItems player],
+			[handgunWeapon player, handgunItems player],
+			[headgear player]
+			
+		];
+
+		aresenalCloseID = addUserActionEventHandler ["ingamePause", "Activate", {
+			
+			removeUserActionEventHandler ["ingamePause", "Activate", aresenalCloseID];
+			[playerLoadout]execVM "Functions\exitArsenal.sqf";
+
+		}];
+
+		},
+		nil,
+		1.5,
+		true,
+		true,
+		"",
+		"true",
+		10
+		];
+	};
+};
 
 
 publicVariable "gameData";

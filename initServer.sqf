@@ -4,9 +4,6 @@
 // if "Tyrants" does exist
 // 		GameData checked for False or True
 
-serverInit = false;
-publicVariable "serverInit";
-
 if (str(profileNamespace getVariable ["Tyrants", "VarCheck"]) == "VarCheck") then {
 
 	// Save Var to namespace to create save file
@@ -19,9 +16,9 @@ if (str(profileNamespace getVariable ["Tyrants", "VarCheck"]) == "VarCheck") the
 			], 
 			[ 
 				0, // west base pos
-			    0,  // resources
-				0,  
-				0 
+			    0,  // steel
+				0,  // ammo
+				0 // fuel
 			],
 			[ 
 				0,  // east base pos
@@ -81,8 +78,5 @@ switch (GameData # 1) do {
 };
 
 waitUntil {gameData # 0 # 0 # 0 isNotEqualTo 0};
-
-serverInit = true;
-publicVariable "serverInit";
 
 execVM "GameUpdate\GameLoop.sqf";
