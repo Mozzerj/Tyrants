@@ -264,28 +264,33 @@ switch (Pside) do {
 	};
 };
 
+
+// playermenu
+
 findDisplay 46 displayAddEventHandler ["KeyDown", {
     params ["_unit", "_key"];
-
 
     if (_key == 21) then {
 
 		if (isNull findDisplay 1001) then {
 			
-			createDialog "TyrantsPlayerMenu";
+			createDialog "TyrPlayerMenu";
 
 			_TyrPlayerMenu = findDisplay 1001;
 
 			_TyrPlayerMenu displayCtrl 1 ctrlSetText (TyrantsPFP # 0);
 			_TyrPlayerMenu displayCtrl 2 ctrlSetText str(TyrantsPFP # 1);
 			_TyrPlayerMenu displayCtrl 3 progressSetPosition (TyrantsPFP # 2);
+
+
+
+			// factory resource collection button
 			{
 
 				_ResourceButton = ((findDisplay 1001) displayCtrl 4);
 				if ((((getPos player) distance (_x # 4)) < 75) and (Pcolor == _x # 3)) then {
 
 					_ResourceButton ctrlSetPosition [safeZoneX + safeZoneW * 0.01375,safeZoneY + safeZoneH * 0.29777778];
-
 					_ResourceButton ctrlCommit 0;
 
 				}
@@ -293,18 +298,27 @@ findDisplay 46 displayAddEventHandler ["KeyDown", {
 				{
 
 					_ResourceButton ctrlSetPosition [-1,-1];
-
 					_ResourceButton ctrlCommit 0;
 
 				};
 			}forEach gameData # 1 # 2;
 
-		} 
-		else 
-		{
-			
-			_TyrPlayerMenu closeDisplay 2;
 
+			// buy vehicle button
+			_ResourceButton = ((findDisplay 1001) displayCtrl 5);
+			if ((getPos player) distance (gameData # 0 # (Pside + 1) # 0) < 25 ) then {
+
+				_ResourceButton ctrlSetPosition [safeZoneX + safeZoneW * 0.01367188,safeZoneY + safeZoneH * 0.34722223];
+				_ResourceButton ctrlCommit 0;
+
+			}
+			else
+			{
+
+				_ResourceButton ctrlSetPosition [-1,-1];
+				_ResourceButton ctrlCommit 0;
+
+			};
 		};
     };
 }];
