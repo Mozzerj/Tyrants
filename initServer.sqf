@@ -49,6 +49,9 @@ if (str(profileNamespace getVariable ["Tyrants", "VarCheck"]) == "VarCheck") the
 			[
 				// destroyed vehicles
 			]
+		],
+		[
+			0
 		]
 	];
 
@@ -92,9 +95,11 @@ switch ((GameData # 0 # 0 # 0)) do {
 
 
 switch (GameData # 1) do {
-    case 0: {execVM "Setup\LocationSetup.sqf";};
+    case 0: {
+		execVM "Setup\LocationSetup.sqf";
+		execVM "Setup\VehicleSetup.sqf"
+	};
 };
-
 waitUntil {gameData # 0 # 0 # 0 isNotEqualTo 0};
 
 execVM "GameUpdate\GameLoop.sqf";

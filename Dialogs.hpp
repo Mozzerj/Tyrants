@@ -64,7 +64,7 @@ class SetupMenu
 			w = safeZoneW * 0.8125;
 			h = safeZoneH * 0.04555556;
 			style = 0;
-			text = "Tyrants";
+			text = " Tyrants";
 			colorBackground[] = {0.851,0.5647,0.0863,1};
 			colorText[] = {0,0,0,1};
 			font = "PuristaMedium";
@@ -698,7 +698,7 @@ class SetupMenu
 			arrowFull = "\A3\ui_f\data\GUI\RscCommon\RscCombo\arrow_combo_active_ca.paa";
 			colorBackground[] = {0.851,0.5647,0.0863,1};
 			colorDisabled[] = {0.2,0.2,0.2,1};
-			colorSelect[] = {1,1,1,1};
+			colorSelect[] = {1, 0.6636, 0.1014, 1};
 			colorSelectBackground[] = {1,0.6636,0.1014,1};
 			colorText[] = {1,1,1,1};
 			font = "PuristaMedium";
@@ -965,7 +965,7 @@ class TyrVehicleBuyMenu
 			colorText[] = {1,1,1,1};
 			font = "PuristaMedium";
 			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1);
-			onLoad = "execVM 'Functions\DialogFunctions\TyrPlayerMenu\TyrPlayerMenuLoad.sqf'";
+			onLoad = "execVM 'Functions\DialogFunctions\TyrPlayerMenu\TyrVehicleBuyMenu.sqf'";
 			
 		};
 		class BackGroundBar
@@ -1024,7 +1024,7 @@ class TyrVehicleBuyMenu
 			y = safeZoneY + safeZoneH * 0.05555556;
 			w = safeZoneW * 0.0825;
 			h = safeZoneH * 0.04;
-			style = 0;
+			style = 2;
 			text = "";
 			colorBackground[] = {0.2,0.2,0.2,0.65};
 			colorText[] = {0,0,0,1};
@@ -1065,7 +1065,7 @@ class TyrVehicleBuyMenu
 			soundEnter[] = {"\A3\ui_f\data\sound\RscButton\soundEnter",0.09,1.0};
 			soundEscape[] = {"\A3\ui_f\data\sound\RscButton\soundEscape",0.09,1.0};
 			soundPush[] = {"\A3\ui_f\data\sound\RscButton\soundPush",0.09,1.0};
-			onButtonClick = "execVM 'functions\getFactoryResource.sqf';";
+			onButtonClick = "";
 			
 		};
 		class VehiclePictureDisplay
@@ -1076,7 +1076,7 @@ class TyrVehicleBuyMenu
 			y = safeZoneY + safeZoneH * 0.01444445;
 			w = safeZoneW * 0.20;
 			h = safeZoneH * 0.22;
-			style = 0;
+			style = 48;
 			text = "";
 			colorBackground[] = {0.1804,0.0902,0.1725,1};
 			colorText[] = {0.8196,0.9098,0.8275,1};
@@ -1124,7 +1124,7 @@ class TyrVehicleBuyMenu
 			style = 16;
 			colorBackground[] = {0.851,0.5647,0.0863,1};
 			colorDisabled[] = {0.851,0.5647,0.0863,1};
-			colorSelect[] = {1,1,1,1};
+			colorSelect[] = {1, 0.6636, 0.1014, 1};
 			colorText[] = {1,1,1,1};
 			font = "PuristaMedium";
 			maxHistoryDelay = 0;
@@ -1145,7 +1145,7 @@ class TyrVehicleBuyMenu
 		class ButtonLeft
 		{
 			type = 1;
-			idc = 1;
+			idc = 2;
 			x = safeZoneX + safeZoneW * 0.0125;
 			y = safeZoneY + safeZoneH * 0.05555556;
 			w = safeZoneW * 0.0475;
@@ -1162,8 +1162,8 @@ class TyrVehicleBuyMenu
 			colorShadow[] = {0,0,0,0};
 			colorText[] = {0,0,0,1};
 			font = "PuristaMedium";
-			offsetPressedX = 0.01;
-			offsetPressedY = 0.01;
+			offsetPressedX = 0;
+			offsetPressedY = 0;
 			offsetX = 0.01;
 			offsetY = 0.01;
 			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1.5);
@@ -1171,7 +1171,7 @@ class TyrVehicleBuyMenu
 			soundEnter[] = {"\A3\ui_f\data\sound\RscButton\soundEnter",0.09,1.0};
 			soundEscape[] = {"\A3\ui_f\data\sound\RscButton\soundEscape",0.09,1.0};
 			soundPush[] = {"\A3\ui_f\data\sound\RscButton\soundPush",0.09,1.0};
-			onButtonClick = "execVM 'functions\getFactoryResource.sqf';";
+			onButtonClick = "selection = selection - 1";
 			
 		};
 		class ButtonRight
@@ -1194,8 +1194,8 @@ class TyrVehicleBuyMenu
 			colorShadow[] = {0,0,0,0};
 			colorText[] = {0,0,0,1};
 			font = "PuristaMedium";
-			offsetPressedX = 0.01;
-			offsetPressedY = 0.01;
+			offsetPressedX = 0;
+			offsetPressedY = 0;
 			offsetX = 0.01;
 			offsetY = 0.01;
 			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1.5);
@@ -1203,7 +1203,7 @@ class TyrVehicleBuyMenu
 			soundEnter[] = {"\A3\ui_f\data\sound\RscButton\soundEnter",0.09,1.0};
 			soundEscape[] = {"\A3\ui_f\data\sound\RscButton\soundEscape",0.09,1.0};
 			soundPush[] = {"\A3\ui_f\data\sound\RscButton\soundPush",0.09,1.0};
-			onButtonClick = "execVM 'functions\getFactoryResource.sqf'";
+			onButtonClick = "selection = selection + 1";
 			
 		};
 		

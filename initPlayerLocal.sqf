@@ -245,7 +245,7 @@ switch (Pside) do {
 					publicVariable "GameData";
 					detach eastAccountant;
 					eastAccountant setPosATL (player modelToWorld [0, 3, 0]);
-					WestBox setPosATL (player modelToWorld [2, 3, 0]);
+					eastBox setPosATL (player modelToWorld [2, 3, 0]);
 					player removeAction eastDropAccID;
 					call AccountantMove;
 				},
@@ -285,38 +285,45 @@ findDisplay 46 displayAddEventHandler ["KeyDown", {
 
 
 			// factory resource collection button
+
+			_inrange = false;
 			{
 
 				_ResourceButton = ((findDisplay 1001) displayCtrl 4);
 				if ((((getPos player) distance (_x # 4)) < 75) and (Pcolor == _x # 3)) then {
 
+					_inrange = true;
+
+				};
+
+				if (_inrange) then {
+
 					_ResourceButton ctrlSetPosition [safeZoneX + safeZoneW * 0.01375,safeZoneY + safeZoneH * 0.29777778];
 					_ResourceButton ctrlCommit 0;
-
+					
 				}
 				else
 				{
-
 					_ResourceButton ctrlSetPosition [-1,-1];
 					_ResourceButton ctrlCommit 0;
+				}
 
-				};
 			}forEach gameData # 1 # 2;
 
 
 			// buy vehicle button
-			_ResourceButton = ((findDisplay 1001) displayCtrl 5);
+			_buyvehicle = ((findDisplay 1001) displayCtrl 5);
 			if ((getPos player) distance (gameData # 0 # (Pside + 1) # 0) < 25 ) then {
 
-				_ResourceButton ctrlSetPosition [safeZoneX + safeZoneW * 0.01367188,safeZoneY + safeZoneH * 0.34722223];
-				_ResourceButton ctrlCommit 0;
+				_buyvehicle ctrlSetPosition [safeZoneX + safeZoneW * 0.01367188,safeZoneY + safeZoneH * 0.34722223];
+				_buyvehicle ctrlCommit 0;
 
 			}
 			else
 			{
 
-				_ResourceButton ctrlSetPosition [-1,-1];
-				_ResourceButton ctrlCommit 0;
+				_buyvehicle ctrlSetPosition [-1,-1];
+				_buyvehicle ctrlCommit 0;
 
 			};
 		};

@@ -64,5 +64,42 @@ fnc_updateVehicleDisplay = {
     };
 };
 
-// Add the event handler to the list box
-_Lb ctrlAddEventHandler ["LBSelChanged", { [_this] call fnc_updateVehicleDisplay }];
+// Initialize the total ammo volume
+_ammoVolume = 0;
+
+// Loop through all magazine class names
+{
+    _x = _forEachIndex; // This will represent each magazine class name in the array
+
+    // Get the ammo count and ammo type from the config
+    _AmmoCount = getNumber(configFile >> "cfgMagazines" >> _x >> "count");
+    _AmmoType = getText(configFile >> "cfgMagazines" >> _x >> "ammo");
+
+    // Check if ammo type is valid
+    if (!isNull _AmmoType) then {
+        // Create an instance of the ammo type at a dummy position
+        _AmmoVeh = _AmmoType createVehicle [0, 0, 0];
+
+        // Get the bounding box of the ammo vehicle
+        _AmmoSize = boundingBox _AmmoVeh;
+        deleteVehicle _AmmoVeh; // Clean up the created ammo instance
+
+        // Extract max and min corners of the bounding box
+        _max = _AmmoSize select 1;
+        _min = _AmmoSize select 0;
+
+        // Calculate dimensions (width, height, depth)
+        _width = _max select 0 - _min select 0; // Width (X-axis)
+        _height = _max select 1 - _min select 1; // Height (Y-axis)
+        _depth = _max select 2 - _min select 2; // Depth (Z-axis)
+
+        // Calculate the volume of this ammunition type
+        _volume = _width * _height * _depth;
+
+        // Accumulate total ammo volume
+        _ammoVolume = _ammoVolume + (_volume * _AmmoCount);
+    };
+} forEach configClasses(configFile >> "cfgMagazines");
+
+// Display the total ammo volume
+hint format ["Total Ammo Volume: %1 cubic meters", _ammoVolume]; // Volume in cubic meters
