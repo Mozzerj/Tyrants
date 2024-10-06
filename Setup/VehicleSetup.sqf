@@ -21,77 +21,79 @@ _vehicleArray = [];
             _configName = configName _x;
             _editorPreview = getText(configFile >> "cfgVehicles" >> _configName >> "editorPreview");
 
-            _MainTurretWeapons = getArray(configFile >> "cfgVehicles" >> _configName >> "Turrets" >> "MainTurret" >> "Weapons");
-            _MainTurretMagazine = getArray(configFile >> "cfgVehicles" >> _configName >> "Turrets" >> "MainTurret" >> "Magazines");
-
-            _GunnerTurretWeapons = getArray(configFile >> "cfgVehicles" >> _configName >> "Turrets" >> "GunnerTurret" >> "Weapons");
-            _GunnerTurretMagazine = getArray(configFile >> "cfgVehicles" >> _configName >> "Turrets" >> "GunnerTurret" >> "Magazines");
-
-            _CopilotTurretWeapons = getArray(configFile >> "cfgVehicles" >> _configName >> "Turrets" >> "CopilotTurret" >> "Weapons");
-            _CopilotTurretMagazine = getArray(configFile >> "cfgVehicles" >> _configName >> "Turrets" >> "CopilotTurret" >> "Magazines");
-
-            _CommanderOpticsWeapons = getArray(configFile >> "cfgVehicles" >> _configName >> "Turrets" >> "CommanderOptics" >> "Weapons");
-            _CommanderOpticsMagazine = getArray(configFile >> "cfgVehicles" >> _configName >> "Turrets" >> "CommanderOptics" >> "Magazines");
-
             _armour = getNumber(configFile >> "cfgVehicles" >> _configName >> "armor");
             _armorStructural = getNumber(configFile >> "cfgVehicles" >> _configName >> "armorStructural");
-            
 
-            // ammo volume calculation
-            _ammoVolume = 0;
-            
+
+            _DataVeh = _configName createVehicle [0,0,100];
+
+            _VehicleWeapons = [];
+            _VehicleMagazines = [];
+
             {
-
-                {
-                    
-                    _AmmoCount = getNumber(configFile >> "cfgMagazines" >> _x >> "count");
-                    _AmmoType =  getText(configFile >> "cfgMagazines" >> _x >> "ammo");
-
-                    _AmmoVeh = _AmmoType createVehicle [0,0,0];
-                    _AmmoSize = boundingBox _AmmoVeh;
-                    deleteVehicle _AmmoVeh;
-
-                    _max = _AmmoSize # 1;
-                    _min = _AmmoSize # 0;
-
-                    _width = _max # 0 - _min # 0;
-                    _height = _max # 1 - _min # 1;
-                    _depth = _max # 2 - _min # 2;
-
-                    _volume = _width * _height * _depth;
-
-                    if (_volume == 0) then {
-
-                        _volume = (_AmmoSize # 2)/20;
-
-                    };
-
-                    _ammoVolume = _ammoVolume + (_volume * _AmmoCount);
-                    
-                } forEach _MainTurretMagazine;
-
                 
-            } forEach [_MainTurretMagazine,_GunnerTurretMagazine,_CopilotTurretMagazine,_CommanderOpticsMagazine];
-            // ammo volume calculation
+                _VehicleWeapons = _VehicleWeapons + (_DataVeh weaponsTurret _x);
+                _VehicleMagazines = _VehicleMagazines + (_DataVeh magazinesTurret _x);
+                
+            } forEach [[-1],[0],[1],[0,0],[0,1],[1,0]];
+
+            deleteVehicle _DataVeh;
+
+
+            // Ammo volume calculation
+            _ammoVolume = 0;
+
+            {
+                _AmmoCount = getNumber(configFile >> "cfgMagazines" >> _x >> "count");
+                _AmmoType = getText(configFile >> "cfgMagazines" >> _x >> "ammo");
+
+                _AmmoVeh = _AmmoType createVehicle [0, 0, 100];
+                _AmmoSize = boundingBox _AmmoVeh;
+                deleteVehicle _AmmoVeh;
+
+                _max = _AmmoSize # 1;
+                _min = _AmmoSize # 0;
+
+                _width = _max # 0 - _min # 0;
+                _height = _max # 1 - _min # 1;
+                _depth = _max # 2 - _min # 2;
+
+                _volume = _width * _height * _depth;
+
+                // Fallback for zero volume
+                if (_volume < 1) then {
+
+                   _volume = getNumber(configFile >> "cfgAmmo" >> _AmmoType >> "cost");
+
+                   _volume = _volume / 100;
+
+                };
+
+                // Adjust the ammo volume calculation with exponential decay
+
+                _decayFactor = 1.1;
+
+                _ammoVolume = _ammoVolume + (_volume * _AmmoCount) / (_decayFactor ^ _ammoVolume);
+                
+            } forEach _VehicleMagazines;
+
+            _ammoVolume = round(_ammoVolume);
 
             // cost calculation
-
-            _vehicleCost = (100 * _ammoVolume / 3) + (100 * _armour) + (2000 * _armorStructural);
+            _vehicleCost = (500 * _ammoVolume) + (70 * _armour) + (4000 * _armorStructural);
             
-            if (_configName isKindOf "Air") then {_vehicleCost = (50 * _ammoVolume / 3) + (200 * _armour) + (4000 * _armorStructural);};
+            if (_configName isKindOf "Air") then {_vehicleCost = ((2 * _ammoVolume) + (100 * _armour) + (7500 * _armorStructural)) * 15};
+
+            // cost calculation
+            _vehicleCost = _vehicleCost * 0.7;
+            _vehicleCost = floor _vehicleCost;
 
             _categoryArray pushBack [
                 _displayName, 
                 _configName, 
                 _editorPreview, 
-                _MainTurretWeapons, 
-                _MainTurretMagazine, 
-                _GunnerTurretWeapons, 
-                _GunnerTurretMagazine, 
-                _CopilotTurretWeapons, 
-                _CopilotTurretMagazine, 
-                _CommanderOpticsWeapons, 
-                _CommanderOpticsMagazine,
+                _VehicleWeapons,
+                _VehicleMagazines,
                 _armour,
                 _armorStructural,
                 _ammoVolume,
@@ -102,6 +104,8 @@ _vehicleArray = [];
 
     _vehicleArray pushBack _categoryArray;
 } forEach _vehTypes;
+
+systemChat "Vehicles Setup";
 
 gameData set [3, _vehicleArray];
 publicVariable "gameData";

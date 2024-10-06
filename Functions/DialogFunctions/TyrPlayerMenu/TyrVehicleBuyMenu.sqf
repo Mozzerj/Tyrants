@@ -38,19 +38,19 @@ while {!isNull findDisplay 1002} do {
     lbAdd [6, _selected];
 
     lbAdd [6, ""];
-    lbAdd [6, format ["Cost: %1", _vehdata # 14]];
+    lbAdd [6, format ["Cost: %1", _vehdata # 8]];
 
     lbAdd [6, ""];
     lbAdd [6, format ["Passengers: %1", getNumber(configFile >> "cfgVehicles" >> _VehConfigName >> "transportSoldier")]];
 
     // Display armor
     lbAdd [6, ""];
-    lbAdd [6, format ["Armor: %1", _vehdata # 11]];
-    lbAdd [6, format ["Structural Armor: %1", _vehdata # 12]];
+    lbAdd [6, format ["Armor: %1", _vehdata # 5]];
+    lbAdd [6, format ["Structural Armor: %1", _vehdata # 6]];
 
     
     lbAdd [6, ""];
-    lbAdd [6, format ["Ammo Volume: %1", _vehdata # 13]];
+    lbAdd [6, format ["Ammo Volume: %1", _vehdata # 7]];
 
 
     lbAdd [6, ""];
