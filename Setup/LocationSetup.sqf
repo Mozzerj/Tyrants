@@ -1,3 +1,5 @@
+systemChat "Location Setup";
+
 _Towns = nearestLocations [[0,0,0], ["NameCity", "NameVillage"], 999999];
 _Cities = nearestLocations [[0,0,0], ["NameCityCapital"], 999999];
 _factory = nearestObjects [[0,0,0], ["Land_dp_mainFactory_F", "Land_Factory_Main_F","Land_DPP_01_smallFactory_F"], 999999];

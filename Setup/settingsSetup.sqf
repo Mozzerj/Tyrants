@@ -15,30 +15,33 @@ switch (_this # 1) do {
 };
 
 switch (_this # 2) do {
-    case 0: {SteelInit = 2000};
-    case 1: {SteelInit = 4000};
-    case 2: {SteelInit = 5000};
-    case 3: {SteelInit = 7500};
-    case 4: {SteelInit = 10000};
-    default {SteelInit = 5000};  // Middle value
+    case 0: {SteelInit = 5000};
+    case 1: {SteelInit = 7500};
+    case 2: {SteelInit = 10000};
+    case 3: {SteelInit = 12500};
+    case 4: {SteelInit = 15000};
+    case 5: {SteelInit = 20000};
+    default {SteelInit = 10000};  // Middle value
 };
 
 switch (_this # 3) do {
-    case 0: {AmmoInit = 2000};
-    case 1: {AmmoInit = 4000};
-    case 2: {AmmoInit = 5000};
-    case 3: {AmmoInit = 7500};
-    case 4: {AmmoInit = 10000};
-    default {AmmoInit = 5000};  // Middle value
+    case 0: {AmmoInit = 5000};
+    case 1: {AmmoInit = 7500};
+    case 2: {AmmoInit = 10000};
+    case 3: {AmmoInit = 12500};
+    case 4: {AmmoInit = 15000};
+    case 5: {AmmoInit = 20000};
+    default {AmmoInit = 10000};  // Middle value
 };
 
 switch (_this # 4) do {
-    case 0: {FuelInit = 2000};
-    case 1: {FuelInit = 4000};
-    case 2: {FuelInit = 5000};
-    case 3: {FuelInit = 7500};
-    case 4: {FuelInit = 10000};
-    default {FuelInit = 5000};  // Middle value
+    case 0: {FuelInit = 5000};
+    case 1: {FuelInit = 7500};
+    case 2: {FuelInit = 10000};
+    case 3: {FuelInit = 12500};
+    case 4: {FuelInit = 15000};
+    case 5: {FuelInit = 20000};
+    default {FuelInit = 10000};  // Middle value
 };
 
 switch (_this # 5) do {
@@ -50,7 +53,6 @@ switch (_this # 5) do {
     case 5: {FactoryProduction = 3};
     default {FactoryProduction = 1};  // Middle value
 };
-
 
 switch (_this # 6) do {
     case 0: {VehicleCost = 0.5};

@@ -469,7 +469,7 @@ class SetupMenu
 			soundEnter[] = {"\A3\ui_f\data\sound\RscButton\soundEnter",0.09,1.0};
 			soundEscape[] = {"\A3\ui_f\data\sound\RscButton\soundEscape",0.09,1.0};
 			soundPush[] = {"\A3\ui_f\data\sound\RscButton\soundPush",0.09,1.0};
-			onButtonClick = "[lbCurSel 1,lbCurSel 2,lbCurSel 3,lbCurSel 4,lbCurSel 5,lbCurSel 6,lbCurSel 7]execVM 'Setup\settingsSetup.sqf';closeDialog IDC_OK";
+			onButtonClick = "[lbCurSel 1,lbCurSel 2,lbCurSel 3,lbCurSel 4,lbCurSel 5,lbCurSel 6,lbCurSel 7]execVM 'Setup\settingsSetup.sqf'";
 			
 		};
 		class PlayerList_copy1
@@ -697,9 +697,8 @@ class SetupMenu
 			arrowEmpty = "\A3\ui_f\data\GUI\RscCommon\RscCombo\arrow_combo_ca.paa";
 			arrowFull = "\A3\ui_f\data\GUI\RscCommon\RscCombo\arrow_combo_active_ca.paa";
 			colorBackground[] = {0.851,0.5647,0.0863,1};
-			colorDisabled[] = {0.2,0.2,0.2,1};
+			colorDisabled[] = {0.851,0.5647,0.0863,1};
 			colorSelect[] = {1, 0.6636, 0.1014, 1};
-			colorSelectBackground[] = {1,0.6636,0.1014,1};
 			colorText[] = {1,1,1,1};
 			font = "PuristaMedium";
 			maxHistoryDelay = 0;
@@ -710,7 +709,7 @@ class SetupMenu
 			wholeHeight = 0.3;
 			class ComboScrollBar
 			{
-				color[] = {1,1,1,1};
+				color[] = {0.851,0.5647,0.0863,1};
 				thumb = "\A3\ui_f\data\gui\cfg\scrollbar\thumb_ca.paa";
 				arrowFull = "\A3\ui_f\data\gui\cfg\scrollbar\arrowFull_ca.paa";
 				arrowEmpty = "\A3\ui_f\data\gui\cfg\scrollbar\arrowEmpty_ca.paa";
@@ -965,7 +964,7 @@ class TyrVehicleBuyMenu
 			colorText[] = {1,1,1,1};
 			font = "PuristaMedium";
 			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1);
-			onLoad = "execVM 'Functions\DialogFunctions\TyrPlayerMenu\TyrVehicleBuyMenu.sqf'";
+			onLoad = "execVM 'Functions\fn_VehicleBuyMenu.sqf'";
 			
 		};
 		class BackGroundBar
@@ -1065,7 +1064,7 @@ class TyrVehicleBuyMenu
 			soundEnter[] = {"\A3\ui_f\data\sound\RscButton\soundEnter",0.09,1.0};
 			soundEscape[] = {"\A3\ui_f\data\sound\RscButton\soundEscape",0.09,1.0};
 			soundPush[] = {"\A3\ui_f\data\sound\RscButton\soundPush",0.09,1.0};
-			onButtonClick = "";
+			onButtonClick = "[lbData[4, lbCurSel 4]] execVM 'Functions\fn_VehicleBuy.sqf'";
 			
 		};
 		class VehiclePictureDisplay

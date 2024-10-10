@@ -1,4 +1,4 @@
-LocationChosen = false;
+_LocationChosen = false;
 
 openMap [true,false];
 
@@ -10,6 +10,7 @@ switch (Pside) do {
     case 0: { lineSide = 500 };
     case 1: { lineSide = -500 };
 };
+
 
 LocationChoose = {
     clicked = false;

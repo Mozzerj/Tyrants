@@ -1,23 +1,28 @@
+systemChat "Destroyed Objects Setup";
+
 {
     _x setDamage [1, false];
     
 } forEach gameData # 2 # 0;
 
-{
-    _x setDamage [1, false];
-    
-    _position = _x # 1;
+destroyedVehicles = [];
 
-    _direction = _x # 2;
+{
+
+    _position = _x # 2;
+
+    _direction = _x # 1;
     
     _vehicleClass = _x # 0;
 
-    _simpleVehicle = createVehicle [_vehicleClass, _position, [], 0, "NONE"]; 
-    
-    _simpleVehicle setDamage [1,false];
-    
-    _simpleVehicle setDir _direction;
-
-    _simpleVehicle enableSimulationGlobal false;
+    destroyedVehicles = [_vehicleClass, _position, _direction, destroyedVehicles] call TYR_fnc_destroyedVehicle;
 
 } forEach gameData # 2 # 1;
+
+sleep 5;
+
+{
+
+    _x enableSimulationGlobal false;
+
+} forEach destroyedVehicles;

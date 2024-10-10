@@ -1,3 +1,5 @@
+systemChat "Loadout Save";
+
 while {true} do {
     
 

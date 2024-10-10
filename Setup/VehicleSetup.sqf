@@ -1,3 +1,5 @@
+systemChat "Vehicles Setup";
+
 _allTanks = ("getText (_x >> 'vehicleClass') == 'Armored'") configClasses (configFile >> "cfgVehicles");
 _allcar = ("getText (_x >> 'vehicleClass') == 'car'") configClasses (configFile >> "cfgVehicles");
 _allPlanes = ("(getText (_x >> 'vehicleClass') == 'Air') and (getText (_x >> 'simulation') == 'airplanex')") configClasses (configFile >> "cfgVehicles");
@@ -38,7 +40,6 @@ _vehicleArray = [];
             } forEach [[-1],[0],[1],[0,0],[0,1],[1,0]];
 
             deleteVehicle _DataVeh;
-
 
             // Ammo volume calculation
             _ammoVolume = 0;
@@ -104,8 +105,6 @@ _vehicleArray = [];
 
     _vehicleArray pushBack _categoryArray;
 } forEach _vehTypes;
-
-systemChat "Vehicles Setup";
 
 gameData set [3, _vehicleArray];
 publicVariable "gameData";

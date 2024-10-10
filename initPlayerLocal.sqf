@@ -1,5 +1,10 @@
 sleep 2;
 
+player setUnitTrait ["Medic", true];
+player setUnitTrait ["UAVHacker", true];
+player setUnitTrait ["explosiveSpecialist", true];
+player setUnitTrait ["engineer", true];
+
 if ((profileNamespace getVariable ["Tyrants", "VarCheck"]) isEqualTo "VarCheck") then {
 	// Save Var to namespace to create save file
       
@@ -11,9 +16,9 @@ if ((profileNamespace getVariable ["Tyrants", "VarCheck"]) isEqualTo "VarCheck")
 			], 
 			[ 
 				0, // west base pos
-			    0,  // resources
-				0,  
-				0 
+			    0,  // steel
+				0,  // ammo
+				0 // fuel
 			],
 			[ 
 				0,  // east base pos
@@ -26,7 +31,22 @@ if ((profileNamespace getVariable ["Tyrants", "VarCheck"]) isEqualTo "VarCheck")
 			]
 			
 		],
-		   0 // location data
+		   0, // location data
+		[
+			[
+				// destroyed buildings
+			],
+			[
+				// destroyed vehicles
+			]
+		],
+		[
+			0 // vehicle data
+		],
+		[
+			[],
+			[]// purchased vehicles
+		]
 	];
 
 	TyrantsMain = [[name player,"Private",1],GameData,[                ]];
@@ -159,7 +179,7 @@ switch (Pside) do {
 		aresenalCloseID = addUserActionEventHandler ["ingamePause", "Activate", {
 			
 			removeUserActionEventHandler ["ingamePause", "Activate", aresenalCloseID];
-			[playerLoadout]execVM "Functions\exitArsenal.sqf";
+			[playerLoadout] call TYR_fnc_exitArsenal;
 
 		}];
 
@@ -221,7 +241,7 @@ switch (Pside) do {
 		aresenalCloseID = addUserActionEventHandler ["ingamePause", "Activate", {
 			
 			removeUserActionEventHandler ["ingamePause", "Activate", aresenalCloseID];
-			[playerLoadout]execVM "Functions\exitArsenal.sqf";
+			[playerLoadout] call TYR_fnc_exitArsenal
 
 		}];
 

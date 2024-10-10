@@ -1,3 +1,5 @@
+    systemChat "Map Update";
+
 while {true} do {
     
     {

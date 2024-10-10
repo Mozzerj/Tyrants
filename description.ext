@@ -2,7 +2,44 @@
 
 respawn = 3; // Sets respawn type to 'BASE', which uses markers as respawn points
 respawnDelay = 30; // Delay in seconds before respawn
-respawnDialog = 0;
+respawnDialog = 1;
+
+reviveRequiredTrait = 0;
+reviveRequiredItems = 2;
+reviveRequiredItemsFakConsumed = 1;
+reviveMedicSpeedMultiplier = 2;
+reviveDelay = 10;
+reviveForceRespawnDelay = 5;
+reviveBleedOutDelay = 180;
+
+class CfgFunctions {
+
+    #include "functions\cfgFunctions.hpp"
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class myMissionConfig
 {

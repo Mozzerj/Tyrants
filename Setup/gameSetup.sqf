@@ -1,3 +1,5 @@
+systemChat "Game Setup";
+
 createDialog "SetupMenu";
 
 _setupMenu = findDisplay 1000;
@@ -37,25 +39,28 @@ _cb2 lbAdd "175";
 _cb2 lbAdd "250";
 
 _cb3 = _setupMenu displayCtrl 3;
-_cb3 lbAdd "2000";
-_cb3 lbAdd "4000";
 _cb3 lbAdd "5000";
 _cb3 lbAdd "7500";
 _cb3 lbAdd "10000";
+_cb3 lbAdd "12500";
+_cb3 lbAdd "15000";
+_cb3 lbAdd "20000";
 
 _cb4 = _setupMenu displayCtrl 4;
-_cb4 lbAdd "2000";
-_cb4 lbAdd "4000";
 _cb4 lbAdd "5000";
 _cb4 lbAdd "7500";
 _cb4 lbAdd "10000";
+_cb4 lbAdd "12500";
+_cb4 lbAdd "15000";
+_cb4 lbAdd "20000";
 
 _cb5 = _setupMenu displayCtrl 5;
-_cb5 lbAdd "2000";
-_cb5 lbAdd "4000";
 _cb5 lbAdd "5000";
 _cb5 lbAdd "7500";
 _cb5 lbAdd "10000";
+_cb5 lbAdd "12500";
+_cb5 lbAdd "15000";
+_cb5 lbAdd "20000";
 
 _cb6 = _setupMenu displayCtrl 6;
 _cb6 lbAdd "0.5x";

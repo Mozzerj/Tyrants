@@ -12,8 +12,6 @@ addMissionEventHandler ["BuildingChanged", {
 	
 }];
 
-execVM "init\destroyedObjects.sqf";
-
 if (str(profileNamespace getVariable ["Tyrants", "VarCheck"]) == "VarCheck") then {
 
 	// Save Var to namespace to create save file
@@ -51,7 +49,11 @@ if (str(profileNamespace getVariable ["Tyrants", "VarCheck"]) == "VarCheck") the
 			]
 		],
 		[
-			0
+			0 // vehicle data
+		],
+		[
+			[],
+			[]// purchased vehicles
 		]
 	];
 
@@ -101,5 +103,11 @@ switch (GameData # 1) do {
 	};
 };
 waitUntil {gameData # 0 # 0 # 0 isNotEqualTo 0};
+waitUntil {gameData # 0 # 1 # 0 isNotEqualTo 0};
+waitUntil {gameData # 0 # 2 # 0 isNotEqualTo 0};
+
+sleep 5;
 
 execVM "GameUpdate\GameLoop.sqf";
+execVM "Init\CreateVehicles.sqf";
+execVM "Init\destroyedObjects.sqf";
