@@ -106,7 +106,7 @@ waitUntil {gameData # 0 # 0 # 0 isNotEqualTo 0};
 waitUntil {gameData # 0 # 1 # 0 isNotEqualTo 0};
 waitUntil {gameData # 0 # 2 # 0 isNotEqualTo 0};
 
-sleep 5;
+sleep 2;
 
 execVM "GameUpdate\GameLoop.sqf";
 execVM "Init\CreateVehicles.sqf";

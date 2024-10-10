@@ -1,3 +1,5 @@
+// basic script setup
+
 systemChat "Player Map Creation";
 
 sleep 2;
@@ -12,7 +14,15 @@ BaseMapLB = missionConfigFile >> "myMissionConfig" >> "RscBaseMapListbox";
 waitUntil {!isNull (findDisplay 46)};
 
 
-// create player overlay on screen to display capture time or mission info
+
+
+
+
+
+
+
+// create player overlay on screen to display capture time or mission info                this is the top middle thing 
+
 _OverlayBackground = (findDisplay 46) ctrlCreate [MapLB, (3000)];// id 3000 - 3999 for player overaly ctrls
 _OverlayHeader = (findDisplay 46) ctrlCreate ["RscText", (3001)];
 
@@ -28,7 +38,16 @@ _OverlayHeader ctrlSetBackgroundColor [0,0,0,0];
 
 
 
-// base mark
+
+
+
+
+
+
+
+
+
+// marker for the player base
 _BaseBackGround = _map ctrlCreate [BaseMapLB, 3002]; // id 2000 - 2999 for map ctrls
 _BaseHeader = _map ctrlCreate ["RscText", 3003];
 
@@ -42,19 +61,44 @@ _BaseHeader ctrlSetPosition [_screenPos select 0, _screenPos select 1, 0.1, 0.05
 _BaseBackGround ctrlCommit 0;
 _BaseHeader ctrlCommit 0;
 
-switch (Pside ) do {
+
+
+
+
+
+
+
+
+
+
+
+// set the correct colour for the base
+switch (Pside) do {
     case 0: { _BaseHeader ctrlSetBackgroundColor [0.00, 0.30, 0.60, 1.00]};
     case 1: { _BaseHeader ctrlSetBackgroundColor [0.50, 0.00, 0.00, 1.00]};
 };
 _BaseBackGround ctrlSetBackgroundColor [0,0,0,0.7];
 
 baseMarks = [_BaseHeader,_BaseBackGround];
-//(findDisplay 12) displayCtrl 3001
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 CreateTownInfo = {
     params["_map","_mapCtrl","_pos"];
-
-
 
     _BackGround = _map ctrlCreate [MapLB, (ctrlCount + 2000)]; // id 2000 - 2999 for map ctrls
     ctrlCount = ctrlCount + 1;
@@ -96,9 +140,13 @@ UpdateMarks = {
     _BackGround ctrlCommit 0;
     _Header ctrlCommit 0;
 
-
 };
 
+
+
+
+
+// creates the markers on the map
 {
 
     _yy = _X;
@@ -118,6 +166,13 @@ UpdateMarks = {
 } forEach (GameData # 1);
 publicVariable "GameData";
 
+
+
+
+
+
+
+// adds an event handler that updates the position when it is moved so they are in the correct position relative to the map
 _map displayAddEventHandler ["MouseMoving", {
     {
         _Header =(marks # _forEachIndex # 0);
@@ -131,6 +186,7 @@ _map displayAddEventHandler ["MouseMoving", {
 
     [baseMarks # 0, baseMarks # 1, (gamedata # 0 # (pside + 1) # 0)]call UpdateMarks;
 }];
+
 _map displayAddEventHandler ["MouseHolding", {
     {
         
@@ -144,6 +200,12 @@ _map displayAddEventHandler ["MouseHolding", {
 
     [baseMarks # 0, baseMarks # 1, (gamedata # 0 # (pside + 1) # 0)]call UpdateMarks;
 }];
+
+
+
+
+
+
 
 execVM "player\PlayerLoops\mapUpdate.sqf"
 execVM "player\PlayerLoops\mapCapture.sqf"

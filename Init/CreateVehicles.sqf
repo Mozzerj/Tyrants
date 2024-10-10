@@ -32,7 +32,8 @@ systemChat "Create Vehicles";
         {
             
             if (_x # 1 == _veh) then {
-
+                
+                deleteMarker (gameData # 4 # 0 # _forEachIndex # 8);
                 gameData # 4 # 0 deleteAt _forEachIndex;
                 
             };
@@ -56,8 +57,8 @@ systemChat "Create Vehicles";
         _x select 4,                     // Magazines (ammo)
         _x select 5,                     // Fuel level
         _x select 6,                     // Direction
-        _x select 7                      // Position
-
+        _x select 7,                     // Position
+        "undefined"                      // mark made 
     ];
 
     _vehicleData = [_vehicleData, 0] call TYR_fnc_VehicleCreate;
@@ -76,7 +77,8 @@ systemChat "Create Vehicles";
         {
             
             if (_x # 1 == _veh) then {
-
+                
+                deleteMarker (gameData # 4 # 1 # _forEachIndex # 8);
                 gameData # 4 # 1 deleteAt _forEachIndex;
                 
             };

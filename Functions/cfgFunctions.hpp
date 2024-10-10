@@ -6,7 +6,6 @@ tag = "TYR";
         file = "Functions";
         
         class ExitArsenal {};
-        class GetFactoryResource {};
         class vehicleData {};
         class VehicleCreate {};
         class destroyedVehicle {};

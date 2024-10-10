@@ -891,7 +891,7 @@ class TyrPlayerMenu
 			soundEnter[] = {"\A3\ui_f\data\sound\RscButton\soundEnter",0.09,1.0};
 			soundEscape[] = {"\A3\ui_f\data\sound\RscButton\soundEscape",0.09,1.0};
 			soundPush[] = {"\A3\ui_f\data\sound\RscButton\soundPush",0.09,1.0};
-			onButtonClick = "execVM 'functions\getFactoryResource.sqf';";
+			onButtonClick = "execVM 'functions\fn_GetFactoryResource.sqf';";
 			
 		};
 		class PFPToNextRank

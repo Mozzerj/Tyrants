@@ -15,10 +15,9 @@ vehicleUpdate = {
 while {True} do {
     // Run the basic update every 60 seconds
     call basicUpdate;
-    sleep 60;
 
     // Run the vehicle update every 15 seconds
-    for "_i" from 0 to 3 do {
+    for "_i" from 0 to 4 do {
         call vehicleUpdate;
         sleep 15;
     };

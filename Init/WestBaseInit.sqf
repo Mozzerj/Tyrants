@@ -12,7 +12,7 @@ markerBLUFOR = createMarker ["respawn_west", gameData # 0 # 1 # 0];
 WestAccountant addEventHandler ["HandleDamage", {
 	params ["_unit", "_selection", "_damage", "_source", "_projectile", "_hitIndex", "_instigator", "_hitPoint", "_directHit", "_context"];
 
-    if ((isPlayer _instigator) and (side _instigator == west) and (_directHit)) then {_unit setDamage _damage} else {
+    if ((isPlayer _instigator) and (side _instigator == east) and (_directHit)) then {
         
         _unit setDamage (damage _unit + _damage);
 

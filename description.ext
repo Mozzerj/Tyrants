@@ -83,7 +83,7 @@ class myMissionConfig
         w = 0.2;  // Width (20% of the screen width)
         h = 0.4;  // Height (40% of the screen height)
     };
-        class RscBaseMapListbox {
+    class RscBaseMapListbox {
         access = 0;
         type = 5;  // Type 5 for listbox
         style = 0;  // Default style

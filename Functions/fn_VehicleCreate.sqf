@@ -52,7 +52,8 @@ _vehicleData = [
     _magCount, 
     _fuel, 
     _dir, 
-    _pos
+    _pos,
+    "undefined"
 ];
 
 _vehicleData;

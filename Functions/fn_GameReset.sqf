@@ -43,3 +43,5 @@ TyrantsMain = [[name player,"Private",1],GameData,[                ]];
             // 0 PFP                         1 Tyrants   2 SniperShootout
 profileNamespace setVariable ["Tyrants", TyrantsMain];
 saveProfileNamespace;
+
+["END1"] remoteExec ["endMission", 0, true];

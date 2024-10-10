@@ -5,7 +5,7 @@ if ((gameData # 0 # (Pside + 1) # 3) > _cost) then {
     LocationChosen = false;
     playerClickPos = [0, 0, 0];
 
-    openMap [true, true];
+    openMap [true, false];
 
     while {!LocationChosen} do {
         onMapSingleClick "
@@ -20,6 +20,8 @@ if ((gameData # 0 # (Pside + 1) # 3) > _cost) then {
         waitUntil {LocationChosen};
     };
 
+    waitUntil {LocationChosen};
+
     openMap [false, false];
 
     // Create the vehicle at the chosen position
@@ -30,11 +32,12 @@ if ((gameData # 0 # (Pside + 1) # 3) > _cost) then {
         _vehicle,                             // Vehicle class
         _veh,                                 // Vehicle object
         Pcolor,                               // Side of vehicle
-        getAllHitPointsDamage _veh,          // Damage of vehicle
-        magazinesAllTurrets _veh,              // Magazines and ammo count (all turrets)
+        getAllHitPointsDamage _veh,           // Damage of vehicle
+        magazinesAllTurrets _veh,             // Magazines and ammo count (all turrets)
         fuel _veh,                            // Fuel
         getDir _veh,                          // Direction
-        getPos _veh                        // Location
+        getPos _veh,                          // Location
+        "undefined"                           // mark made 
     ];
 
     // Update the cost in gameData
@@ -48,7 +51,10 @@ if ((gameData # 0 # (Pside + 1) # 3) > _cost) then {
         
         {
             if (_x # 1 == _veh) then {
+
+                deleteMarker (gameData # 4 # Pside # _forEachIndex # 8);
                 gameData # 4 # Pside deleteAt _forEachIndex;
+                
             };
         } forEach gameData # 4 # Pside;
 
