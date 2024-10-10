@@ -10,5 +10,8 @@ tag = "TYR";
         class VehicleCreate {};
         class destroyedVehicle {};
         class GameReset {};
+        class TYRVarCheck {};
+        class getPlayerLoadout {};
+        class givePlayerLoadout {};
     };
 };

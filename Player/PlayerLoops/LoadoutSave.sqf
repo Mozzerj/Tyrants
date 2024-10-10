@@ -1,25 +1,8 @@
-systemChat "Loadout Save";
-
 while {true} do {
     
-
-    (gameData # 0 # 3) set [PFPID,[
-
-        getPlayerUID player,
-        getPosATL player,
-
-        [backpack player,backpackItems player],
-
-        [vest player,vestItems player],
-
-        [uniform player,uniformItems player],
-
-        [primaryWeapon player,primaryWeaponItems player],
-        [secondaryWeapon player,secondaryWeaponItems player],
-        [handgunWeapon player,handgunItems player]]
-
-    ];
+    sleep 15;
+    _loadout = ([] call TYR_fnc_getPlayerLoadout);
+    (gameData # 0 # 3) set [PFPID,_loadout];
 
     publicVariable "gameData";
-    sleep 15;
 };

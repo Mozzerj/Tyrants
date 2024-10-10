@@ -1,9 +1,7 @@
-systemChat "West Base Init";
-
 WestAccGrp = createGroup West;
-basePos = (GameData # 0 # 1 # 0);
-WestAccountant = WestAccGrp createUnit ["C_man_polo_4_F", (basePos), [], 0, "NONE"];
-WestBox = createVehicle ["virtualReammoBox_camonet_F", (basePos vectorAdd [1,0,0]), [], 0, "NONE"];
+_basePos = (GameData # 0 # 1 # 0);
+WestAccountant = WestAccGrp createUnit ["C_man_polo_4_F", (_basePos), [], 0, "NONE"];
+WestBox = createVehicle ["virtualReammoBox_camonet_F", (_basePos vectorAdd [1,0,0]), [], 0, "NONE"];
 publicVariable "WestBox";
 
 
@@ -23,6 +21,12 @@ WestAccountant addEventHandler ["HandleDamage", {
 
         };
         
+    }
+    else
+    {
+
+        _unit setDamage 0;
+
     }
 
 }];

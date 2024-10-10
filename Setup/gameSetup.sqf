@@ -1,5 +1,3 @@
-systemChat "Game Setup";
-
 createDialog "SetupMenu";
 
 _setupMenu = findDisplay 1000;

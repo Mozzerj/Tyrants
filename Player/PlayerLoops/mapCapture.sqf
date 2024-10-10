@@ -1,5 +1,3 @@
-systemChat "Map Capture";
-
 _OverlayBackground = (findDisplay 46) displayCtrl 3000;
 _OverlayHeader = (findDisplay 46) displayCtrl 3001;
 

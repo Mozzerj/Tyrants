@@ -1,5 +1,3 @@
-systemChat "Create Vehicles";
-
 //[_vehicle, _veh, Pcolor, _AllHitPointsDamage, magazines, fuel, dir, pos]
 
 {

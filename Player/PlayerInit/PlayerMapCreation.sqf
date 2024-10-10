@@ -1,7 +1,5 @@
 // basic script setup
 
-systemChat "Player Map Creation";
-
 sleep 2;
 
 _map = findDisplay 12;

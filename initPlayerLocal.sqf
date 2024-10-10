@@ -5,55 +5,7 @@ player setUnitTrait ["UAVHacker", true];
 player setUnitTrait ["explosiveSpecialist", true];
 player setUnitTrait ["engineer", true];
 
-if ((profileNamespace getVariable ["Tyrants", "VarCheck"]) isEqualTo "VarCheck") then {
-	// Save Var to namespace to create save file
-      
-	GameData = [
-		
-		[
-			[
-				0 // server started
-			], 
-			[ 
-				0, // west base pos
-			    0,  // steel
-				0,  // ammo
-				0 // fuel
-			],
-			[ 
-				0,  // east base pos
-			    0,  // resources
-				0,  
-				0
-			],
-			[
-				[""] // player Location
-			]
-			
-		],
-		   0, // location data
-		[
-			[
-				// destroyed buildings
-			],
-			[
-				// destroyed vehicles
-			]
-		],
-		[
-			0 // vehicle data
-		],
-		[
-			[],
-			[]// purchased vehicles
-		]
-	];
-
-	TyrantsMain = [[name player,"Private",1],GameData,[                ]];
-				// 0 PFP                         1 Tyrants   2 SniperShootout
-	profileNamespace setVariable ["Tyrants", TyrantsMain];
-	saveProfileNamespace;
-};
+[] call TYR_fnc_TYRVarCheck;
 
 TyrantsMain = profileNamespace getVariable ["Tyrants", False];
 TyrantsPFP = TyrantsMain # 0;
@@ -83,76 +35,21 @@ if (!isNil "commanderEast") then {
 waitUntil {(GameData # 0 # 1 # 0 isNotEqualTo 0) and (GameData # 0 # 2 # 0 isNotEqualTo 0)};
 
 {
-	if (_x # 0 == getPlayerUID player) exitwith {
+	if ((_x # 0) isEqualTo getPlayerUID player) exitwith {
 		
-		_PIDFound = true;
+		
 		PFPID = _forEachIndex;
+    	player setPos ([] call TYR_fnc_givePlayerLoadout) # 1;
 
-			removeUniform player;
-			removeAllItems player; // clears deafualt inventory
-			removeAllWeapons player; // clears deafualt inventory
-			removeVest player;
-			removeBackpack player;
-			removeHeadgear player;
-
-			_PFP = gameData # 0 # 3 # PFPID;
-
-			player setPosATL (_PFP # 1); // set position from last save
-
-			player AddBackpack (_PFP # 2 # 0); // adds backpack
-			player addVest (_PFP # 3 # 0); // adds vest
-			player addUniform (_PFP # 4 # 0); // adds uniform
-			player addHeadgear (_PFP # 8 # 0); // adds uniform
-
-			removeAllItems player; // clears deafualt inventory
-			removeAllWeapons player; // clears deafualt inventory
-
-			{player addItemToBackpack _x;} forEach (_PFP # 2 # 1); // adds items to backpack
-			{player addItemToVest _x;} forEach (_PFP # 3 # 1); // adds items to backpack
-			{player addItemToUniform _x;} forEach (_PFP # 4 # 1);
-
-			player addWeapon _PFP # 5 # 0;
-			{
-
-				player addPrimaryWeaponItem _x;
-
-			} forEach _PFP # 5 # 1;
-
-			player addWeapon _PFP # 6 # 0;
-			{
-
-				player addPrimaryWeaponItem _x;
-
-			} forEach _PFP # 6 # 1;
-
-			player addWeapon _PFP # 7 # 0;
-			{
-
-				player addPrimaryWeaponItem _x;
-
-			} forEach _PFP # 7 # 1;
 	};
 	
 } forEach gameData # 0 # 3;
 
-if (_PIDFound == false) then {
+if (isNil "PFPID") then {
 
 	PFPID = count (gameData # 0 # 3);
+	gameData # 0 # 3 pushback ([] call TYR_fnc_getPlayerLoadout);
 
-	gameData # 0 # 3 pushback[
-
-		getPlayerUID player,
-		getPos player,
-
-		[backpack player, backpackItems player],
-		[vest player, vestItems player],
-		[uniform player, uniformItems player],
-		[primaryWeapon player, primaryWeaponItems player],
-		[secondaryWeapon player, secondaryWeaponItems player],
-		[handgunWeapon player, handgunItems player],
-		[headgear player]
-
-	];
 
 };
 
@@ -164,22 +61,10 @@ switch (Pside) do {
 		westBox addAction ["Open Arsenal", { 
 		["Open", [true]] call BIS_fnc_arsenal;
 
-		playerLoadout = [
-			
-			[backpack player, backpackItems player],
-			[vest player, vestItems player],
-			[uniform player, uniformItems player],
-			[primaryWeapon player, primaryWeaponItems player],
-			[secondaryWeapon player, secondaryWeaponItems player],
-			[handgunWeapon player, handgunItems player],
-			[headgear player]
-			
-		];
-
 		aresenalCloseID = addUserActionEventHandler ["ingamePause", "Activate", {
 			
 			removeUserActionEventHandler ["ingamePause", "Activate", aresenalCloseID];
-			[playerLoadout] call TYR_fnc_exitArsenal;
+			[([] call TYR_fnc_getPlayerLoadout)] call TYR_fnc_exitArsenal;
 
 		}];
 
@@ -226,22 +111,10 @@ switch (Pside) do {
 		EastBox addAction ["Open Arsenal", { 
 		["Open", [true]] call BIS_fnc_arsenal;
 
-		playerLoadout = [
-			
-			[backpack player, backpackItems player],
-			[vest player, vestItems player],
-			[uniform player, uniformItems player],
-			[primaryWeapon player, primaryWeaponItems player],
-			[secondaryWeapon player, secondaryWeaponItems player],
-			[handgunWeapon player, handgunItems player],
-			[headgear player]
-			
-		];
-
 		aresenalCloseID = addUserActionEventHandler ["ingamePause", "Activate", {
 			
 			removeUserActionEventHandler ["ingamePause", "Activate", aresenalCloseID];
-			[playerLoadout] call TYR_fnc_exitArsenal
+			[([] call TYR_fnc_getPlayerLoadout)] call TYR_fnc_exitArsenal;
 
 		}];
 

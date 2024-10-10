@@ -1,4 +1,3 @@
-systemChat "Location Setup";
 
 _Towns = nearestLocations [[0,0,0], ["NameCity", "NameVillage"], 999999];
 _Cities = nearestLocations [[0,0,0], ["NameCityCapital"], 999999];

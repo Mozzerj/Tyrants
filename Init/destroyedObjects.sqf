@@ -1,5 +1,3 @@
-systemChat "Destroyed Objects Setup";
-
 {
     _x setDamage [1, false];
     

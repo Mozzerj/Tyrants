@@ -1,3 +1,6 @@
+if ((profileNamespace getVariable ["Tyrants", "VarCheck"]) isEqualTo "VarCheck") then {
+	// Save Var to namespace to create save file
+      
 	GameData = [
 		
 		[
@@ -19,7 +22,7 @@
 				0    // HR
 			],
 			[
-				[[]] // player Location
+				[""] // player Location
 			]
 			
 		],
@@ -45,5 +48,4 @@
 				// 0 PFP                         1 Tyrants   2 SniperShootout
 	profileNamespace setVariable ["Tyrants", TyrantsMain];
 	saveProfileNamespace;
-
-["END1"] remoteExec ["endMission", 0, true];
+};

@@ -1,5 +1,3 @@
-systemChat "Vehicles Setup";
-
 _allTanks = ("getText (_x >> 'vehicleClass') == 'Armored'") configClasses (configFile >> "cfgVehicles");
 _allcar = ("getText (_x >> 'vehicleClass') == 'car'") configClasses (configFile >> "cfgVehicles");
 _allPlanes = ("(getText (_x >> 'vehicleClass') == 'Air') and (getText (_x >> 'simulation') == 'airplanex')") configClasses (configFile >> "cfgVehicles");

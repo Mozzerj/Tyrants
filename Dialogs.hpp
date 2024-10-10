@@ -891,7 +891,7 @@ class TyrPlayerMenu
 			soundEnter[] = {"\A3\ui_f\data\sound\RscButton\soundEnter",0.09,1.0};
 			soundEscape[] = {"\A3\ui_f\data\sound\RscButton\soundEscape",0.09,1.0};
 			soundPush[] = {"\A3\ui_f\data\sound\RscButton\soundPush",0.09,1.0};
-			onButtonClick = "execVM 'functions\fn_GetFactoryResource.sqf';";
+			onButtonClick = "execVM 'functions\GetFactoryResource.sqf';";
 			
 		};
 		class PFPToNextRank
@@ -932,7 +932,7 @@ class TyrPlayerMenu
 			offsetPressedY = 0.01;
 			offsetX = 0.01;
 			offsetY = 0.01;
-			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1);
+			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1.5);
 			soundClick[] = {"\A3\ui_f\data\sound\RscButton\soundClick",0.09,1.0};
 			soundEnter[] = {"\A3\ui_f\data\sound\RscButton\soundEnter",0.09,1.0};
 			soundEscape[] = {"\A3\ui_f\data\sound\RscButton\soundEscape",0.09,1.0};
