@@ -1,2 +1,0 @@
-GameMode = "AirInterdiction";
-publicVariable "GameMode";
