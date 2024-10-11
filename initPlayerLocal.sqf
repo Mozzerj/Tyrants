@@ -61,10 +61,12 @@ switch (Pside) do {
 		westBox addAction ["Open Arsenal", { 
 		["Open", [true]] call BIS_fnc_arsenal;
 
+		playerLoadout = ([] call TYR_fnc_getPlayerLoadout);
+
 		aresenalCloseID = addUserActionEventHandler ["ingamePause", "Activate", {
-			
+
 			removeUserActionEventHandler ["ingamePause", "Activate", aresenalCloseID];
-			[([] call TYR_fnc_getPlayerLoadout)] call TYR_fnc_exitArsenal;
+			[playerLoadout] call TYR_fnc_exitArsenal;
 
 		}];
 
@@ -111,10 +113,12 @@ switch (Pside) do {
 		EastBox addAction ["Open Arsenal", { 
 		["Open", [true]] call BIS_fnc_arsenal;
 
+		playerLoadout = ([] call TYR_fnc_getPlayerLoadout);
+
 		aresenalCloseID = addUserActionEventHandler ["ingamePause", "Activate", {
-			
+
 			removeUserActionEventHandler ["ingamePause", "Activate", aresenalCloseID];
-			[([] call TYR_fnc_getPlayerLoadout)] call TYR_fnc_exitArsenal;
+			[playerLoadout] call TYR_fnc_exitArsenal;
 
 		}];
 

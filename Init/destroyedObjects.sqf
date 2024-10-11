@@ -1,5 +1,5 @@
 {
-    _x setDamage [1, false];
+    _x setDamage [1, true];
     
 } forEach gameData # 2 # 0;
 

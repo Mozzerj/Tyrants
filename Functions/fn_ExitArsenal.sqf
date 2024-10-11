@@ -20,6 +20,7 @@ getLoadoutValue = {
     _secondaryWeaponCost = 0;
     _handgunWeaponCost = 0;
     _headgearCost = 0;
+    _magazinesCost = 0;
 
     _backpack = _Loadout # 2 # 0;
     _backpackItems = _Loadout # 2 # 1;
@@ -41,6 +42,8 @@ getLoadoutValue = {
     _handgunWeapon = _Loadout # 8 # 0;
     _handgunWeaponItems = _Loadout # 8 # 1;
 
+    _magazines = _Loadout # 9;
+
     // Backpack cost calculations
     _backpack = (configfile >> "CfgVehicles" >> _backpack);
     _backpackMaxLoad = getNumber(_backpack >> "maximumLoad");
@@ -54,16 +57,6 @@ getLoadoutValue = {
 
         _backpackItemCost = _backpackItemCost + (_itemMass / 10);
 
-        // Check for magazines
-        if (isNil str _itemConfig) then {
-            _itemConfig = (configfile >> "CfgMagazines" >> _item);
-            _itemAmmo = getText(_itemConfig >> "ammo");
-            _itemAmmoConfig = (configfile >> "CfgAmmo" >> _itemAmmo);
-            _itemAmmoCost = getNumber(_itemAmmoConfig >> "Cost");
-
-            _itemCount = getNumber(_itemConfig >> "mass");
-            _backpackItemCost = _backpackItemCost + _itemCount * (_itemAmmoCost / 10);
-        };
     } forEach _backpackItems;
 
     // Vest cost calculations
@@ -79,16 +72,6 @@ getLoadoutValue = {
 
         _vestItemCost = _vestItemCost + (_itemMass / 10);
 
-        // Check for magazines
-        if (isNil str _itemConfig) then {
-            _itemConfig = (configfile >> "CfgMagazines" >> _item);
-            _itemAmmo = getText(_itemConfig >> "ammo");
-            _itemAmmoConfig = (configfile >> "CfgAmmo" >> _itemAmmo);
-            _itemAmmoCost = getNumber(_itemAmmoConfig >> "Cost");
-
-            _itemCount = getNumber(_itemConfig >> "mass");
-            _vestItemCost = _vestItemCost + _itemCount * (_itemAmmoCost / 10);
-        };
     } forEach _vestItems;
 
     // Uniform cost calculations
@@ -103,16 +86,6 @@ getLoadoutValue = {
 
         _uniformItemCost = _uniformItemCost + (_itemMass / 10);
 
-        // Check for magazines
-        if (isNil str _itemConfig) then {
-            _itemConfig = (configfile >> "CfgMagazines" >> _item);
-            _itemAmmo = getText(_itemConfig >> "ammo");
-            _itemAmmoConfig = (configfile >> "CfgAmmo" >> _itemAmmo);
-            _itemAmmoCost = getNumber(_itemAmmoConfig >> "Cost");
-
-            _itemCount = getNumber(_itemConfig >> "mass");
-            _uniformItemCost = _uniformItemCost + _itemCount * (_itemAmmoCost / 10);
-        };
     } forEach _uniformItems;
 
     // Headgear cost calculations
@@ -172,8 +145,24 @@ getLoadoutValue = {
         _handgunWeaponCost = (_handgunWeaponRange * handgunMultiplier) + _handgunWeaponMass;
     };
 
+    // Check for magazines
+
+    {
+
+        _item = _x # 0;
+        _count = _x # 1;
+
+        _itemConfig = (configfile >> "CfgMagazines" >> _item);
+        _itemAmmo = getText(_itemConfig >> "ammo");
+        _itemAmmoCost = getNumber(configfile >> "CfgAmmo" >> _itemAmmo >> "Cost");
+
+        _magazinesCost = _magazinesCost + _count * (_itemAmmoCost / 10);
+        
+    } forEach _magazines;
+
+
     // Show all costs in the hint
-    _totalCost = (_backpackCost + _backpackItemCost + _vestCost + _vestItemCost + _uniformCost + _uniformItemCost + _primaryWeaponCost + _secondaryWeaponCost + _handgunWeaponCost + _headgearCost);
+    _totalCost = (_magazinesCost + _backpackCost + _backpackItemCost + _vestCost + _vestItemCost + _uniformCost + _uniformItemCost + _primaryWeaponCost + _secondaryWeaponCost + _handgunWeaponCost + _headgearCost);
 
     Loadoutinfo = format [
         "Loadout Costs:\n\n" +
@@ -184,8 +173,9 @@ getLoadoutValue = {
         "Secondary Weapon Cost: %5\n" +
         "Handgun Weapon Cost: %6\n" +
         "Headgear Cost: %7\n" +
-        "Loadout Value: %8\n" +
-        "Cost: %9\n",
+        "Magazines Cost: %8\n" +
+        "Loadout Value: %9\n" +
+        "Cost: %10\n",
         _backpackCost,
         _vestCost,
         _uniformCost,
@@ -193,6 +183,7 @@ getLoadoutValue = {
         _secondaryWeaponCost,
         _handgunWeaponCost,
         _headgearCost,
+        _magazinesCost,
         _totalCost,
         (_LoadoutValue + (_totalCost * _Multi))
     ];
