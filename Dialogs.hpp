@@ -903,28 +903,12 @@ class SetupMenuVehicles
 	
 	class ControlsBackground
 	{
-		class Background
-		{
-			type = 0;
-			idc = -1;
-			x = safeZoneX + safeZoneW * -0.00125;
-			y = safeZoneY + safeZoneH * 0.125;
-			w = safeZoneW * 1.0025;
-			h = safeZoneH * 0.75;
-			style = 0;
-			text = "";
-			colorBackground[] = {0.2,0.2,0.2,0.7};
-			colorText[] = {1,1,1,1};
-			font = "PuristaMedium";
-			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1);
-			
-		};
 		class Background_copy1_copy1
 		{
 			type = 0;
 			idc = -1;
 			x = safeZoneX + safeZoneW * -0.00125;
-			y = safeZoneY + safeZoneH * 0.04222223;
+			y = safeZoneY + safeZoneH * 0.03222223;
 			w = safeZoneW * 1.0025;
 			h = safeZoneH * 0.04444445;
 			style = 0;
@@ -955,13 +939,13 @@ class SetupMenuVehicles
 	};
 	class Controls
 	{
-		class LoadProgress
+class LoadProgress
 		{
 			type = 8;
 			idc = 1;
 			x = safeZoneX + safeZoneW * 0.01875;
 			y = safeZoneY + safeZoneH * 0.93333334;
-			w = safeZoneW * 0.9625;
+			w = safeZoneW * 0.8925;
 			h = safeZoneH * 0.03111112;
 			style = 0;
 			colorBar[] = {0.851,0.5647,0.0863,1};
@@ -969,10 +953,27 @@ class SetupMenuVehicles
 			texture = "#(argb,8,8,3)color(1,1,1,1)";
 			
 		};
+		class ETA
+		{
+			type = 0;
+			idc = 2;
+			x = safeZoneX + safeZoneW * 0.92375;
+			y = safeZoneY + safeZoneH * 0.93444445;
+			w = safeZoneW * 0.0525;
+			h = safeZoneH * 0.03111112;
+			style = 0+2;
+			text = "ETA";
+			colorBackground[] = {0,0,0,1};
+			colorText[] = {1,1,1,1};
+			font = "PuristaMedium";
+			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1);
+			
+		};
 		
 	};
 	
 };
+
 
 
 

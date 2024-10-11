@@ -1,4 +1,8 @@
 // player init and basic setup
+
+
+titleCut ["", "BLACK IN", 4];
+
 player setUnitTrait ["Medic", true];
 player setUnitTrait ["UAVHacker", true];
 player setUnitTrait ["explosiveSpecialist", true];
@@ -14,8 +18,6 @@ switch (playerSide) do {
 	case WEST: {Pside = 0;PColor = "ColorWest";PlayerOverlayColor =  [0.00, 0.30, 0.60, 1.00]};
 	case EAST: {Pside = 1;PColor = "ColorEast";PlayerOverlayColor =  [0.50, 0.00, 0.00, 1.00]};
 };
-
-_PIDFound = false;
 
 
 // case 0: game is brand new nothing has been setup wait for server host to do setup

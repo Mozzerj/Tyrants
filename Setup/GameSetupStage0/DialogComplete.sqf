@@ -90,4 +90,4 @@ publicVariable "GameData";
 
 closeDialog 1000;
 
-execVM "Setup\GameSetupStage1\VehicleSetup\VehicleSetup.sqf";
+execVM "Setup\GameSetupStage1\VehicleSetup.sqf";
