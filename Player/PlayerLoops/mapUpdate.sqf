@@ -16,7 +16,7 @@ while {true} do {
         _ctrlB lbAdd "";
         _ctrlB lbAdd format["Pop: %1",_pop];
 
-        sleep 0.1;
+        sleep 0.025;
 
     }forEach GameData # 1 # 0;
 
@@ -37,7 +37,7 @@ while {true} do {
         _ctrlB lbAdd "";
         _ctrlB lbAdd format["Pop: %1",_pop];
         
-        sleep 0.1;
+        sleep 0.025;
 
     }forEach GameData # 1 # 1;
 
@@ -68,7 +68,7 @@ while {true} do {
 
         };
         
-        sleep 0.1;
+        sleep 0.025;
 
     }forEach GameData # 1 # 2;
 
@@ -96,28 +96,28 @@ while {true} do {
 
 
     // Create or update marks for vehicles
-{
-    // Check if marker reference is "undefined" then create if needed
-    if (_x # 8 == "undefined") then {
-
-        _vehicleMarker = createMarkerLocal [str(_x # 1), _x # 7];
-        _vehicleMarker setMarkerTypeLocal "mil_triangle";
-        _vehicleMarker setMarkerColorLocal Pcolor;
-        _vehicleMarker setMarkerTextLocal getText(configFile >> "CfgVehicles" >> (_x # 0) >> "displayName");
-        _x set [8, _vehicleMarker]; // Store the marker reference in the array
-
-    } 
-    else
     {
+        // Check if marker reference is "undefined" then create if needed
+        if (_x # 8 == "undefined") then {
 
-        _vehicleMarker = _x # 8; // Retrieve existing marker
-        _vehicleMarker setMarkerDirLocal _x # 6;
-        _vehicleMarker setMarkerPosLocal _x # 7;
-    };
+            _vehicleMarker = createMarkerLocal [str(_x # 1), _x # 7];
+            _vehicleMarker setMarkerTypeLocal "mil_triangle";
+            _vehicleMarker setMarkerColorLocal Pcolor;
+            _vehicleMarker setMarkerTextLocal getText(configFile >> "CfgVehicles" >> (_x # 0) >> "displayName");
+            _x set [8, _vehicleMarker]; // Store the marker reference in the array
 
-    // Update or set marker properties
+        } 
+        else
+        {
 
-} forEach gameData # 4 # Pside;
+            _vehicleMarker = _x # 8; // Retrieve existing marker
+            _vehicleMarker setMarkerDirLocal _x # 6;
+            _vehicleMarker setMarkerPosLocal _x # 7;
+        };
+
+        // Update or set marker properties
+
+    } forEach gameData # 4 # Pside;
 
 
 
@@ -131,6 +131,7 @@ while {true} do {
     _ctrlB lbAdd format["Steel: %1",(gameData # 0 # (pside + 1) # 1)];
     _ctrlB lbAdd format["Ammo: %1",(gameData # 0 # (pside + 1) # 2)];
     _ctrlB lbAdd format["Fuel: %1",(gameData # 0 # (pside + 1) # 3)];
+    _ctrlB lbAdd format["HR: %1",(gameData # 0 # (pside + 1) # 4)];
 
-    sleep 5;
+    sleep 0.025;
 };

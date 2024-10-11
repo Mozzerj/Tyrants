@@ -46,4 +46,4 @@
 	profileNamespace setVariable ["Tyrants", TyrantsMain];
 	saveProfileNamespace;
 
-["END1"] remoteExec ["endMission", 0, true];
+	["END1"] remoteExec ["endMission", 0, true];

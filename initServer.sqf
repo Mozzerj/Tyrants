@@ -1,8 +1,37 @@
-// if "Tyrants" does not exist 
-// 		VarCheck is returned then "Tyrants" will be made with GameData = [False]
-//
-// if "Tyrants" does exist
-// 		GameData checked for False or True
+[] call TYR_fnc_TYRVarCheck;
+
+TyrantsMain = profileNamespace getVariable ["Tyrants", False];
+GameData = TyrantsMain # 1;
+publicVariable "GameData";
+
+waitUntil {!isNull (findDisplay 70)};
+sleep 1;
+
+switch (gameData # 0 # 0 # 0) do {
+    case 0: {
+        
+        sleep 0.5;
+
+        while {gameData # 0 # 0 # 0 == 0} do {
+
+            execVM "Setup\GameSetupStage0\DialogSetup.sqf";
+
+            sleep 0.5;
+
+            waitUntil {isNull findDisplay 1000};
+        };
+    };
+	case 1: { };
+	case 2: { };
+	case 3: { };
+	case 4: { };
+	case 5: { };
+	default { };
+};
+
+
+
+
 
 addMissionEventHandler ["BuildingChanged", {
 	params ["_from", "_to", "_isRuin"];
@@ -12,16 +41,7 @@ addMissionEventHandler ["BuildingChanged", {
 	
 }];
 
-[] call TYR_fnc_TYRVarCheck;
-
-TyrantsMain = profileNamespace getVariable ["Tyrants", False];
-GameData = TyrantsMain # 1;
-publicVariable "GameData";
-
-//                     00   010 010 011 012   020 020 021 022        10   11   12          
-//GameData = [ [ 0, [ 0,  0,  0,  0 ],[ 0,  0,  0,  0]],    [[[],[[]],[[]]]    ];
-//                     GameMode and Team Data                        Location Data     
-
+/*
 waitUntil {!isNull (findDisplay 70)};
 sleep 1;
 

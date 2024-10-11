@@ -1,5 +1,4 @@
-sleep 2;
-
+// player init and basic setup
 player setUnitTrait ["Medic", true];
 player setUnitTrait ["UAVHacker", true];
 player setUnitTrait ["explosiveSpecialist", true];
@@ -17,6 +16,61 @@ switch (playerSide) do {
 };
 
 _PIDFound = false;
+
+
+// case 0: game is brand new nothing has been setup wait for server host to do setup
+switch (gameData # 0 # 0 # 0) do {
+	case 0: { execVM "Setup\Player\GameSetup\GameInitStage0.sqf"};
+	case 1: { };
+	case 2: { };
+	case 3: { };
+	case 4: { };
+	case 5: { };
+	default { };
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 waitUntil {(GameData # 0 # 0 # 0 isNotEqualTo 0) and (GameData # 1 isNotEqualTo 0)};
 
