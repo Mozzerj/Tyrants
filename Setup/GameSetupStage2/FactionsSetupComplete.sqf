@@ -1,3 +1,39 @@
+_setupMenu1002 = findDisplay 1002;
+
+_selectedFactionLB = _setupMenu1002 displayCtrl 2;
+
+_dlcs = [];
+_configs = [];
+
+for "_i" from 0 to (lbSize _selectedFactionLB - 1) do {
+    private _item = _selectedFactionLB lbText _i;
+
+    if (_item == "Vanilla") then {
+        _dlcs pushBack ""; 
+    } 
+    else 
+    {
+        _dlcs pushBack _item; 
+    };
+};
+
+{
+
+    {
+
+        if ((_x # 2) in _dlcs) then {
+
+            _configs pushBack (configFile >> "cfgVehicles" >> (_x # 1));
+            
+        };
+            
+    } forEach _x;
+    
+} forEach gameData # 3 # 1;
+
+_conlen = count _configs;
+
+closeDialog 1002;
 createDialog "SetupMenuVehicles";
 
 spawnZone = getPos initZone;
@@ -6,9 +42,6 @@ _setupMenu = findDisplay 1001;
 _progressbar = _setupMenu displayCtrl 1;
 _ETA = _setupMenu displayCtrl 2;
 
-_configs = "(getNumber (configfile >> 'CfgVehicles' >> configName _x >> 'scope') isEqualTo 2) and (configName _x isKindOf 'AllVehicles')" configClasses (configFile >> "CfgVehicles");
-_conlen = count _configs;
-
 getVehicleData = {
     params["_x"];
     
@@ -16,11 +49,82 @@ getVehicleData = {
     _displayName = getText(configFile >> "cfgVehicles" >> _configName >> "displayName");
     _editorPreview = getText(configFile >> "cfgVehicles" >> _configName >> "editorPreview");
 
+    _armour = getNumber(configFile >> "cfgVehicles" >> _configName >> "armor");
+    _armorStructural = getNumber(configFile >> "cfgVehicles" >> _configName >> "armorStructural");
+
+    _VehicleWeapons = [];
+    _VehicleMagazines = [];
+
+    _DataVeh = createVehicle [_configName, spawnZone, [], 0, "CAN_COLLIDE"];
+    _DataVeh enableSimulationGlobal false;
+
+    {
+        _VehicleWeapons = _VehicleWeapons + (_DataVeh weaponsTurret _x);
+        _VehicleMagazines = _VehicleMagazines + (_DataVeh magazinesTurret _x);
+    } forEach [[-1],[0],[1],[0,0],[0,1],[1,0]];
+
+    deleteVehicle _DataVeh;
+
+    // Ammo volume calculation
+    _ammoVolume = 0;
+
+    {
+        _AmmoCount = getNumber(configFile >> "cfgMagazines" >> _x >> "count");
+        _AmmoType = getText(configFile >> "cfgMagazines" >> _x >> "ammo");
+
+        _AmmoVeh = createVehicle [_AmmoType, (spawnZone vectorAdd [0,8,2]), [], 0, "NONE"];
+        _AmmoSize = boundingBox _AmmoVeh;
+        deleteVehicle _AmmoVeh;
+
+        _max = _AmmoSize # 1;
+        _min = _AmmoSize # 0;
+
+        _width = _max # 0 - _min # 0;
+        _height = _max # 1 - _min # 1;
+        _depth = _max # 2 - _min # 2;
+
+        _volume = _width * _height * _depth;
+
+        
+
+        // Fallback for zero volume
+        if (_volume < 1) then {
+            _volume = getNumber(configFile >> "cfgAmmo" >> _AmmoType >> "cost");
+            _volume = _volume / 1000;
+
+            if (_volume < 0) then {_volume = 0};
+        };
+
+        // Adjust the ammo volume calculation with exponential decay
+        _decayFactor = 1.1;
+        _ammoVolume = _ammoVolume + (_volume * _AmmoCount) / (_decayFactor ^ _ammoVolume);
+        
+    } forEach _VehicleMagazines;
+
+    _ammoVolume = round(_ammoVolume);
+
+    // Cost calculation
+    _vehicleCost = (500 * _ammoVolume) + (70 * _armour) + (4000 * _armorStructural);
+    
+    if (_configName isKindOf "Air") then {
+        _vehicleCost = (10 * _ammoVolume) + (100 * _armour) + (5000 * _armorStructural) + (100000);
+    };
+
+    _vehicleCost = _vehicleCost * 0.7;
+    _vehicleCost = floor _vehicleCost;
+
     _dlc = getText(configfile >> "CfgVehicles" >> _configName >> "dlc");
 
     _categoryArray = [
         _displayName, 
         _configName, 
+        _editorPreview, 
+        _VehicleWeapons,
+        _VehicleMagazines,
+        _armour,
+        _armorStructural,
+        _ammoVolume,
+        _vehicleCost,
         _dlc
     ];
 
@@ -171,53 +275,34 @@ _checkedVehicles = [];
             };
         };
     };
-
-    // Update ETA and progress bar
-    _ETA ctrlSetText format ["ETA: %1", (_conlen - _forEachIndex)];
-    _progressbar progressSetPosition (_forEachIndex / _conlen);
-
+        // Update ETA and progress bar
+        _ETA ctrlSetText format ["ETA: %1", (_conlen - _forEachIndex)];
+        _progressbar progressSetPosition (_forEachIndex / _conlen);
 } forEach _configs;
 
-
-// Collect all vehicle arrays into a single array
-_allVehiclesData = [
-
-    _Factions,
-    [
+_vehCategories = [
+    _CarVehicles,
     _ArmoredVehicles,
     _ArtilleryVehicles,
-    _CarVehicles,
-    _AutonomousCarVehicles,
-    _ShipVehicles,
-    _SubmarineVehicles,
     _MotorcycleVehicles,
     _TankVehicles,
-    _AutonomousTankVehicles,
     _HelicopterVehicles,
-    _AutonomousHelicopterVehicles,
     _PlaneVehicles,
-    _AutonomousPlaneVehicles,
     _StaticWeaponVehicles,
+    _ShipVehicles,
+    _SubmarineVehicles,
+    _AutonomousCarVehicles,
+    _AutonomousTankVehicles,
+    _AutonomousHelicopterVehicles,
+    _AutonomousPlaneVehicles,
     _AutonomousStaticWeaponVehicles
-    ]
-
 ];
 
-// Set gameData[3] to the array of all vehicle arrays
-gameData # 0 # 0 set [0, 2];
-gameData set [3, _allVehiclesData];
-publicVariable "gameData";
+
+gameData # 0 # 0 set [0, 3];
+gameData # 3 set [1, _vehCategories];
 
 _progressbar ctrlSetPositionY 1.5;
 _progressbar ctrlCommit 1;
 
 closeDialog 1001;
-
-while {gameData # 0 # 0 # 0 == 2} do {
-
-    execVM "Setup\GameSetupStage2\FactionSetup.sqf";
-
-    sleep 0.5;
-
-    waitUntil {isNull findDisplay 1002};
-};

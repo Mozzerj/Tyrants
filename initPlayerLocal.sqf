@@ -22,73 +22,12 @@ switch (playerSide) do {
 
 // case 0: game is brand new nothing has been setup wait for server host to do setup
 switch (gameData # 0 # 0 # 0) do {
-	case 0: { execVM "Setup\Player\GameSetup\GameInitStage0.sqf"};
-	case 1: { };
-	case 2: { };
-	case 3: { };
-	case 4: { };
-	case 5: { };
-	default { };
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-waitUntil {(GameData # 0 # 0 # 0 isNotEqualTo 0) and (GameData # 1 isNotEqualTo 0)};
-
-if (!isNil "commanderWest") then {
-
-	if ((player == commanderWest) && (gameData # 0 # 1 # 0 isEqualTo 0)) then {execVM "Setup\player\playerBaseSelectionMap.sqf";};
+	case 0: { execVM "Setup\GameSetupPlayer\GameInit.sqf"};
+	case 1: { execVM "Setup\GameSetupPlayer\GameInit.sqf"};
+	case 2: { execVM "Setup\GameSetupPlayer\GameInit.sqf"};
+	case 3: { execVM "Setup\GameSetupPlayer\GameInit.sqf"};
 
 };
-
-if (!isNil "commanderEast") then {
-
-	if ((player == commanderEast) && (gameData # 0 # 2 # 0 isEqualTo 0)) then {execVM "Setup\player\playerBaseSelectionMap.sqf";};
-
-};
-
-waitUntil {(GameData # 0 # 1 # 0 isNotEqualTo 0) and (GameData # 0 # 2 # 0 isNotEqualTo 0)};
 
 {
 	if ((_x # 0) isEqualTo getPlayerUID player) exitwith {
@@ -109,7 +48,8 @@ if (isNil "PFPID") then {
 
 };
 
-sleep 0.5;
+waitUntil { ((!isNil "WestBox") and (!isNil "EastBox")) };
+
 
 switch (Pside) do {
 	case 0: {
@@ -284,5 +224,3 @@ findDisplay 46 displayAddEventHandler ["KeyDown", {
 }];
 
 publicVariable "gameData";
-
-execVM "Player\PlayerInit\PlayerMapCreation.sqf";

@@ -1,15 +1,35 @@
 selection = 0;
 _selector1 = 1;
 
-_vehs = gameData # 3;
-_vehTypes = ["Tanks", "Cars", "Planes", "Helis", "UAVs"];
+_vehs = gameData # 3 # 1;
+
+
+_vehTypes = [
+    "Cars",
+    "Armored",
+    "Artillery",
+    "Motorcycle",
+    "Tanks",
+    "Helicopter",
+    "Planes",
+    "Static",
+    "Ship",
+    "Submarine",
+    "UGV",
+    "UGV Tank",
+    "UAV Heli",
+    "UAV",
+    "UGV Static"
+];
+
 
 while {!isNull findDisplay 1002} do {
 
     if (_selector1 != selection) then {
-
+        if (count(_vehs # selection) == 0) then {selection = selection + 1};
         if (selection > (count _vehs - 1)) then {selection = 0};
         if (selection < 0) then {selection = (count _vehs - 1)};
+            
 
         lbClear 4;
         (findDisplay 1002 displayCtrl 4) lbSetSelected [1, true, true];
@@ -18,7 +38,10 @@ while {!isNull findDisplay 1002} do {
 
         _selector1 = selection;
 
+
         {
+
+
             _VehicleListBox = ((findDisplay 1002) displayCtrl 4);
             _VehicleListBox lbAdd (_x # 0);  // Add vehicle names without sorting
             lbSetData [4, (lbSize 4 - 1), _x # 1];

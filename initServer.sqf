@@ -21,12 +21,28 @@ switch (gameData # 0 # 0 # 0) do {
             waitUntil {isNull findDisplay 1000};
         };
     };
-	case 1: { };
-	case 2: { };
-	case 3: { };
-	case 4: { };
-	case 5: { };
-	default { };
+	case 1: { execVM "Setup\GameSetupStage1\VehicleSetup.sqf";};
+	case 2: { 
+        
+        sleep 0.5;
+
+        while {gameData # 0 # 0 # 0 == 0} do {
+
+            execVM "Setup\GameSetupStage2\FactionSetup.sqf";
+
+            sleep 0.5;
+
+            waitUntil {isNull findDisplay 1002};
+        };
+        
+    };
+
+};
+
+switch (GameData # 1) do {
+    case 0: {
+		execVM "Setup\GameSetupStage0\LocationSetup.sqf";
+	};
 };
 
 
@@ -40,6 +56,16 @@ addMissionEventHandler ["BuildingChanged", {
 
 	
 }];
+
+waitUntil {GameData # 0 # 1 # 0 isNotEqualTo 0};
+waitUntil {GameData # 0 # 2 # 0 isNotEqualTo 0};
+
+gameData # 0 # 0 set[0, 4];
+publicVariable "gameData";
+
+execVM "Init\EastBaseInit.sqf";
+execVM "Init\WestBaseInit.sqf";
+
 
 /*
 waitUntil {!isNull (findDisplay 70)};

@@ -1,3 +1,5 @@
+waitUntil {gamedata # 0 # (pside + 1) # 0 isNotEqualTo 0};
+
 // basic script setup
 
 sleep 2;
@@ -53,8 +55,8 @@ _BaseHeader ctrlSetText "Hideout";
 
 _screenPos = _mapCtrl ctrlMapWorldToScreen (gamedata # 0 # (pside + 1) # 0); 
 
-_BaseBackGround ctrlSetPosition [_screenPos select 0, _screenPos select 1, 0.1, 0.05];
-_BaseHeader ctrlSetPosition [_screenPos select 0, _screenPos select 1, 0.1, 0.05];
+_BaseBackGround ctrlSetPosition [_screenPos select 0, _screenPos select 1, 0.16, 0.155];
+_BaseHeader ctrlSetPosition [_screenPos select 0, _screenPos select 1, 0.16, 0.025];
 
 _BaseBackGround ctrlCommit 0;
 _BaseHeader ctrlCommit 0;
