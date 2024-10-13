@@ -77,7 +77,6 @@ while {!isNull findDisplay 1002} do {
     lbAdd [6, ""];
     lbAdd [6, format ["Ammo Volume: %1", _vehdata # 7]];
 
-
     lbAdd [6, ""];
     lbAdd [6, "Weapons"];
     

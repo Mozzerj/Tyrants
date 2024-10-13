@@ -52,6 +52,9 @@ getVehicleData = {
     _armour = getNumber(configFile >> "cfgVehicles" >> _configName >> "armor");
     _armorStructural = getNumber(configFile >> "cfgVehicles" >> _configName >> "armorStructural");
 
+    if (_armorStructural > 100) then {_armorStructural = (_armorStructural/100)};
+    if (_armorStructural > 10) then {_armorStructural = (_armorStructural/10)};
+
     _VehicleWeapons = [];
     _VehicleMagazines = [];
 
@@ -73,38 +76,34 @@ getVehicleData = {
         _AmmoType = getText(configFile >> "cfgMagazines" >> _x >> "ammo");
 
         _AmmoVeh = createVehicle [_AmmoType, (spawnZone vectorAdd [0,8,2]), [], 0, "NONE"];
-        _AmmoSize = boundingBox _AmmoVeh;
+        _AmmoSize = boundingBoxReal [_AmmoVeh,"Geometry"];
         deleteVehicle _AmmoVeh;
 
-        _max = _AmmoSize # 1;
-        _min = _AmmoSize # 0;
+        _diff = (_AmmoSize select 1) vectorDiff (_AmmoSize select 0); 
 
-        _width = _max # 0 - _min # 0;
-        _height = _max # 1 - _min # 1;
-        _depth = _max # 2 - _min # 2;
+        _width = _diff vectorDotProduct [1, 0, 0]; 
+        _length = _diff vectorDotProduct [0, 1, 0]; 
+        _height = _diff vectorDotProduct [0, 0, 1]; 
 
-        _volume = _width * _height * _depth;
+        _volume = _width * _length * _height; 
 
-        
+        _volume = _volume * 100;
 
-        // Fallback for zero volume
-        if (_volume < 1) then {
+        if (_volume == 0) then {
             _volume = getNumber(configFile >> "cfgAmmo" >> _AmmoType >> "cost");
             _volume = _volume / 1000;
 
-            if (_volume < 0) then {_volume = 0};
         };
 
-        // Adjust the ammo volume calculation with exponential decay
-        _decayFactor = 1.1;
-        _ammoVolume = _ammoVolume + (_volume * _AmmoCount) / (_decayFactor ^ _ammoVolume);
+        for "_i" from 0 to _AmmoCount - 1 do {
+            _ammoVolume = _ammoVolume + (_volume * exp(-(_ammoVolume / 1000)));
+        };
         
     } forEach _VehicleMagazines;
 
-    _ammoVolume = round(_ammoVolume);
+    //_ammoVolume = round(_ammoVolume);
 
-    // Cost calculation
-    _vehicleCost = (500 * _ammoVolume) + (70 * _armour) + (4000 * _armorStructural);
+    _vehicleCost = (500 * _ammoVolume) + (70 * _armour) + (40 * _armorStructural);
     
     if (_configName isKindOf "Air") then {
         _vehicleCost = (10 * _ammoVolume) + (100 * _armour) + (5000 * _armorStructural) + (100000);

@@ -29,6 +29,10 @@ switch (gameData # 0 # 0 # 0) do {
 
 };
 
+waitUntil {(gameData # 0 # 0 # 0 == 4)};
+
+execVM "Player\PlayerInit\PlayerMapCreation.sqf";
+
 {
 	if ((_x # 0) isEqualTo getPlayerUID player) exitwith {
 		

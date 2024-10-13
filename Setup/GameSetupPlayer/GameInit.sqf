@@ -12,8 +12,6 @@ waitUntil {gameData # 1 isNotEqualTo 0};
 
 sleep 0.5;
 
-execVM "Player\PlayerInit\PlayerMapCreation.sqf";
-
 waitUntil {gameData # 0 # 0 # 0 == 3};
 
 camera cameraEffect ["terminate","back"];
