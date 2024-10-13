@@ -1,3 +1,5 @@
+waitUntil {gamedata # 0 # (pside + 1) # 0 isNotEqualTo 0};
+
 // basic script setup
 
 sleep 2;
@@ -53,8 +55,8 @@ _BaseHeader ctrlSetText "Hideout";
 
 _screenPos = _mapCtrl ctrlMapWorldToScreen (gamedata # 0 # (pside + 1) # 0); 
 
-_BaseBackGround ctrlSetPosition [_screenPos select 0, _screenPos select 1, 0.1, 0.05];
-_BaseHeader ctrlSetPosition [_screenPos select 0, _screenPos select 1, 0.1, 0.05];
+_BaseBackGround ctrlSetPosition [_screenPos select 0, _screenPos select 1, 0.16, 0.155];
+_BaseHeader ctrlSetPosition [_screenPos select 0, _screenPos select 1, 0.16, 0.025];
 
 _BaseBackGround ctrlCommit 0;
 _BaseHeader ctrlCommit 0;
@@ -121,7 +123,7 @@ CreateTownInfo = {
 };
 
 UpdateMarks = {
-    params["_Header","_Background","_Pos"];
+    params["_Header","_Background","_Pos","_height","_width","_height1","_width1"];
 
     _map = findDisplay 12;
     _mapCtrl = _map displayCtrl 51;
@@ -129,8 +131,8 @@ UpdateMarks = {
     _Pos = _Pos vectorAdd [0,-20,0];
     _screenPos = _mapCtrl ctrlMapWorldToScreen _Pos; 
 
-    _BackGround ctrlSetPosition [_screenPos select 0, (_screenPos select 1), 0.15,  0.12];
-    _Header ctrlSetPosition [_screenPos select 0, _screenPos select 1, 0.15, 0.025];
+    _BackGround ctrlSetPosition [_screenPos select 0, (_screenPos select 1), _width,  _height];
+    _Header ctrlSetPosition [_screenPos select 0, _screenPos select 1, _width1, _height1];
 
     _Header ctrlSetScale (1 - ctrlMapScale  _mapCtrl);
     _BackGround ctrlSetScale (1 - ctrlMapScale  _mapCtrl);
@@ -177,12 +179,12 @@ _map displayAddEventHandler ["MouseMoving", {
         _BackGround = (marks # _forEachIndex # 1);
         _pos = (marks # _forEachIndex # 2);
 
-        [_Header, _BackGround, _pos]call UpdateMarks;
+        [_Header, _BackGround, _pos, 0.12, 0.15, 0.025, 0.15]call UpdateMarks;
 
         
     } forEach marks;
 
-    [baseMarks # 0, baseMarks # 1, (gamedata # 0 # (pside + 1) # 0)]call UpdateMarks;
+    [baseMarks # 0, baseMarks # 1, (gamedata # 0 # (pside + 1) # 0), 0.155, 0.16, 0.025, 0.16]call UpdateMarks;
 }];
 
 _map displayAddEventHandler ["MouseHolding", {
@@ -192,11 +194,11 @@ _map displayAddEventHandler ["MouseHolding", {
         _BackGround = (marks # _forEachIndex # 1);
         _pos = (marks # _forEachIndex # 2);
 
-        [_Header, _BackGround, _pos]call UpdateMarks;
+        [_Header, _BackGround, _pos, 0.12, 0.15, 0.025, 0.15]call UpdateMarks;
 
     } forEach marks;
 
-    [baseMarks # 0, baseMarks # 1, (gamedata # 0 # (pside + 1) # 0)]call UpdateMarks;
+    [baseMarks # 0, baseMarks # 1, (gamedata # 0 # (pside + 1) # 0), 0.155, 0.16, 0.025, 0.16]call UpdateMarks;
 }];
 
 

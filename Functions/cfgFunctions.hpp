@@ -13,5 +13,7 @@ tag = "TYR";
         class TYRVarCheck {};
         class getPlayerLoadout {};
         class givePlayerLoadout {};
+        class FactoryUpdate {};
+        class VehicleUpdate {};
     };
 };

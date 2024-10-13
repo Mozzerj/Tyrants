@@ -2,8 +2,8 @@ _OverlayBackground = (findDisplay 46) displayCtrl 3000;
 _OverlayHeader = (findDisplay 46) displayCtrl 3001;
 
 
-CaptureTime = gameData # 0 # 0 # 0 # 0;
-CaptureRange = gameData # 0 # 0 # 0 # 1;
+CaptureTime = gameData # 0 # 0 # 1 # 0;
+CaptureRange = gameData # 0 # 0 # 1 # 1;
 
 RegionUpdate = {
 	

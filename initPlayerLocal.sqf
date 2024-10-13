@@ -1,4 +1,7 @@
-sleep 2;
+// player init and basic setup
+
+
+titleCut ["", "BLACK IN", 4];
 
 player setUnitTrait ["Medic", true];
 player setUnitTrait ["UAVHacker", true];
@@ -16,23 +19,19 @@ switch (playerSide) do {
 	case EAST: {Pside = 1;PColor = "ColorEast";PlayerOverlayColor =  [0.50, 0.00, 0.00, 1.00]};
 };
 
-_PIDFound = false;
 
-waitUntil {(GameData # 0 # 0 # 0 isNotEqualTo 0) and (GameData # 1 isNotEqualTo 0)};
-
-if (!isNil "commanderWest") then {
-
-	if ((player == commanderWest) && (gameData # 0 # 1 # 0 isEqualTo 0)) then {execVM "Setup\player\playerBaseSelectionMap.sqf";};
-
-};
-
-if (!isNil "commanderEast") then {
-
-	if ((player == commanderEast) && (gameData # 0 # 2 # 0 isEqualTo 0)) then {execVM "Setup\player\playerBaseSelectionMap.sqf";};
+// case 0: game is brand new nothing has been setup wait for server host to do setup
+switch (gameData # 0 # 0 # 0) do {
+	case 0: { execVM "Setup\GameSetupPlayer\GameInit.sqf"};
+	case 1: { execVM "Setup\GameSetupPlayer\GameInit.sqf"};
+	case 2: { execVM "Setup\GameSetupPlayer\GameInit.sqf"};
+	case 3: { execVM "Setup\GameSetupPlayer\GameInit.sqf"};
 
 };
 
-waitUntil {(GameData # 0 # 1 # 0 isNotEqualTo 0) and (GameData # 0 # 2 # 0 isNotEqualTo 0)};
+waitUntil {(gameData # 0 # 0 # 0 == 4)};
+
+execVM "Player\PlayerInit\PlayerMapCreation.sqf";
 
 {
 	if ((_x # 0) isEqualTo getPlayerUID player) exitwith {
@@ -53,7 +52,8 @@ if (isNil "PFPID") then {
 
 };
 
-sleep 0.5;
+waitUntil { ((!isNil "WestBox") and (!isNil "EastBox")) };
+
 
 switch (Pside) do {
 	case 0: {
@@ -228,5 +228,3 @@ findDisplay 46 displayAddEventHandler ["KeyDown", {
 }];
 
 publicVariable "gameData";
-
-execVM "Player\PlayerInit\PlayerMapCreation.sqf";
