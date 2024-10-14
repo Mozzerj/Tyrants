@@ -126,7 +126,7 @@ class RscMapControl
 	colorText[] = {0,0,0,1};
 	font = "TahomaB";
 	sizeEx = 0.04;
-	colorSea[] = {0.467,0.631,0.851,1};
+	colorSea[] = {0.411, 0.510, 0.667, 1};
 	colorForest[] = {0.624,0.78,0.388,1};
 	colorRocks[] = {0,0,0,0.3};
 	colorCountlines[] = {0.572,0.354,0.188,0.25};

@@ -15,13 +15,13 @@ switch (_this # 0 # 1) do {
 };
 
 switch (_this # 0 # 2) do {
-    case 0: {SteelInit = 15000};
-    case 1: {SteelInit = 20000};
-    case 2: {SteelInit = 30000};
-    case 3: {SteelInit = 40000};
-    case 4: {SteelInit = 50000};
-    case 5: {SteelInit = 75000};
-    default {SteelInit = 30000};  // Middle value
+    case 0: {SteelInit = 5000};
+    case 1: {SteelInit = 10000};
+    case 2: {SteelInit = 15000};
+    case 3: {SteelInit = 20000};
+    case 4: {SteelInit = 30000};
+    case 5: {SteelInit = 45000};
+    default {SteelInit = 15000};  // Middle value
 };
 
 switch (_this # 0 # 3) do {

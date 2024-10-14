@@ -4,6 +4,10 @@ _ResearchProgress = GameData # 0 # (Pside + 1) # 5;
 
 _ResearchDisplay = findDisplay 1005;
 
+ctrlSetFocus (_ResearchDisplay displayCtrl 5);
+
+(_ResearchDisplay displayCtrl 2)ctrlSetText format["Steel: %1", (gameData # 0 # (Pside + 1) # 1)];
+
 _BI1 = _ResearchProgress # 0 # 0;
 _BI2 = _ResearchProgress # 0 # 1;
 _BI3 = _ResearchProgress # 0 # 2;
@@ -26,15 +30,15 @@ _AP6 = _ResearchProgress # 2 # 5;
 
 _CtrlBI1 = _ResearchDisplay displayCtrl 1000;
 _CtrlBI2 = _ResearchDisplay displayCtrl 1100;
-_CtrlBI3 = _ResearchDisplay displayCtrl 1200;
-_CtrlBI4 = _ResearchDisplay displayCtrl 1110;
+_CtrlBI3 = _ResearchDisplay displayCtrl 1110;
+_CtrlBI4 = _ResearchDisplay displayCtrl 1200;
 _CtrlBI5 = _ResearchDisplay displayCtrl 1300;
 
 _CtrlBI21 = _ResearchDisplay displayCtrl 2000;
 _CtrlBI22 = _ResearchDisplay displayCtrl 2100;
-_CtrlBI23 = _ResearchDisplay displayCtrl 2200;
-_CtrlBI24 = _ResearchDisplay displayCtrl 2110;
-_CtrlBI25 = _ResearchDisplay displayCtrl 2120;
+_CtrlBI23 = _ResearchDisplay displayCtrl 2110;
+_CtrlBI24 = _ResearchDisplay displayCtrl 2120;
+_CtrlBI25 = _ResearchDisplay displayCtrl 2200;
 _CtrlBI26 = _ResearchDisplay displayCtrl 2300;
 
 _CtrlAP1 = _ResearchDisplay displayCtrl 3000;
@@ -46,8 +50,8 @@ _CtrlAP6 = _ResearchDisplay displayCtrl 3005;
 
 
 switch (Pside) do {
-    case 0: { _solidColor = [0.00, 0.30, 0.60, 1.00]};
-    case 1: { _solidColor = [0.50, 0.00, 0.00, 1.00]};
+    case 0: { solidColor = [0.00, 0.30, 0.60, 1.00]};
+    case 1: { solidColor = [0.50, 0.00, 0.00, 1.00]};
 };
 
 _greyed = [0.851,0.5647,0.0863,1];
@@ -58,8 +62,8 @@ _changeCtrlColor = {
         _ctrl ctrlSetBackgroundColor _greyed;
         _ctrl ctrlSetActiveColor _greyed;
     } else {
-        _ctrl ctrlSetBackgroundColor _solidColor;
-        _ctrl ctrlSetActiveColor _solidColor;
+        _ctrl ctrlSetActiveColor solidColor;
+        _ctrl ctrlSetBackgroundColor solidColor;
     };
 };
 

@@ -1,3 +1,5 @@
+systemChat "FactoryUpdate";
+
 FactoryData  = ((GameData # 1) # 2);
 FactoryMultiplier = gameData # 0 # 0 # 1 # 7;
 
@@ -42,7 +44,7 @@ FactoryMultiplier = gameData # 0 # 0 # 1 # 7;
         
     }forEach FactoryPartGroup;
 
-    FactoryPartGroupResourceData = FactoryPartGroupResourceData + (FactoryPartGroupResourceData * FactoryMultiplier);
+    FactoryPartGroupResourceData = FactoryPartGroupResourceData + (FactoryResource * FactoryMultiplier);
     
     if (FactoryPartGroupResourceData > 50000) then {
     

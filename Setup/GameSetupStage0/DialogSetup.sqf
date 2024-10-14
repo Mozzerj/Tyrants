@@ -33,12 +33,12 @@ _cb2 lbAdd "175";
 _cb2 lbAdd "250";
 
 _cb3 = _setupMenu displayCtrl 3;
+_cb3 lbAdd "5000";
+_cb3 lbAdd "10000";
 _cb3 lbAdd "15000";
 _cb3 lbAdd "20000";
 _cb3 lbAdd "30000";
-_cb3 lbAdd "40000";
-_cb3 lbAdd "50000";
-_cb3 lbAdd "75000";
+_cb3 lbAdd "45000";
 
 _cb4 = _setupMenu displayCtrl 4;
 _cb4 lbAdd "15000";

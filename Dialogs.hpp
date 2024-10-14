@@ -1557,6 +1557,22 @@ class TyrPlayerMenu
 			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1);
 			
 		};
+		class TitleBar3
+		{
+			type = 0;
+			idc = -1;
+			x = safeZoneX + safeZoneW * 0;
+			y = safeZoneY + safeZoneH * 0.29555556;
+			w = safeZoneW * 0.2225;
+			h = safeZoneH * 0.02222223;
+			style = 0;
+			text = "   Factory Management";
+			colorBackground[] = {0,0,0,1};
+			colorText[] = {1,1,1,1};
+			font = "PuristaMedium";
+			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1);
+			
+		};
 	};
 
 	class Controls
@@ -1590,7 +1606,7 @@ class TyrPlayerMenu
 			soundEnter[] = {"\A3\ui_f\data\sound\RscButton\soundEnter",0.09,1.0};
 			soundEscape[] = {"\A3\ui_f\data\sound\RscButton\soundEscape",0.09,1.0};
 			soundPush[] = {"\A3\ui_f\data\sound\RscButton\soundPush",0.09,1.0};
-			onButtonClick = "execVM 'functions\getFactoryResource.sqf';";
+			onButtonClick = "execVM 'Research\CreateResearchDialog.sqf'";
 			
 		};
 		class CollectResources
@@ -2732,10 +2748,10 @@ class ResearchMenu
 			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1.5);
 			
 		};
-		class Line_copy4
+		class SteelDisplay
 		{
 			type = 0;
-			idc = -1;
+			idc = 2;
 			x = safeZoneX + safeZoneW * 0.82;
 			y = safeZoneY + safeZoneH * 0.08444445;
 			w = safeZoneW * 0.19;
@@ -2781,6 +2797,7 @@ class ResearchMenu
 			soundEnter[] = {"\A3\ui_f\data\sound\RscButton\soundEnter",0.09,1.0};
 			soundEscape[] = {"\A3\ui_f\data\sound\RscButton\soundEscape",0.09,1.0};
 			soundPush[] = {"\A3\ui_f\data\sound\RscButton\soundPush",0.09,1.0};
+			onButtonClick = "[1000]execVM'Research\ResearchUpdate.sqf'";
 			
 		};
 		class BasicInfra
@@ -2812,6 +2829,7 @@ class ResearchMenu
 			soundEnter[] = {"\A3\ui_f\data\sound\RscButton\soundEnter",0.09,1.0};
 			soundEscape[] = {"\A3\ui_f\data\sound\RscButton\soundEscape",0.09,1.0};
 			soundPush[] = {"\A3\ui_f\data\sound\RscButton\soundPush",0.09,1.0};
+			onButtonClick = "[2000]execVM'Research\ResearchUpdate.sqf'";
 			
 		};
 		class CBA
@@ -2843,6 +2861,7 @@ class ResearchMenu
 			soundEnter[] = {"\A3\ui_f\data\sound\RscButton\soundEnter",0.09,1.0};
 			soundEscape[] = {"\A3\ui_f\data\sound\RscButton\soundEscape",0.09,1.0};
 			soundPush[] = {"\A3\ui_f\data\sound\RscButton\soundPush",0.09,1.0};
+			onButtonClick = "[2110]execVM'Research\ResearchUpdate.sqf'";
 			
 		};
 		class FactoryProd
@@ -2874,6 +2893,7 @@ class ResearchMenu
 			soundEnter[] = {"\A3\ui_f\data\sound\RscButton\soundEnter",0.09,1.0};
 			soundEscape[] = {"\A3\ui_f\data\sound\RscButton\soundEscape",0.09,1.0};
 			soundPush[] = {"\A3\ui_f\data\sound\RscButton\soundPush",0.09,1.0};
+			onButtonClick = "[2200]execVM'Research\ResearchUpdate.sqf'";
 			
 		};
 		class Comintercept
@@ -2905,6 +2925,7 @@ class ResearchMenu
 			soundEnter[] = {"\A3\ui_f\data\sound\RscButton\soundEnter",0.09,1.0};
 			soundEscape[] = {"\A3\ui_f\data\sound\RscButton\soundEscape",0.09,1.0};
 			soundPush[] = {"\A3\ui_f\data\sound\RscButton\soundPush",0.09,1.0};
+			onButtonClick = "[1100]execVM'Research\ResearchUpdate.sqf'";
 			
 		};
 		class SatelliteSurveillance
@@ -2936,6 +2957,7 @@ class ResearchMenu
 			soundEnter[] = {"\A3\ui_f\data\sound\RscButton\soundEnter",0.09,1.0};
 			soundEscape[] = {"\A3\ui_f\data\sound\RscButton\soundEscape",0.09,1.0};
 			soundPush[] = {"\A3\ui_f\data\sound\RscButton\soundPush",0.09,1.0};
+			onButtonClick = "[1300]execVM'Research\ResearchUpdate.sqf'";
 			
 		};
 		class VehicleTrack
@@ -2967,6 +2989,7 @@ class ResearchMenu
 			soundEnter[] = {"\A3\ui_f\data\sound\RscButton\soundEnter",0.09,1.0};
 			soundEscape[] = {"\A3\ui_f\data\sound\RscButton\soundEscape",0.09,1.0};
 			soundPush[] = {"\A3\ui_f\data\sound\RscButton\soundPush",0.09,1.0};
+			onButtonClick = "[1200]execVM'Research\ResearchUpdate.sqf'";
 			
 		};
 		class StrategicEmplacements
@@ -2998,6 +3021,7 @@ class ResearchMenu
 			soundEnter[] = {"\A3\ui_f\data\sound\RscButton\soundEnter",0.09,1.0};
 			soundEscape[] = {"\A3\ui_f\data\sound\RscButton\soundEscape",0.09,1.0};
 			soundPush[] = {"\A3\ui_f\data\sound\RscButton\soundPush",0.09,1.0};
+			onButtonClick = "[2100]execVM'Research\ResearchUpdate.sqf'";
 			
 		};
 		class RoadBlock
@@ -3029,6 +3053,7 @@ class ResearchMenu
 			soundEnter[] = {"\A3\ui_f\data\sound\RscButton\soundEnter",0.09,1.0};
 			soundEscape[] = {"\A3\ui_f\data\sound\RscButton\soundEscape",0.09,1.0};
 			soundPush[] = {"\A3\ui_f\data\sound\RscButton\soundPush",0.09,1.0};
+			onButtonClick = "[2120]execVM'Research\ResearchUpdate.sqf'";
 			
 		};
 		class OffensiveEmplacement
@@ -3060,6 +3085,7 @@ class ResearchMenu
 			soundEnter[] = {"\A3\ui_f\data\sound\RscButton\soundEnter",0.09,1.0};
 			soundEscape[] = {"\A3\ui_f\data\sound\RscButton\soundEscape",0.09,1.0};
 			soundPush[] = {"\A3\ui_f\data\sound\RscButton\soundPush",0.09,1.0};
+			onButtonClick = "[2300]execVM'Research\ResearchUpdate.sqf'";
 			
 		};
 		class Listening
@@ -3091,6 +3117,7 @@ class ResearchMenu
 			soundEnter[] = {"\A3\ui_f\data\sound\RscButton\soundEnter",0.09,1.0};
 			soundEscape[] = {"\A3\ui_f\data\sound\RscButton\soundEscape",0.09,1.0};
 			soundPush[] = {"\A3\ui_f\data\sound\RscButton\soundPush",0.09,1.0};
+			onButtonClick = "[1110]execVM'Research\ResearchUpdate.sqf'";
 			
 		};
 		class ArmouredProcurement
@@ -3122,6 +3149,7 @@ class ResearchMenu
 			soundEnter[] = {"\A3\ui_f\data\sound\RscButton\soundEnter",0.09,1.0};
 			soundEscape[] = {"\A3\ui_f\data\sound\RscButton\soundEscape",0.09,1.0};
 			soundPush[] = {"\A3\ui_f\data\sound\RscButton\soundPush",0.09,1.0};
+			onButtonClick = "[3000]execVM'Research\ResearchUpdate.sqf'";
 			
 		};
 		class TankProcurement
@@ -3153,6 +3181,7 @@ class ResearchMenu
 			soundEnter[] = {"\A3\ui_f\data\sound\RscButton\soundEnter",0.09,1.0};
 			soundEscape[] = {"\A3\ui_f\data\sound\RscButton\soundEscape",0.09,1.0};
 			soundPush[] = {"\A3\ui_f\data\sound\RscButton\soundPush",0.09,1.0};
+			onButtonClick = "[3001]execVM'Research\ResearchUpdate.sqf'";
 			
 		};
 		class Artillery
@@ -3184,6 +3213,7 @@ class ResearchMenu
 			soundEnter[] = {"\A3\ui_f\data\sound\RscButton\soundEnter",0.09,1.0};
 			soundEscape[] = {"\A3\ui_f\data\sound\RscButton\soundEscape",0.09,1.0};
 			soundPush[] = {"\A3\ui_f\data\sound\RscButton\soundPush",0.09,1.0};
+			onButtonClick = "[3003]execVM'Research\ResearchUpdate.sqf'";
 			
 		};
 		class RotaryWing
@@ -3215,6 +3245,7 @@ class ResearchMenu
 			soundEnter[] = {"\A3\ui_f\data\sound\RscButton\soundEnter",0.09,1.0};
 			soundEscape[] = {"\A3\ui_f\data\sound\RscButton\soundEscape",0.09,1.0};
 			soundPush[] = {"\A3\ui_f\data\sound\RscButton\soundPush",0.09,1.0};
+			onButtonClick = "[3002]execVM'Research\ResearchUpdate.sqf'";
 			
 		};
 		class FixedWing
@@ -3246,6 +3277,7 @@ class ResearchMenu
 			soundEnter[] = {"\A3\ui_f\data\sound\RscButton\soundEnter",0.09,1.0};
 			soundEscape[] = {"\A3\ui_f\data\sound\RscButton\soundEscape",0.09,1.0};
 			soundPush[] = {"\A3\ui_f\data\sound\RscButton\soundPush",0.09,1.0};
+			onButtonClick = "[3004]execVM'Research\ResearchUpdate.sqf'";
 			
 		};
 		class AutonomousCapabilities
@@ -3277,6 +3309,7 @@ class ResearchMenu
 			soundEnter[] = {"\A3\ui_f\data\sound\RscButton\soundEnter",0.09,1.0};
 			soundEscape[] = {"\A3\ui_f\data\sound\RscButton\soundEscape",0.09,1.0};
 			soundPush[] = {"\A3\ui_f\data\sound\RscButton\soundPush",0.09,1.0};
+			onButtonClick = "[3005]execVM'Research\ResearchUpdate.sqf'";
 			
 		};
 		class ResearchLB
@@ -3284,9 +3317,9 @@ class ResearchMenu
 			type = 5;
 			idc = 1;
 			x = safeZoneX + safeZoneW * 0.82;
-			y = safeZoneY + safeZoneH * 0.12444445;
+			y = safeZoneY + safeZoneH * 0.20777778;
 			w = safeZoneW * 0.2025;
-			h = safeZoneH * 0.93555556;
+			h = safeZoneH * 0.79333334;
 			style = 16;
 			colorBackground[] = {0.851,0.5647,0.0863,1};
 			colorDisabled[] = {0.2,0.2,0.2,1};
@@ -3306,6 +3339,38 @@ class ResearchMenu
 				border = "\A3\ui_f\data\gui\cfg\scrollbar\border_ca.paa";
 				
 			};
+			
+		};
+		class UnlockResearch
+		{
+			type = 1;
+			idc = 5;
+			x = safeZoneX + safeZoneW * 0.83875;
+			y = safeZoneY + safeZoneH * 0.14555556;
+			w = safeZoneW * 0.1425;
+			h = safeZoneH * 0.05;
+			style = 0+2;
+			text = "Research Selected";
+			borderSize = 0;
+			colorBackground[] = {0.851,0.5647,0.0863,1};
+			colorBackgroundActive[] = {1,0.6636,0.1014,1};
+			colorBackgroundDisabled[] = {0.2,0.2,0.2,1};
+			colorBorder[] = {0,0,0,1};
+			colorDisabled[] = {0.2,0.2,0.2,1};
+			colorFocused[] = {0.851,0.5647,0.0863,1};
+			colorShadow[] = {0,0,0,0};
+			colorText[] = {0,0,0,1};
+			font = "PuristaMedium";
+			offsetPressedX = 0.005;
+			offsetPressedY = 0.005;
+			offsetX = 0.01;
+			offsetY = 0.01;
+			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1);
+			soundClick[] = {"\A3\ui_f\data\sound\RscButton\soundClick",0.09,1.0};
+			soundEnter[] = {"\A3\ui_f\data\sound\RscButton\soundEnter",0.09,1.0};
+			soundEscape[] = {"\A3\ui_f\data\sound\RscButton\soundEscape",0.09,1.0};
+			soundPush[] = {"\A3\ui_f\data\sound\RscButton\soundPush",0.09,1.0};
+			onButtonClick = "[5]execVM'Research\ResearchUpdate.sqf'";
 			
 		};
 		
