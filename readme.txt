@@ -1,5 +1,7 @@
 [] call TYR_fnc_gameReset
 
+GameData # 1 # 2 # 0
+
 things to test before main branch release:
 
 does loading in and out make any errors
@@ -15,64 +17,31 @@ Vehicles:
     does destroying a vehicle remove marker from map
 
 
-_player = player; 
-_pos = getPosATL _player; 
-_dir = getDir _player; 
-_distance = 5; // Distance in meters in front of the player 
-_height = 1;   // Height in meters above the ground 
+Research:
 
-// Calculate position in front of the player at the specified height 
-_newPos = _pos getPos [_distance, _dir]; 
-_newPos set [2, (_newPos select 2) + _height]; // Set the height 
+Basic Intelligence allow for other unlocks
 
-_ammo = "ammo_Missile_s750" createVehicle _newPos; 
+    comintercept randomly shows dots on map in region of enemy
 
-// Disable simulation for the ammo 
-_ammo enableSimulation false; 
-_ammo setVelocity [0, 0, 0]; // Ensure the object is not affected by physics 
-_ammo allowDamage false; // Prevent damage 
+    listening devices tells player 2 min before any planned attack
 
-// Wait for the object to initialize
-waitUntil {alive _ammo};
+    satellite surveilcance allow sky view of certain area takes time to move around map
+    
+    vehicle tracker allows for one vehicle to be tracked, has to enemy vehicle interacted with
 
-// Get the bounding box using boundingBoxReal
-_boundingBox = boundingBoxReal [_ammo, 0];
 
-// Check if bounding box data is valid
-if (count _boundingBox == 2) then {
-    _min = _boundingBox select 0;
-    _max = _boundingBox select 1;
 
-    _width = _max select 0 - _min select 0;
-    _length = _max select 1 - _min select 1;
-    _height = _max select 2 - _min select 2;
+basic infrastructure allow for other unlocks
 
-    // Calculate the volume
-    _volumeBoundingBox = _width * _length * _height;
+    strategic emplacements allows for other unlocks
 
-    // Display the volume using boundingBoxReal
-    hint format ["Volume using boundingBoxReal: %1 m³", _volumeBoundingBox];
-} else {
-    hint "Failed to retrieve the bounding box dimensions using boundingBoxReal.";
-};
+    cbr gets cbr
+    roadblock allows for roadblock to be tank traps
 
-// Get bounding box dimensions using BIS_fnc_boundingBoxDimensions
-_dimensions = _ammo call BIS_fnc_boundingBoxDimensions;
+    offensive emplacements are VLS turret or any other static artillery
 
-// Check if dimensions are valid
-if (count _dimensions == 3) then {
-    _width = _dimensions select 0;
-    _length = _dimensions select 1;
-    _height = _dimensions select 2;
+    factory prodcution is % increase of prodcution
 
-    // Calculate the volume
-    _volumeBIS = _width * _length * _height;
+Procurement 
 
-    // Display the volume using BIS_fnc_boundingBoxDimensions
-    hint format ["Volume using BIS_fnc_boundingBoxDimensions: %1 m³", _volumeBIS];
-} else {
-    hint "Failed to retrieve dimensions using BIS_fnc_boundingBoxDimensions.";
-};
-
-ammo_Missile_s750
-rhs_ammo_TOWB_AT
+    choose which Procurement

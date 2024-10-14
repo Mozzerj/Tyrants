@@ -103,10 +103,10 @@ getVehicleData = {
 
     //_ammoVolume = round(_ammoVolume);
 
-    _vehicleCost = (500 * _ammoVolume) + (70 * _armour) + (40 * _armorStructural);
+    _vehicleCost = (500 * _ammoVolume) + (100 * _armour) + (500 * _armorStructural);
     
     if (_configName isKindOf "Air") then {
-        _vehicleCost = (10 * _ammoVolume) + (100 * _armour) + (5000 * _armorStructural) + (100000);
+        _vehicleCost = (500 * _ammoVolume) + (100 * _armour) + (500 * _armorStructural) + (100000);
     };
 
     _vehicleCost = _vehicleCost * 0.7;

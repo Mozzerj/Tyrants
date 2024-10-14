@@ -12,17 +12,19 @@ if ((profileNamespace getVariable ["Tyrants", "VarCheck"]) isEqualTo "VarCheck")
 			    0,   // steel
 				0,   // ammo
 				0,   // fuel
-				0    // HR
+				0,    // HR
+				[[0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]] // Research
 			],
 			[ 
 				0,   // east base pos
 			    0,   // steel
 				0,   // ammo
 				0,   // fuel
-				0    // HR
+				0,    // HR
+				[[0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]] // Research
 			],
 			[
-				[""] // player Location
+				[[]] // player Location
 			]
 			
 		],

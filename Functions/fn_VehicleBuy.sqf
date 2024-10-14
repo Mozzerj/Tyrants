@@ -26,6 +26,8 @@ if ((gameData # 0 # (Pside + 1) # 3) > _cost) then {
 
     // Create the vehicle at the chosen position
     _veh = createVehicle [_vehicle, playerClickPos, [], 0, "NONE"];
+        
+    _veh setAmmoCargo 0;
 
     // Update gameData with the new structured vehicle data
     (gameData # 4 # Pside) pushBack [

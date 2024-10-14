@@ -45,6 +45,7 @@ switch (GameData # 1) do {
 	};
 };
 
+sleep 2;
 
 
 
@@ -65,6 +66,9 @@ publicVariable "gameData";
 
 execVM "Init\EastBaseInit.sqf";
 execVM "Init\WestBaseInit.sqf";
+execVM "Init\destroyedObjects.sqf";
+execVM "Init\CreateVehicles.sqf";
+execVM "GameUpdate\GameLoop.sqf";
 
 
 /*

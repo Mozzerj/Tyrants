@@ -173,20 +173,19 @@ findDisplay 46 displayAddEventHandler ["KeyDown", {
 			
 			createDialog "TyrPlayerMenu";
 
-			_TyrPlayerMenu = findDisplay 1001;
 
-			_TyrPlayerMenu displayCtrl 1 ctrlSetText (TyrantsPFP # 0);
-			_TyrPlayerMenu displayCtrl 2 ctrlSetText str(TyrantsPFP # 1);
-			_TyrPlayerMenu displayCtrl 3 progressSetPosition (TyrantsPFP # 2);
+			_ResourceButton = ((findDisplay 1001) displayCtrl 4);
 
-
+			_Research = ((findDisplay 1001) displayCtrl 3);
+			_buyvehicle = ((findDisplay 1001) displayCtrl 5);
+			_Hire = ((findDisplay 1001) displayCtrl 6);
+			_Emplace = ((findDisplay 1001) displayCtrl 7);
 
 			// factory resource collection button
 
 			_inrange = false;
 			{
 
-				_ResourceButton = ((findDisplay 1001) displayCtrl 4);
 				if ((((getPos player) distance (_x # 4)) < 75) and (Pcolor == _x # 3)) then {
 
 					_inrange = true;
@@ -195,7 +194,7 @@ findDisplay 46 displayAddEventHandler ["KeyDown", {
 
 				if (_inrange) then {
 
-					_ResourceButton ctrlSetPosition [safeZoneX + safeZoneW * 0.01375,safeZoneY + safeZoneH * 0.29777778];
+					_ResourceButton ctrlSetPosition [safeZoneX + safeZoneW * 0.01375,safeZoneY + safeZoneH * 0.33222223];
 					_ResourceButton ctrlCommit 0;
 					
 				}
@@ -208,19 +207,30 @@ findDisplay 46 displayAddEventHandler ["KeyDown", {
 			}forEach gameData # 1 # 2;
 
 
-			// buy vehicle button
-			_buyvehicle = ((findDisplay 1001) displayCtrl 5);
+			// Base mangaemt
 			if ((getPos player) distance (gameData # 0 # (Pside + 1) # 0) < 25 ) then {
 
-				_buyvehicle ctrlSetPosition [safeZoneX + safeZoneW * 0.01367188,safeZoneY + safeZoneH * 0.34722223];
+				_Research ctrlSetPosition [safeZoneX + safeZoneW * 0.01375,safeZoneY + safeZoneH * 0.08222223];
+				_Research ctrlCommit 0;
+				_buyvehicle ctrlSetPosition [safeZoneX + safeZoneW * 0.01375,safeZoneY + safeZoneH * 0.13222223];
 				_buyvehicle ctrlCommit 0;
+				_Hire ctrlSetPosition [safeZoneX + safeZoneW * 0.01375,safeZoneY + safeZoneH * 0.18222223];
+				_Hire ctrlCommit 0;
+				_Emplace ctrlSetPosition [safeZoneX + safeZoneW * 0.01375,safeZoneY + safeZoneH * 0.23222223];
+				_Emplace ctrlCommit 0;
 
 			}
 			else
 			{
 
+				_Research ctrlSetPosition [-1,-1];
+				_Research ctrlCommit 0;
 				_buyvehicle ctrlSetPosition [-1,-1];
 				_buyvehicle ctrlCommit 0;
+				_Hire ctrlSetPosition [-1,-1];
+				_Hire ctrlCommit 0;
+				_Emplace ctrlSetPosition [-1,-1];
+				_Emplace ctrlCommit 0;
 
 			};
 		};

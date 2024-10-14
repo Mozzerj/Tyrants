@@ -23,9 +23,11 @@ _dir = _vehicleData # 6;
 _pos = _vehicleData # 7;
 
 // Create the vehicle at the saved position
-_veh = createVehicle [_vehicle, _pos];
+_veh = createVehicle [_vehicle, _pos, [], 0, "CAN_COLLIDE"];
 _veh setDir _dir;
 _veh setFuel _fuel;
+
+_veh setAmmoCargo 0;
 
 // Remove all turret magazines from the vehicle
 {

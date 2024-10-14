@@ -1,4 +1,3 @@
-
 _Towns = nearestLocations [[0,0,0], ["NameCity", "NameVillage"], 999999];
 _Cities = nearestLocations [[0,0,0], ["NameCityCapital"], 999999];
 _factory = nearestObjects [[0,0,0], ["Land_dp_mainFactory_F", "Land_Factory_Main_F","Land_DPP_01_smallFactory_F"], 999999];
@@ -44,7 +43,7 @@ factoryBuildingsGroup = [];
 // takes all the factory buildings and puts them into groups based on position
 while {count _factory > 0} do {
 
-	_factoryBuilding = (_factory select 0); 
+	_factoryBuilding = (_factory # 0); 
 	
     _pregroup = [_factoryBuilding]; 
 	
@@ -87,9 +86,9 @@ factories = [];
 	{
 		
 		factoryBuilding = _x;
-		xpos = xpos + ((getPos factoryBuilding) select 0);
-		ypos = ypos + ((getPos factoryBuilding) select 1);
-		Zpos = Zpos + ((getPos factoryBuilding) select 2);	
+		xpos = xpos + ((getPos factoryBuilding) # 0);
+		ypos = ypos + ((getPos factoryBuilding) # 1);
+		Zpos = Zpos + ((getPos factoryBuilding) # 2);	
 	
 	}forEach groupToProcess;
 	
@@ -99,7 +98,7 @@ factories = [];
 	fuelTanks = nearestObjects [averagePos, ["Land_dp_bigTank_F", "Land_dp_smallTank_F"], 200];
 	
 	{
-		(factory select 5) pushBack _x;
+		(factory # 5) pushBack _x;
 	}forEach fuelTanks;
 
 	factory = [(format ["factory_%1", _forEachIndex]),"ColorGUER","ColorGUER","ColorGUER",averagePos,_x,0, 0, 0];
@@ -108,15 +107,15 @@ factories = [];
 
 }forEach factoryBuildingsGroup;
 
-
 // sets what the factories will make
 for "_i" from 0 to (count factories) do {
 
 	factoriesTypes = ["Fuel","Steel","Ammo","Fuel","Steel","Ammo","Fuel","Steel","Ammo","Fuel","Steel","Ammo","Fuel","Steel","Ammo"];
 	
-	(factories select _i) set [7, (factoriesTypes select _i)];
+	(factories # _i) set [7, (factoriesTypes # _i)];
 
 };
+
 	
 LocationData set [2, factories];
 
