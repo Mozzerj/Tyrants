@@ -76,7 +76,7 @@ getVehicleData = {
         _AmmoType = getText(configFile >> "cfgMagazines" >> _x >> "ammo");
 
         _AmmoVeh = createVehicle [_AmmoType, (spawnZone vectorAdd [0,8,2]), [], 0, "NONE"];
-        _AmmoSize = boundingBoxReal [_AmmoVeh,"Geometry"];
+        _AmmoSize = boundingBoxReal [_AmmoVeh,"FireGeometry"];
         deleteVehicle _AmmoVeh;
 
         _diff = (_AmmoSize select 1) vectorDiff (_AmmoSize select 0); 
@@ -281,20 +281,19 @@ _checkedVehicles = [];
 
 _vehCategories = [
     _CarVehicles,
-    _ArmoredVehicles,
-    _ArtilleryVehicles,
-    _MotorcycleVehicles,
-    _TankVehicles,
-    _HelicopterVehicles,
-    _PlaneVehicles,
-    _StaticWeaponVehicles,
     _ShipVehicles,
     _SubmarineVehicles,
+    _ArmoredVehicles,
+    _TankVehicles,
+    _HelicopterVehicles,
+    _ArtilleryVehicles,
+    _PlaneVehicles,
     _AutonomousCarVehicles,
     _AutonomousTankVehicles,
     _AutonomousHelicopterVehicles,
     _AutonomousPlaneVehicles,
-    _AutonomousStaticWeaponVehicles
+    _AutonomousStaticWeaponVehicles,
+    _StaticWeaponVehicles
 ];
 
 

@@ -181,7 +181,14 @@ findDisplay 46 displayAddEventHandler ["KeyDown", {
 			_Hire = ((findDisplay 1001) displayCtrl 6);
 			_Emplace = ((findDisplay 1001) displayCtrl 7);
 
-			// factory resource collection button
+			_Research ctrlSetPosition [-1,-1];
+			_Research ctrlCommit 0;
+			_buyvehicle ctrlSetPosition [-1,-1];
+			_buyvehicle ctrlCommit 0;
+			_Hire ctrlSetPosition [-1,-1];
+			_Hire ctrlCommit 0;
+			_Emplace ctrlSetPosition [-1,-1];
+			_Emplace ctrlCommit 0;
 
 			_inrange = false;
 			{
@@ -194,7 +201,7 @@ findDisplay 46 displayAddEventHandler ["KeyDown", {
 
 				if (_inrange) then {
 
-					_ResourceButton ctrlSetPosition [safeZoneX + safeZoneW * 0.01375,safeZoneY + safeZoneH * 0.33222223];
+					_ResourceButton ctrlSetPosition [safeZoneX + safeZoneW * 0.01375,safeZoneY + safeZoneH *  0.08222223];
 					_ResourceButton ctrlCommit 0;
 					
 				}
@@ -208,30 +215,33 @@ findDisplay 46 displayAddEventHandler ["KeyDown", {
 
 
 			// Base mangaemt
-			if ((getPos player) distance (gameData # 0 # (Pside + 1) # 0) < 25 ) then {
+			if (player == commanderWest || player == CommanderEast) then {
+			
+				if ((getPos player) distance (gameData # 0 # (Pside + 1) # 0) < 25 ) then {
 
-				_Research ctrlSetPosition [safeZoneX + safeZoneW * 0.01375,safeZoneY + safeZoneH * 0.08222223];
-				_Research ctrlCommit 0;
-				_buyvehicle ctrlSetPosition [safeZoneX + safeZoneW * 0.01375,safeZoneY + safeZoneH * 0.13222223];
-				_buyvehicle ctrlCommit 0;
-				_Hire ctrlSetPosition [safeZoneX + safeZoneW * 0.01375,safeZoneY + safeZoneH * 0.18222223];
-				_Hire ctrlCommit 0;
-				_Emplace ctrlSetPosition [safeZoneX + safeZoneW * 0.01375,safeZoneY + safeZoneH * 0.23222223];
-				_Emplace ctrlCommit 0;
+					_Research ctrlSetPosition [safeZoneX + safeZoneW * 0.26375,safeZoneY + safeZoneH * 0.01222223];
+					_Research ctrlCommit 0;
+					_buyvehicle ctrlSetPosition [safeZoneX + safeZoneW * 0.43875,safeZoneY + safeZoneH * 0.01222223];
+					_buyvehicle ctrlCommit 0;
+					_Hire ctrlSetPosition [safeZoneX + safeZoneW * 0.61375,safeZoneY + safeZoneH * 0.01222223];
+					_Hire ctrlCommit 0;
+					_Emplace ctrlSetPosition [safeZoneX + safeZoneW * 0.78875,safeZoneY + safeZoneH * 0.01222223];
+					_Emplace ctrlCommit 0;
 
-			}
-			else
-			{
+				}
+				else
+				{
 
-				_Research ctrlSetPosition [-1,-1];
-				_Research ctrlCommit 0;
-				_buyvehicle ctrlSetPosition [-1,-1];
-				_buyvehicle ctrlCommit 0;
-				_Hire ctrlSetPosition [-1,-1];
-				_Hire ctrlCommit 0;
-				_Emplace ctrlSetPosition [-1,-1];
-				_Emplace ctrlCommit 0;
+					_Research ctrlSetPosition [-1,-1];
+					_Research ctrlCommit 0;
+					_buyvehicle ctrlSetPosition [-1,-1];
+					_buyvehicle ctrlCommit 0;
+					_Hire ctrlSetPosition [-1,-1];
+					_Hire ctrlCommit 0;
+					_Emplace ctrlSetPosition [-1,-1];
+					_Emplace ctrlCommit 0;
 
+				};
 			};
 		};
     };

@@ -45,6 +45,63 @@
 } forEach gameData # 4 # 0;
 
 {
+    _vehicleData = [
+
+        _x select 0,                     // Vehicle type
+        0,                               // Vehicle object
+        _x select 2,                     // Color
+        _x select 3,                     // Damage to hit points
+        _x select 4,                     // Magazines (ammo)
+        _x select 5,                     // Fuel level
+        _x select 6,                     // Direction
+        _x select 7                      // Position
+
+    ];
+
+    _vehicleData = [_vehicleData, 0] call TYR_fnc_VehicleCreate;
+
+    gameData # 4 # 0 set [_forEachIndex, _vehicleData];
+    publicVariable "gameData";
+
+
+    _veh = _vehicleData # 1;
+    createVehicleCrew _veh;
+    _veh setVehicleReceiveRemoteTargets true;
+
+
+    _veh addAction [
+        "Open Targeting System", // Display name for the action
+        {
+            // Code to execute when action is triggered
+            [_this]execVM "Emplacements\VLS\VLSMenu.sqf";
+        },
+        [],
+        6
+    ];
+
+    _veh addEventHandler ["Killed", {
+        params ["_veh", "_killer"];
+
+        gameData # 2 # 1 pushBack [typeOf _veh, getDir _veh, getPos _veh];
+        
+        {
+            
+            if (_x # 1 == _veh) then {
+                
+                deleteMarker (gameData # 5 # 0 # _forEachIndex # 8);
+                gameData # 5 # 0 deleteAt _forEachIndex;
+                
+            };
+            
+        } forEach gameData # 5 # 0;
+        publicVariable "gameData";
+
+    }];
+    
+
+} forEach gameData # 5 # 0;
+
+{
 
     _vehicleData = [
 

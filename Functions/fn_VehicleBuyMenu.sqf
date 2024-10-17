@@ -3,32 +3,37 @@ _selector1 = 1;
 
 _vehs = gameData # 3 # 1;
 
+_Research = gameData # 0 # (Pside + 1) # 5 # 2;
+
+_availableVehs = [_vehs # 0,_vehs # 1,_vehs # 2];
+
+if (_Research # 0 == 1) then {_availableVehs pushBack _vehs # 3};
+if (_Research # 1 == 1) then {_availableVehs pushBack _vehs # 4};
+if (_Research # 2 == 1) then {_availableVehs pushBack _vehs # 5};
+if (_Research # 3 == 1) then {_availableVehs pushBack _vehs # 6};
+if (_Research # 4 == 1) then {_availableVehs pushBack _vehs # 7;_availableVehs pushBack _vehs # 8;_availableVehs pushBack _vehs # 9;_availableVehs pushBack _vehs # 10;_availableVehs pushBack _vehs # 11};
 
 _vehTypes = [
     "Cars",
-    "Armored",
-    "Artillery",
-    "Motorcycle",
-    "Tanks",
-    "Helicopter",
-    "Planes",
-    "Static",
     "Ship",
-    "Submarine",
-    "UGV",
-    "UGV Tank",
-    "UAV Heli",
-    "UAV",
-    "UGV Static"
+    "Submarine"
 ];
 
+if (_Research # 0 == 1) then {_vehTypes pushBack "Armoured"};
+if (_Research # 1 == 1) then {_vehTypes pushBack "Tanks"};
+if (_Research # 2 == 1) then {_vehTypes pushBack "Helicopters"};
+if (_Research # 3 == 1) then {_vehTypes pushBack "Artillery"};
+if (_Research # 4 == 1) then {_vehTypes pushBack "Planes"};
+if (_Research # 4 == 1) then {_vehTypes pushBack "UAV",_vehTypes pushBack "UAV",_vehTypes pushBack "UAV",_vehTypes pushBack "UAV",_vehTypes pushBack "UAV"};
+
+//if (_Research # 5 == 1) then {_availableVehs = _availableVehs + ("UGV","UGV Tank","UAV Heli","UAV")};
 
 while {!isNull findDisplay 1002} do {
 
     if (_selector1 != selection) then {
-        if (count(_vehs # selection) == 0) then {selection = selection + 1};
-        if (selection > (count _vehs - 1)) then {selection = 0};
-        if (selection < 0) then {selection = (count _vehs - 1)};
+        if (count(_availableVehs # selection) == 0) exitWith {selection = selection + 1};
+        if (selection > (count _availableVehs - 1)) then {selection = 0};
+        if (selection < 0) then {selection = (count _availableVehs)};
             
 
         lbClear 4;
@@ -45,7 +50,7 @@ while {!isNull findDisplay 1002} do {
             _VehicleListBox = ((findDisplay 1002) displayCtrl 4);
             _VehicleListBox lbAdd (_x # 0);  // Add vehicle names without sorting
             lbSetData [4, (lbSize 4 - 1), _x # 1];
-        } forEach (_vehs # selection);
+        } forEach (_availableVehs # selection);
 
         lbSetCurSel [4, 0];
 
@@ -56,7 +61,7 @@ while {!isNull findDisplay 1002} do {
 
     lbClear 6;
 
-    _vehdata = _vehs # selection # lbCurSel 4;
+    _vehdata = _availableVehs # selection # lbCurSel 4;
 
     lbAdd [6, _selected];
 
@@ -84,7 +89,10 @@ while {!isNull findDisplay 1002} do {
     
     {
         _weaponDisplayName = getText(configFile >> "cfgWeapons" >> _x >> "displayName");
-        lbAdd [6, format["    %1", _weaponDisplayName]];
+
+        if (_weaponDisplayName != "") then {
+            lbAdd [6, format["    %1", _weaponDisplayName]];
+        };
     } forEach _weapons;
 
     lbAdd [6, ""];
@@ -94,10 +102,12 @@ while {!isNull findDisplay 1002} do {
     
     {
         _magazineDisplayName = getText(configFile >> "cfgMagazines" >> _x >> "displayName");
-        lbAdd [6, format["    %1", _magazineDisplayName]];
+        if (_magazineDisplayName != "") then {
+            lbAdd [6, format["    %1", _magazineDisplayName]];
+        };
     } forEach _magazines;
 
-    ctrlSetText [5, _vehs # selection # lbCurSel 4 # 2];
+    ctrlSetText [5, _availableVehs # selection # lbCurSel 4 # 2];
 
     sleep 0.1;
 };

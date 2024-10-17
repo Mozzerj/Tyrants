@@ -57,7 +57,6 @@ _CarVehicles = [];
 _AutonomousCarVehicles = [];
 _ShipVehicles = [];
 _SubmarineVehicles = [];
-_MotorcycleVehicles = [];
 _TankVehicles = [];
 _AutonomousTankVehicles = [];
 _HelicopterVehicles = [];
@@ -184,21 +183,20 @@ _allVehiclesData = [
 
     _Factions,
     [
-    _ArmoredVehicles,
-    _ArtilleryVehicles,
     _CarVehicles,
-    _AutonomousCarVehicles,
     _ShipVehicles,
     _SubmarineVehicles,
-    _MotorcycleVehicles,
+    _ArmoredVehicles,
     _TankVehicles,
-    _AutonomousTankVehicles,
     _HelicopterVehicles,
-    _AutonomousHelicopterVehicles,
+    _ArtilleryVehicles,
     _PlaneVehicles,
+    _AutonomousCarVehicles,
+    _AutonomousTankVehicles,
+    _AutonomousHelicopterVehicles,
     _AutonomousPlaneVehicles,
-    _StaticWeaponVehicles,
-    _AutonomousStaticWeaponVehicles
+    _AutonomousStaticWeaponVehicles,
+    _StaticWeaponVehicles
     ]
 
 ];

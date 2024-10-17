@@ -40,6 +40,11 @@
 		[
 			[],
 			[]// purchased vehicles
+		],
+		[
+			[], 
+			[]// emplacements
+
 		]
 	];
 

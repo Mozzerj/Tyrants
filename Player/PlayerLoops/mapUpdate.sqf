@@ -119,6 +119,29 @@ while {true} do {
 
     } forEach gameData # 4 # Pside;
 
+    {
+        // Check if marker reference is "undefined" then create if needed
+        if (_x # 8 == "undefined") then {
+
+            _vehicleMarker = createMarkerLocal [str(_x # 1), _x # 7];
+            _vehicleMarker setMarkerTypeLocal "mil_triangle";
+            _vehicleMarker setMarkerColorLocal Pcolor;
+            _vehicleMarker setMarkerTextLocal getText(configFile >> "CfgVehicles" >> (_x # 0) >> "displayName");
+            _x set [8, _vehicleMarker]; // Store the marker reference in the array
+
+        } 
+        else
+        {
+
+            _vehicleMarker = _x # 8; // Retrieve existing marker
+            _vehicleMarker setMarkerDirLocal _x # 6;
+            _vehicleMarker setMarkerPosLocal _x # 7;
+        };
+
+        // Update or set marker properties
+
+    } forEach gameData # 5 # Pside;
+
 
 
     // base ctrls

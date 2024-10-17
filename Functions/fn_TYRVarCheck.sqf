@@ -43,6 +43,11 @@ if ((profileNamespace getVariable ["Tyrants", "VarCheck"]) isEqualTo "VarCheck")
 		[
 			[],
 			[]// purchased vehicles
+		],
+		[
+			[], 
+			[]// emplacements
+
 		]
 	];
 

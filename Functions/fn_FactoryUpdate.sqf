@@ -44,6 +44,8 @@ FactoryMultiplier = gameData # 0 # 0 # 1 # 7;
         
     }forEach FactoryPartGroup;
 
+    if (FactoryResource > 2500) then {FactoryResource = 2500};
+
     FactoryPartGroupResourceData = FactoryPartGroupResourceData + (FactoryResource * FactoryMultiplier);
     
     if (FactoryPartGroupResourceData > 50000) then {

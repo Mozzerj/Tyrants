@@ -1,5 +1,3 @@
-CreateDialog "ResearchMenu";
-
 _ResearchProgress = GameData # 0 # (Pside + 1) # 5;
 
 _ResearchDisplay = findDisplay 1005;

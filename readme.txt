@@ -1,5 +1,9 @@
 [] call TYR_fnc_gameReset
 
+gameData # 0 # (Pside + 1) set[1,99999999999999999];
+gameData # 0 # (Pside + 1) set[2,99999999999999999];
+gameData # 0 # (Pside + 1) set[3,99999999999999999];
+gameData # 0 # 0 # 1 set [0,1]
 GameData # 1 # 2 # 0
 
 things to test before main branch release:
