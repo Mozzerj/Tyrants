@@ -8,7 +8,7 @@ class TyrDeploymentMenu
     class ControlsBackground
     {
         class Backdrop: TYR_UI_Text {x=safeZoneX; y=safeZoneY; w=safeZoneW; h=safeZoneH; colorBackground[]={0.012,0.016,0.021,1};};
-        class Header: TYR_UI_Text {x=safeZoneX+safeZoneW*0.016; y=safeZoneY; w=safeZoneW*0.984; h=safeZoneH*0.065; text="TYRANTS // STRATEGIC DEPLOYMENT // v4.0.13 DEV"; sizeEx=0.042; colorBackground[]={0.055,0.065,0.075,1};};
+        class Header: TYR_UI_Text {x=safeZoneX+safeZoneW*0.016; y=safeZoneY; w=safeZoneW*0.984; h=safeZoneH*0.065; text="TYRANTS // STRATEGIC DEPLOYMENT // v4.0.14 DEV"; sizeEx=0.042; colorBackground[]={0.055,0.065,0.075,1};};
         class Accent: TYR_UI_Text {x=safeZoneX; y=safeZoneY; w=safeZoneW*0.007; h=safeZoneH; colorBackground[]={0.851,0.5647,0.0863,1};};
         class MapFrame: TYR_UI_Text {x=safeZoneX+safeZoneW*0.018; y=safeZoneY+safeZoneH*0.085; w=safeZoneW*0.70; h=safeZoneH*0.89; colorBackground[]={0.005,0.008,0.012,1};};
         class SidePanel: TYR_UI_Text {x=safeZoneX+safeZoneW*0.735; y=safeZoneY+safeZoneH*0.085; w=safeZoneW*0.245; h=safeZoneH*0.89; colorBackground[]={0.035,0.043,0.052,0.98};};

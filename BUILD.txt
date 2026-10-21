@@ -1,4 +1,4 @@
-Tyrants v4.0.13 DEV
+Tyrants v4.0.14 DEV
 Strategic AI Overhaul + Physical Command Network + Real Intelligence Tracking
 
 Current development changes:
@@ -67,3 +67,12 @@ v4.0.13 strategic AI overhaul:
 - Added compact live trace polling so the flowchart does not spam the full omniscient-map payload.
 - Omniscient debug map now shows strategic operation targets, reasons/scores/phases, force-to-target intent lines and pending commander/officer delivery routes with ETA/reroutes.
 - Added AI_STRATEGIC_OVERHAUL.md and expanded runtime test guidance.
+
+v4.0.14 debug console rewrite:
+- Replaced the expanding accordion with a fixed five-page tool rail: Movement, AI, Command, Economy, System.
+- Faction target controls remain pinned and workspace views are direct top tabs: Truth Map, AI Flow, Intel Map, Tests, Intel Log, Commands.
+- Removed per-refresh ctrlSetPosition/ctrlCommit reflow of the left panel.
+- Split status, tasks, log, command console and AI-flow rendering into targeted refresh functions.
+- Full omniscient map payload now polls only while the Truth/Order map is visible; AI Flow uses compact trace-only updates; other views are event-driven.
+- Full map refresh interval relaxed to 4 seconds and live AI trace interval to 0.55 seconds.
+- Omniscient map culls individual live entities at wide zoom and infantry until closer zoom, reducing per-frame draw work while retaining force-level strategic markers.

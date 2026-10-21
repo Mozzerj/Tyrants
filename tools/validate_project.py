@@ -398,7 +398,7 @@ ai_reassess = read(ROOT / "AI/fn_AIReassessOperations.sqf")
 ai_score = read(ROOT / "AI/fn_AIScoreCandidates.sqf")
 ai_validate = read(ROOT / "AI/fn_AIValidateCandidate.sqf")
 debug_draw = read(ROOT / "Debug/fn_ClientDebugMapDraw.sqf")
-debug_ui = read(ROOT / "UI/fn_DebugMenuRefresh.sqf")
+debug_ui = read(ROOT / "UI/fn_DebugFlowRefresh.sqf")
 if 'EMERGENCY OVERRIDE' not in ai_think or 'GENERATE ACTIONS' not in ai_think or 'VALIDATE' not in ai_think or 'REVIEW / OUTCOME' not in ai_think:
     errors.append("AI commander think is missing the staged strategic decision pipeline")
 if 'emergencyThreats' not in ai_posture or 'knownHostileLocations' not in ai_picture:
@@ -409,7 +409,7 @@ if 'staleIntelPenalty' in ai_score:
     warnings.append("AI score function contains legacy staleIntelPenalty token; verify it is intentional")
 if '_aiOperations' not in debug_map or '_debugOrders' not in debug_map:
     errors.append("debug server payload is missing AI operation/order telemetry")
-if 'AI STRATEGIC DECISION PATH' not in read(ROOT / "Dialogs/TyrDebugMenu.hpp") or 'currentStep' not in debug_ui:
+if 'AI STRATEGIC DECISION PATH' not in read(ROOT / "Dialogs/TyrDebugMenu.hpp") or '_currentStep' not in debug_ui:
     errors.append("debug menu is missing the 12-stage highlighted AI flowchart")
 if 'ORDER %1' not in debug_draw or 'AI %1 // %2 // %3' not in debug_draw:
     errors.append("omniscient debug map is missing AI command/operation visualization")
@@ -423,6 +423,22 @@ if 'debugTrace' not in debug_map or 'ClientDebugAITraceData' not in read(ROOT / 
     errors.append("live AI flowchart is missing its compact trace-only debug transport")
 if '2131 + _i' not in debug_ui or 'ctrlSetTextColor' not in debug_ui:
     errors.append("AI debug flowchart does not highlight traversed/current connectors")
+
+# v4.0.14 debug console performance invariants.
+debug_menu_dialog = read(ROOT / "Dialogs/TyrDebugMenu.hpp")
+debug_menu_refresh = read(ROOT / "UI/fn_DebugMenuRefresh.sqf")
+debug_menu_page = read(ROOT / "UI/fn_DebugMenuSetPage.sqf")
+debug_client_map = read(ROOT / "Debug/fn_ClientDebugMapData.sqf")
+if 'NavMovement' not in debug_menu_dialog or 'TabConsole' not in debug_menu_dialog:
+    errors.append("debug console is missing fixed tool navigation or workspace tabs")
+if 'ctrlSetPosition' in debug_menu_refresh or 'ctrlCommit' in debug_menu_refresh:
+    errors.append("debug console monolithic refresh has reintroduced runtime layout reflow")
+if 'TYR_debugPage' not in debug_menu_page or 'ctrlShow false' not in debug_menu_page:
+    errors.append("debug console fixed-page visibility switching is not wired")
+if 'TYR_debugView' not in debug_client_map or 'diag_tickTime' not in debug_client_map:
+    errors.append("debug polling is not view-aware/throttled")
+if '_showLiveEntities' not in debug_draw or '_showUnits' not in debug_draw:
+    errors.append("omniscient debug map is missing level-of-detail entity culling")
 
 if errors:
     for e in errors:

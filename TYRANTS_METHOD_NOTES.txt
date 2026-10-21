@@ -228,3 +228,27 @@ CURRENT - Omniscient AI order-map telemetry should show both layers of intent: a
 force -> operation target and, while pending, Main Commander/officer -> force commander
 command delivery path with ETA/reroute count. This remains developer-only and must never
 become a normal faction intelligence source.
+
+v4.0.14 DEBUG UI PERFORMANCE REWRITE
+-----------------------------------
+FAILED / TOO EXPENSIVE - The v4.0.13 debug console used a large accordion whose
+entire control tree was reflowed with ctrlSetPosition/ctrlCommit whenever map data,
+AI trace data, faction state or knowledge changed. The same monolithic refresh also
+rebuilt list boxes and the AI flowchart even when those views were not visible. This
+made the debug UI feel cluttered and could cause avoidable client UI work.
+
+CURRENT - Use fixed-position tool pages rather than runtime layout reflow. Only the
+selected left page is shown. Workspace views have direct tabs and their renderers are
+separate: status, flow, tasks, intel log and command console update independently.
+
+CURRENT - Debug polling is view-aware. Full omniscient map payloads are requested only
+while the truth/order map is visible. AI flow uses the compact trace payload. Tests,
+logs, console and faction-intel views do not continuously request omniscient entity data.
+
+CURRENT - Omniscient per-frame map drawing is level-of-detail culled. At wide zoom use
+strategic locations, HQs and force-level markers; draw vehicles/emplacements after zooming
+in and individual infantry only at closer zoom. Do not loop/draw every unit at island scale.
+
+DESIGN RULE - Adding a debug feature should not put its refresh work in a global menu
+refresh. Give expensive/debug-data views their own targeted update path and only run it
+while that view is visible.

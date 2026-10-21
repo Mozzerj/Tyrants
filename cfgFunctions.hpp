@@ -215,6 +215,15 @@ class TYR
         class DeploymentMenuRefresh {};
         class CommanderMenuRefresh {};
         class DebugMenuRefresh {};
+        class DebugMenuInit {};
+        class DebugMenuSetPage {};
+        class DebugMenuSetView {};
+        class DebugMenuUpdateStatus {};
+        class DebugMenuRefreshView {};
+        class DebugFlowRefresh {};
+        class DebugTasksRefresh {};
+        class DebugIntelLogRefresh {};
+        class DebugCommandRefresh {};
         class DebugTeleport {};
         class DebugCamera {};
         class DebugMapTeleport {};

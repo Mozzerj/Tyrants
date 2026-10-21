@@ -1,4 +1,4 @@
-# Tyrants v4.0.13 DEV
+# Tyrants v4.0.14 DEV
 
 Current development baseline for the three-faction Tyrants rewrite. It includes deployment sectors, human/AI commanders, the v4 save architecture, targeted replication, and the tactical UI.
 
@@ -82,3 +82,8 @@ Commander death starts a succession period; surviving senior officers can assume
 The AI commander now runs a 12-stage decision pipeline instead of choosing a single location and attacking it. It builds its enemy picture from the same faction knowledge database used by players, maintains reserves, reacts to command disruption and known emergencies, creates recon/probe actions for unknown territory, can raid legitimately observed command personnel/emplacements/vehicles, and validates resources/intel/command routes before issuing an operation.
 
 Developer Debug Mode includes an actual live 12-node decision flowchart. **RUN THINK + TRACE** slows the real AI think just enough to watch the current stage and branch result. The omniscient debug map draws the operation target, assigned force, reason/score/phase, and the physical commander -> officer -> force commander delivery route with ETA/reroutes. See `AI_STRATEGIC_OVERHAUL.md`.
+
+
+## v4.0.14 debug console rewrite
+
+The developer console now uses fixed tool pages and direct workspace tabs instead of a dynamically reflowed accordion. Expensive views refresh independently: the truth map requests full omniscient data only while visible, AI Flow receives compact trace updates, and the tests/log/command views are event-driven. The omniscient map also uses zoom-based entity level-of-detail to reduce per-frame drawing work.

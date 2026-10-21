@@ -7,8 +7,10 @@ if !(_data isEqualType [] && {count _data >= 5}) exitWith {};
 
 _data params ["_serverTime","_locations","_factions","_entities","_forces"];
 private _scale = ctrlMapScale _map;
-private _showEntityLabels = _scale < 0.16;
-private _showUnitLabels = _scale < 0.075;
+private _showLiveEntities = _scale < 0.055;
+private _showUnits = _scale < 0.028;
+private _showEntityLabels = _scale < 0.025;
+private _showUnitLabels = _scale < 0.012;
 
 // True strategic locations. These intentionally ignore faction intelligence.
 {
@@ -46,26 +48,30 @@ private _showUnitLabels = _scale < 0.075;
     };
 } forEach _forces;
 
-// Live entity truth. Infantry labels are suppressed while zoomed out to avoid turning the map into solid text.
-{
-    _x params ["_kind","_fid","_class","_display","_pos","_dir","_alive","_damage","_extra"];
-    if (_alive && {count _pos >= 2}) then {
-        private _color = if (_fid in ["west","east","independent"]) then {[_fid,true] call TYR_fnc_FactionColor} else {[0.7,0.7,0.7,0.9]};
-        private _icon = switch (_kind) do {
-            case "unit": {"\A3\ui_f\data\map\markers\nato\b_inf.paa"};
-            case "emplacement": {"\A3\ui_f\data\map\markers\nato\b_art.paa"};
-            default {"\A3\ui_f\data\map\markers\nato\b_motor_inf.paa"};
+// Live entity truth is the most expensive overlay. At island/operational zoom the
+// force-level markers above already show the useful picture, so individual entities
+// are intentionally culled until the user zooms in. Infantry are culled even earlier.
+if (_showLiveEntities) then {
+    {
+        _x params ["_kind","_fid","_class","_display","_pos","_dir","_alive","_damage","_extra"];
+        if (_alive && {count _pos >= 2} && {(_kind isNotEqualTo "unit") || {_showUnits}}) then {
+            private _color = if (_fid in ["west","east","independent"]) then {[_fid,true] call TYR_fnc_FactionColor} else {[0.7,0.7,0.7,0.9]};
+            private _icon = switch (_kind) do {
+                case "unit": {"\A3\ui_f\data\map\markers\nato\b_inf.paa"};
+                case "emplacement": {"\A3\ui_f\data\map\markers\nato\b_art.paa"};
+                default {"\A3\ui_f\data\map\markers\nato\b_motor_inf.paa"};
+            };
+            private _label = "";
+            if (_kind isEqualTo "unit") then {
+                if (_showUnitLabels) then {_label = format ["%1 // %2",_display,_extra]};
+            } else {
+                if (_showEntityLabels) then {_label = if (_extra isEqualTo "") then {_display} else {format ["%1 // %2",_display,toUpper _extra]}};
+            };
+            private _size = if (_kind isEqualTo "unit") then {10} else {15};
+            _map drawIcon [_icon,_color,_pos,_size,_size,_dir,_label,0,0.021,"PuristaMedium","right"];
         };
-        private _label = "";
-        if (_kind isEqualTo "unit") then {
-            if (_showUnitLabels) then {_label = format ["%1 // %2",_display,_extra]};
-        } else {
-            if (_showEntityLabels) then {_label = if (_extra isEqualTo "") then {_display} else {format ["%1 // %2",_display,toUpper _extra]}};
-        };
-        private _size = if (_kind isEqualTo "unit") then {10} else {15};
-        _map drawIcon [_icon,_color,_pos,_size,_size,_dir,_label,0,0.021,"PuristaMedium","right"];
-    };
-} forEach _entities;
+    } forEach _entities;
+};
 
 // Physical command network: main commander -> officers -> force commanders.
 // This is omniscient developer data only; normal faction intelligence never receives it.

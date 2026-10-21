@@ -1,5 +1,5 @@
-onLoadName = "Tyrants v4.0.13 DEV";
-onLoadMission = "Three-faction strategic warfare // development baseline v4.0.13";
+onLoadName = "Tyrants v4.0.14 DEV";
+onLoadMission = "Three-faction strategic warfare // development baseline v4.0.14";
 author = "Mozzerj";
 enableDebugConsole = 1; // DEV: host/logged-in admins may also use Arma standard Debug Console.
 
