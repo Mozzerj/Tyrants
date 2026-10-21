@@ -46,6 +46,11 @@ private _remove = [];
                     private _previousOwner = _l getOrDefault ["owner","neutral"];
                     _l set ["owner",_attacker];
                     _l set ["stock",0];
+                    if ((_l getOrDefault ["kind",""]) isEqualTo "factory") then {
+                        // Capture seizes completed inventory but interrupts the old
+                        // owner's production queue. The new owner must issue fresh jobs.
+                        _l set ["productionQueue",[]];
+                    };
                     [_attacker,_id,"capture"] call TYR_fnc_StateObserveLocation;
                     if (_previousOwner in ["west","east","independent"] && {_previousOwner isNotEqualTo _attacker}) then {[_id,_previousOwner] call TYR_fnc_ServerPublishLocation};
                     ["territory-capture",true] call TYR_fnc_StateMarkDirty;

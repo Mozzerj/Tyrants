@@ -6,6 +6,7 @@
 #include "Dialogs\TyrEmplacementMenu.hpp"
 #include "Dialogs\TyrantsVLSMenu.hpp"
 #include "Dialogs\TyrResearchMenu.hpp"
+#include "Dialogs\TyrFactoryMenu.hpp"
 #include "Dialogs\TyrDebugMenu.hpp"
 
 #include "Dialogs\TyrDeploymentMenu.hpp"

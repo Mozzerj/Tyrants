@@ -9,7 +9,7 @@ class TyrDebugMenu
     class ControlsBackground
     {
         class Backdrop: TYR_UI_Text {x=safeZoneX; y=safeZoneY; w=safeZoneW; h=safeZoneH; colorBackground[]={0.012,0.016,0.020,0.985};};
-        class Header: TYR_UI_Text {x=safeZoneX; y=safeZoneY; w=safeZoneW; h=safeZoneH*0.062; text="TYRANTS // DEVELOPER CONSOLE // v4.0.14"; sizeEx=0.038; colorBackground[]={0.045,0.052,0.060,1};};
+        class Header: TYR_UI_Text {x=safeZoneX; y=safeZoneY; w=safeZoneW; h=safeZoneH*0.062; text="TYRANTS // DEVELOPER CONSOLE // v4.0.15"; sizeEx=0.038; colorBackground[]={0.045,0.052,0.060,1};};
         class Accent: TYR_UI_Text {x=safeZoneX; y=safeZoneY; w=safeZoneW*0.006; h=safeZoneH; colorBackground[]={0.851,0.5647,0.0863,1};};
         class NavPanel: TYR_UI_Text {x=safeZoneX+safeZoneW*0.018; y=safeZoneY+safeZoneH*0.082; w=safeZoneW*0.115; h=safeZoneH*0.865; colorBackground[]={0.026,0.032,0.038,0.98};};
         class ActionPanel: TYR_UI_Text {x=safeZoneX+safeZoneW*0.142; y=safeZoneY+safeZoneH*0.082; w=safeZoneW*0.178; h=safeZoneH*0.865; colorBackground[]={0.032,0.039,0.046,0.98};};
@@ -66,9 +66,14 @@ class TyrDebugMenu
         class AddFuel: TYR_UI_Button {idc=224; x=safeZoneX+safeZoneW*0.157; y=safeZoneY+safeZoneH*0.463; w=safeZoneW*0.071; h=safeZoneH*0.041; text="+FUEL"; onButtonClick="['resource',[TYR_debugFaction,'fuel',10000]] call TYR_debugSend;";};
         class AddManpower: TYR_UI_Button {idc=225; x=safeZoneX+safeZoneW*0.234; y=safeZoneY+safeZoneH*0.463; w=safeZoneW*0.071; h=safeZoneH*0.041; text="+100 MP"; onButtonClick="['resource',[TYR_debugFaction,'manpower',100]] call TYR_debugSend;";};
         class EconomyMax: TYR_UI_ButtonAccent {idc=226; x=safeZoneX+safeZoneW*0.157; y=safeZoneY+safeZoneH*0.520; w=safeZoneW*0.148; h=safeZoneH*0.041; text="MAX RESOURCES"; onButtonClick="['max',[TYR_debugFaction]] call TYR_debugSend;";};
-        class EconomyTick: TYR_UI_Button {idc=227; x=safeZoneX+safeZoneW*0.157; y=safeZoneY+safeZoneH*0.569; w=safeZoneW*0.148; h=safeZoneH*0.041; text="RUN ECONOMY TICK"; onButtonClick="['factoryTick',[]] call TYR_debugSend;";};
+        class EconomyTick: TYR_UI_Button {idc=227; x=safeZoneX+safeZoneW*0.157; y=safeZoneY+safeZoneH*0.569; w=safeZoneW*0.148; h=safeZoneH*0.041; text="RUN BASE ECONOMY"; onButtonClick="['factoryTick',[]] call TYR_debugSend;";};
         class ResearchUnlock: TYR_UI_Button {idc=241; x=safeZoneX+safeZoneW*0.157; y=safeZoneY+safeZoneH*0.626; w=safeZoneW*0.148; h=safeZoneH*0.041; text="UNLOCK RESEARCH"; onButtonClick="['unlockResearch',[TYR_debugFaction]] call TYR_debugSend;";};
         class ResearchReset: TYR_UI_ButtonDanger {idc=242; x=safeZoneX+safeZoneW*0.157; y=safeZoneY+safeZoneH*0.675; w=safeZoneW*0.148; h=safeZoneH*0.041; text="RESET RESEARCH"; onButtonClick="['resetResearch',[TYR_debugFaction]] call TYR_debugSend;";};
+        class DepotReadout: TYR_UI_TextMulti {idc=232; x=safeZoneX+safeZoneW*0.157; y=safeZoneY+safeZoneH*0.726; w=safeZoneW*0.148; h=safeZoneH*0.060; sizeEx=0.017; colorBackground[]={0.022,0.028,0.033,1}; colorText[]={0.58,0.66,0.73,1}; text="HQ DEPOT // EMPTY";};
+        class ProductionTick: TYR_UI_ButtonAccent {idc=228; x=safeZoneX+safeZoneW*0.157; y=safeZoneY+safeZoneH*0.797; w=safeZoneW*0.071; h=safeZoneH*0.038; text="PROD TICK"; onButtonClick="['productionTick',[]] call TYR_debugSend;";};
+        class ProductionPlan: TYR_UI_Button {idc=229; x=safeZoneX+safeZoneW*0.234; y=safeZoneY+safeZoneH*0.797; w=safeZoneW*0.071; h=safeZoneH*0.038; text="AI PROD"; onButtonClick="['productionPlan',[TYR_debugFaction]] call TYR_debugSend;";};
+        class LogisticsPlan: TYR_UI_ButtonAccent {idc=230; x=safeZoneX+safeZoneW*0.157; y=safeZoneY+safeZoneH*0.843; w=safeZoneW*0.071; h=safeZoneH*0.038; text="PLAN LOG"; onButtonClick="['logisticsPlan',[]] call TYR_debugSend;";};
+        class LogisticsTick: TYR_UI_Button {idc=231; x=safeZoneX+safeZoneW*0.234; y=safeZoneY+safeZoneH*0.843; w=safeZoneW*0.071; h=safeZoneH*0.038; text="MOVE LOG"; onButtonClick="['logisticsTick',[]] call TYR_debugSend;";};
 
         // SYSTEM PAGE
         class SystemPerf: TYR_UI_TextMulti {idc=131; x=safeZoneX+safeZoneW*0.157; y=safeZoneY+safeZoneH*0.328; w=safeZoneW*0.148; h=safeZoneH*0.068; sizeEx=0.019; colorBackground[]={0.022,0.028,0.033,1}; text="CLIENT FPS -- // SERVER FPS --";};

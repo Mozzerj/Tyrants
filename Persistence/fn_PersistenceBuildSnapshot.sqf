@@ -130,6 +130,7 @@ _factionKeys sort true;
         ["vehiclePool",+(_f getOrDefault ["vehiclePool",[]])],
         ["commander",[_commander] call _pairs],
         ["commandNetwork",_commandNetworkOut],
+        ["depotInventory",[_f getOrDefault ["depotInventory",createHashMap]] call _pairs],
         ["knowledge",[["locations",_knowledgeLocationsOut],["contacts",_knowledgeContactsOut],["log",_knowledgeLogOut]]]
     ];
 } forEach _factionKeys;
@@ -140,10 +141,28 @@ private _locationKeys = keys _locations;
 _locationKeys sort true;
 {
     private _l = _locations get _x;
+    private _inventoryOut = [];
+    private _inv = _l getOrDefault ["inventory",createHashMap];
+    private _ik = keys _inv; _ik sort true;
+    {_inventoryOut pushBack [_x,_inv getOrDefault [_x,0]]} forEach _ik;
+    private _queueOut = [];
+    {
+        _queueOut pushBack [
+            ["id",_x getOrDefault ["id",""]],["product",_x getOrDefault ["product",""]],["display",_x getOrDefault ["display",""]],
+            ["category",_x getOrDefault ["category",""]],["amount",_x getOrDefault ["amount",0]],["class",_x getOrDefault ["class",""]],
+            ["startRemaining",((_x getOrDefault ["startAt",serverTime])-serverTime) max 0],
+            ["finishRemaining",((_x getOrDefault ["finishAt",serverTime])-serverTime) max 0],
+            ["duration",_x getOrDefault ["duration",0]],["reason",_x getOrDefault ["reason",""]],["requestedBy",_x getOrDefault ["requestedBy",""]]
+        ];
+    } forEach (_l getOrDefault ["productionQueue",[]]);
     _locationsOut pushBack [
         ["id",_x],
         ["owner",_l getOrDefault ["owner","neutral"]],
-        ["stock",_l getOrDefault ["stock",0]]
+        ["stock",0],
+        ["factoryType",_l getOrDefault ["factoryType",""]],
+        ["inventory",_inventoryOut],["productionQueue",_queueOut],
+        ["lastProductionAge",if ((_l getOrDefault ["lastProduction",-1]) < 0) then {-1} else {(serverTime-(_l getOrDefault ["lastProduction",serverTime])) max 0}],
+        ["lastProductionText",_l getOrDefault ["lastProductionText",""]]
     ];
 } forEach _locationKeys;
 
@@ -256,6 +275,7 @@ _forceKeys sort true;
         ["operation",_f getOrDefault ["operation",""]],
         ["commandOfficer",_f getOrDefault ["commandOfficer",""]],
         ["commandState",_f getOrDefault ["commandState","local"]],
+        ["supply",[_f getOrDefault ["supply",createHashMapFromArray [["ammo",100],["fuel",100]]]] call _pairs],
         ["active",count _classes > 0]
     ];
 } forEach _forceKeys;
@@ -325,6 +345,27 @@ _commandOrderIds sort true;
     };
 } forEach _commandOrderIds;
 
+
+private _logisticsOut = [];
+private _logistics = TYR_State getOrDefault ["logistics",createHashMap];
+private _logIds = keys _logistics; _logIds sort true;
+{
+    private _j = _logistics get _x;
+    private _status = _j getOrDefault ["status","virtual"];
+    private _pos = +(_j getOrDefault ["currentPosition",[]]);
+    private _runtime = TYR_Runtime getOrDefault ["logistics",createHashMap];
+    private _rr = _runtime getOrDefault [_x,[]];
+    if (_status isEqualTo "physical" && {count _rr >= 1} && {!isNull (_rr # 0)}) then {_pos = getPosATL (_rr # 0)};
+    _logisticsOut pushBack [
+        ["id",_x],["faction",_j getOrDefault ["faction",""]],["originType",_j getOrDefault ["originType",""]],["originId",_j getOrDefault ["originId",""]],
+        ["originPosition",+(_j getOrDefault ["originPosition",[]])],["destinationType",_j getOrDefault ["destinationType",""]],["destinationId",_j getOrDefault ["destinationId",""]],
+        ["destinationPosition",+(_j getOrDefault ["destinationPosition",[]])],["cargo",+(_j getOrDefault ["cargo",[]])],["reason",_j getOrDefault ["reason",""]],
+        ["status",if (_status isEqualTo "physical") then {"virtual"} else {_status}],["currentPosition",_pos],["legStartPosition",_pos],
+        ["remaining",((_j getOrDefault ["arriveAt",serverTime])-serverTime) max 10],["virtualSpeed",_j getOrDefault ["virtualSpeed",11]],
+        ["escortAlive",_j getOrDefault ["escortAlive",true]],["cargoAlive",_j getOrDefault ["cargoAlive",true]]
+    ];
+} forEach _logIds;
+
 [
     ["campaign",_campaignOut],
     ["factions",_factionsOut],
@@ -336,5 +377,6 @@ _commandOrderIds sort true;
     ["operations",_operationsOut],
     ["commandPersonnel",_commandPersonnelOut],
     ["commandOrders",_commandOrdersOut],
+    ["logistics",_logisticsOut],
     ["destroyedBuildings",+(TYR_State getOrDefault ["destroyedBuildings",[]])]
 ]

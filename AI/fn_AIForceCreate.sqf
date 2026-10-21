@@ -65,6 +65,7 @@ private _id = ["force"] call TYR_fnc_StateNextId;
     ["position",_pos],
     ["unitClasses",_unitClasses],
     ["operation",""],
+    ["supply",createHashMapFromArray [["ammo",100],["fuel",100]]],
     ["active",true]
 ]];
 

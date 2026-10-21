@@ -68,7 +68,7 @@ class TyrPlayerMenu
         class Manpower: TYR_UI_Text {idc=23; x=safeZoneX+safeZoneW*0.18; y=safeZoneY+safeZoneH*0.355; w=safeZoneW*0.12; h=safeZoneH*0.03; text="Manpower: --";};
         class Context: TYR_UI_Text {idc=24; x=safeZoneX+safeZoneW*0.052; y=safeZoneY+safeZoneH*0.397; w=safeZoneW*0.24; h=safeZoneH*0.025; sizeEx=0.024; colorText[]={0.60,0.64,0.68,1}; text="";};
 
-        class CollectResources: TYR_UI_ButtonAccent {idc=4; x=safeZoneX+safeZoneW*0.04; y=safeZoneY+safeZoneH*0.46; w=safeZoneW*0.27; h=safeZoneH*0.047; text="COLLECT FACTORY STOCKPILE"; onButtonClick="[] spawn TYR_fnc_GetFactoryResource; closeDialog 0;";};
+        class CollectResources: TYR_UI_ButtonAccent {idc=4; x=safeZoneX+safeZoneW*0.04; y=safeZoneY+safeZoneH*0.46; w=safeZoneW*0.27; h=safeZoneH*0.047; text="FACTORY PRODUCTION"; onButtonClick="closeDialog 0; [] call TYR_fnc_OpenFactoryMenu;";};
         class BuyVehicle: TYR_UI_ButtonAccent {idc=5; x=safeZoneX+safeZoneW*0.04; y=safeZoneY+safeZoneH*0.515; w=safeZoneW*0.27; h=safeZoneH*0.047; text="VEHICLE PROCUREMENT"; onButtonClick="closeDialog 0; createDialog 'TyrVehicleBuyMenu';";};
         class Research: TYR_UI_Button {idc=8; x=safeZoneX+safeZoneW*0.04; y=safeZoneY+safeZoneH*0.57; w=safeZoneW*0.13; h=safeZoneH*0.047; text="RESEARCH"; onButtonClick="closeDialog 0; [] spawn TYR_fnc_OpenResearchMenu;";};
         class BuyEmplacement: TYR_UI_Button {idc=7; x=safeZoneX+safeZoneW*0.18; y=safeZoneY+safeZoneH*0.57; w=safeZoneW*0.13; h=safeZoneH*0.047; text="EMPLACEMENTS"; onButtonClick="closeDialog 0; [] call TYR_fnc_OpenEmplacementMenu;";};

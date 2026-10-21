@@ -8,6 +8,8 @@ private _forcesRuntime = TYR_Runtime getOrDefault ["forces",createHashMap];
 private _activeForces = [];
 private _freeForces = [];
 private _forcePositions = createHashMap;
+private _forceSupply = createHashMap;
+private _lowSupplyForces = [];
 {
     private _id = _x;
     private _rec = _forcesState get _id;
@@ -23,6 +25,9 @@ private _forcePositions = createHashMap;
         if (_aliveCount > 0 || {isNull _grp}) then {
             _activeForces pushBack _id;
             _forcePositions set [_id,_pos];
+            private _supply = _rec getOrDefault ["supply",createHashMapFromArray [["ammo",100],["fuel",100]]];
+            _forceSupply set [_id,_supply];
+            if ((_supply getOrDefault ["ammo",100]) < 45 || {(_supply getOrDefault ["fuel",100]) < 30}) then {_lowSupplyForces pushBack _id};
             if ((_rec getOrDefault ["operation",""]) isEqualTo "") then {_freeForces pushBack _id};
         };
     };
@@ -128,6 +133,9 @@ createHashMapFromArray [
     ["activeForces",_activeForces],
     ["freeForces",_freeForces],
     ["forcePositions",_forcePositions],
+    ["forceSupply",_forceSupply],
+    ["lowSupplyForces",_lowSupplyForces],
+    ["depotInventory",_f getOrDefault ["depotInventory",createHashMap]],
     ["forceCount",count _activeForces],
     ["availableCount",count _freeForces],
     ["desiredForces",_desiredForces],

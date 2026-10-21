@@ -10,6 +10,11 @@ missionNamespace setVariable ["TYR_debugView",missionNamespace getVariable ["TYR
 TYR_debugSend = {
     params ["_action",["_args",[]]];
     [_action,_args] remoteExecCall ["TYR_fnc_ServerDebugAction",2];
+    // Mutation actions refresh the small amount of omniscient status data once.
+    // Continuous full-map polling remains view-aware and is not reintroduced here.
+    if (_action in ["resource","max","factoryTick","unlockResearch","resetResearch","productionTick","productionPlan","logisticsPlan","logisticsTick","commandTick","commandFastTimer","commandKillMain","commandKillOfficer","commandKillAll","spawnForce"]) then {
+        [] spawn {sleep 0.25; ["debugMap",[]] remoteExecCall ["TYR_fnc_ServerDebugAction",2]};
+    };
 };
 TYR_debugSelect = {
     params ["_fid"];
@@ -47,7 +52,15 @@ if (isNil "TYR_DebugTaskDefinitions") then {
         ["AI order appears on map","Create an operation and confirm force-to-target intent and command route appear on ORDER MAP."],
         ["AI officer loss reroutes order","Kill an officer while an order is pending and confirm route/ETA/reroute changes."],
         ["AI collapse stops planning","Kill all command personnel and confirm the AI creates no new strategic operation."],
-        ["Observed commander can be targeted","Observe an enemy commander legitimately and confirm it can become a raid candidate."]
+        ["Observed commander can be targeted","Observe an enemy commander legitimately and confirm it can become a raid candidate."],
+        ["Factory queue completes","Queue a product at a controlled factory, run PROD TICK or wait, and confirm completed stock remains at that factory."],
+        ["Virtual logistics when irrelevant","Create factory stock far from players/enemies, run PLAN LOG, and confirm TRUTH MAP labels the convoy VIRTUAL rather than spawning trucks."],
+        ["Convoy materialises near interaction","Approach a virtual convoy or place a hostile force near its route. Run MOVE LOG and confirm the cargo truck/escort materialise at the simulated route position."],
+        ["Convoy virtualises after leaving","Move away from a physical convoy and remove hostile interaction. After 30s, run MOVE LOG and confirm it becomes VIRTUAL without losing cargo/progress."],
+        ["Destroyed cargo loses stock","Destroy the physical cargo truck and confirm the logistics job becomes destroyed and its reserved manifest is not delivered."],
+        ["Low supply requests resupply","Drive an AI force below 45% strategic ammo, ensure HQ depot has GENERAL_AMMO, run PLAN LOG, and confirm a depot-to-force job is created."],
+        ["Produced vehicle required","Try to release a vehicle with zero factory stock, then manufacture one and confirm VEHICLE PROCUREMENT releases exactly one completed vehicle."],
+        ["Unused lobby AI absent","Start with empty playable slots and confirm no WEST/EAST/INDEPENDENT lobby-slot AI remain at the Altis airbase once the campaign is running."]
     ]];
 };
 if (isNil "TYR_DebugTaskStatus") then {missionNamespace setVariable ["TYR_DebugTaskStatus",createHashMap]};

@@ -59,5 +59,11 @@ private _resources = if (_own) then {[
     _f getOrDefault ["eliminated", false],
     if (_own) then {+(_f getOrDefault ["commanderPublic", []])} else {[]},
     _f getOrDefault ["baseConfirmed",false],
-    _commandSummary
+    _commandSummary,
+    if (_own) then {
+        private _depot = _f getOrDefault ["depotInventory",createHashMap];
+        private _dk = keys _depot; _dk sort true;
+        private _out = []; {_out pushBack [_x,_depot getOrDefault [_x,0]]} forEach _dk;
+        _out
+    } else {[]}
 ]

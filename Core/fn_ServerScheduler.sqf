@@ -5,6 +5,10 @@ if (!isServer) exitWith {};
     private _nextOps = serverTime + 3;
     private _nextObservation = serverTime + 2;
     private _nextCommandNetwork = serverTime + 1;
+    private _nextProduction = serverTime + 2;
+    private _nextLogistics = serverTime + 3;
+    private _nextLogisticsPlan = serverTime + 8;
+    private _nextProductionAI = createHashMapFromArray [["west",serverTime+5],["east",serverTime+10],["independent",serverTime+15]];
     private _nextCommander = createHashMapFromArray [["west",serverTime+2],["east",serverTime+7],["independent",serverTime+12]];
     while {true} do {
         sleep 1;
@@ -22,6 +26,21 @@ if (!isServer) exitWith {};
                 _nextObservation = serverTime + 4;
             };
 
+            if (serverTime >= _nextProduction) then {
+                call TYR_fnc_ServerProductionTick;
+                _nextProduction = serverTime + 2;
+            };
+
+            if (serverTime >= _nextLogistics) then {
+                call TYR_fnc_ServerLogisticsTick;
+                _nextLogistics = serverTime + 3;
+            };
+
+            if (serverTime >= _nextLogisticsPlan) then {
+                call TYR_fnc_ServerLogisticsPlanner;
+                _nextLogisticsPlan = serverTime + 12;
+            };
+
             if (serverTime >= _nextOps) then {
                 call TYR_fnc_AIOperationsTick;
                 _nextOps = serverTime + 5;
@@ -31,6 +50,13 @@ if (!isServer) exitWith {};
                 call TYR_fnc_ServerEconomyTick;
                 _nextEconomy = serverTime + (_settings getOrDefault ["economyInterval",75]);
             };
+
+            {
+                if (serverTime >= (_nextProductionAI getOrDefault [_x,0])) then {
+                    [_x] call TYR_fnc_ServerProductionAIPlan;
+                    _nextProductionAI set [_x,serverTime + 25];
+                };
+            } forEach ["west","east","independent"];
 
             // At most one commander gets a strategic thinking slice in any scheduler second.
             private _processed = false;

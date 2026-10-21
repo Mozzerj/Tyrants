@@ -60,6 +60,9 @@ private _factions = _state get "factions";
             _network set ["lastStatusChange",if (_lastStatusAge < 0) then {serverTime} else {serverTime - _lastStatusAge}];
         };
         _f set ["commandNetwork",_network];
+        private _depot = createHashMap;
+        {if (_x isEqualType [] && {count _x >= 2}) then {_depot set [_x # 0,_x # 1]}} forEach ([_x,"depotInventory",[]] call TYR_fnc_RecordGet);
+        _f set ["depotInventory",_depot];
         private _knowledgeSaved = [_x,"knowledge",[]] call TYR_fnc_RecordGet;
         private _knowledge = createHashMapFromArray [["locations",createHashMap],["contacts",createHashMap],["log",[]]];
         private _knownLocations = _knowledge get "locations";
@@ -106,9 +109,22 @@ private _loadedLocationState = createHashMap;
 {
     private _id = [_x,"id",""] call TYR_fnc_RecordGet;
     if (_id isNotEqualTo "") then {
+        private _inv = createHashMap;
+        {if (_x isEqualType [] && {count _x >= 2}) then {_inv set [_x # 0,_x # 1]}} forEach ([_x,"inventory",[]] call TYR_fnc_RecordGet);
+        private _queue = [];
+        {
+            _queue pushBack (createHashMapFromArray [
+                ["id",[_x,"id",""] call TYR_fnc_RecordGet],["product",[_x,"product",""] call TYR_fnc_RecordGet],["display",[_x,"display",""] call TYR_fnc_RecordGet],
+                ["category",[_x,"category",""] call TYR_fnc_RecordGet],["amount",[_x,"amount",0] call TYR_fnc_RecordGet],["class",[_x,"class",""] call TYR_fnc_RecordGet],
+                ["startAt",serverTime + ([_x,"startRemaining",0] call TYR_fnc_RecordGet)],["finishAt",serverTime + ([_x,"finishRemaining",0] call TYR_fnc_RecordGet)],
+                ["duration",[_x,"duration",0] call TYR_fnc_RecordGet],["reason",[_x,"reason",""] call TYR_fnc_RecordGet],["requestedBy",[_x,"requestedBy",""] call TYR_fnc_RecordGet]
+            ]);
+        } forEach ([_x,"productionQueue",[]] call TYR_fnc_RecordGet);
+        private _lastAge = [_x,"lastProductionAge",-1] call TYR_fnc_RecordGet;
         _loadedLocationState set [_id,createHashMapFromArray [
-            ["owner",[_x,"owner","neutral"] call TYR_fnc_RecordGet],
-            ["stock",[_x,"stock",0] call TYR_fnc_RecordGet]
+            ["owner",[_x,"owner","neutral"] call TYR_fnc_RecordGet],["stock",0],
+            ["factoryType",[_x,"factoryType",""] call TYR_fnc_RecordGet],["inventory",_inv],["productionQueue",_queue],
+            ["lastProduction",if (_lastAge < 0) then {-1} else {serverTime-_lastAge}],["lastProductionText",[_x,"lastProductionText",""] call TYR_fnc_RecordGet]
         ]];
     };
 } forEach ([_snapshot,"locations",[]] call TYR_fnc_RecordGet);
@@ -163,11 +179,14 @@ private _forces = createHashMap;
 {
     private _id = [_x,"id",""] call TYR_fnc_RecordGet;
     if (_id isNotEqualTo "") then {
+        private _supply = createHashMap;
+        {if (_x isEqualType [] && {count _x >= 2}) then {_supply set [_x # 0,_x # 1]}} forEach ([_x,"supply",[["ammo",100],["fuel",100]]] call TYR_fnc_RecordGet);
+        if (count _supply isEqualTo 0) then {_supply = createHashMapFromArray [["ammo",100],["fuel",100]]};
         _forces set [_id,createHashMapFromArray [
             ["id",_id],["faction",[_x,"faction",""] call TYR_fnc_RecordGet],["role",[_x,"role","infantry"] call TYR_fnc_RecordGet],
             ["position",+([_x,"position",[0,0,0]] call TYR_fnc_RecordGet)],["unitClasses",+([_x,"unitClasses",[]] call TYR_fnc_RecordGet)],
             ["operation",[_x,"operation",""] call TYR_fnc_RecordGet],["commandOfficer",[_x,"commandOfficer",""] call TYR_fnc_RecordGet],
-            ["commandState",[_x,"commandState","local"] call TYR_fnc_RecordGet],["active",[_x,"active",true] call TYR_fnc_RecordGet]
+            ["commandState",[_x,"commandState","local"] call TYR_fnc_RecordGet],["supply",_supply],["active",[_x,"active",true] call TYR_fnc_RecordGet]
         ]];
     };
 } forEach ([_snapshot,"forces",[]] call TYR_fnc_RecordGet);
@@ -222,6 +241,24 @@ private _commandOrders = createHashMap;
     };
 } forEach ([_snapshot,"commandOrders",[]] call TYR_fnc_RecordGet);
 _state set ["commandOrders",_commandOrders];
+
+private _logistics = createHashMap;
+{
+    private _id = [_x,"id",""] call TYR_fnc_RecordGet;
+    if (_id isNotEqualTo "") then {
+        private _remaining = [_x,"remaining",30] call TYR_fnc_RecordGet;
+        private _pos = +([_x,"currentPosition",[]] call TYR_fnc_RecordGet);
+        _logistics set [_id,createHashMapFromArray [
+            ["id",_id],["faction",[_x,"faction",""] call TYR_fnc_RecordGet],["originType",[_x,"originType",""] call TYR_fnc_RecordGet],["originId",[_x,"originId",""] call TYR_fnc_RecordGet],
+            ["originPosition",+([_x,"originPosition",[]] call TYR_fnc_RecordGet)],["destinationType",[_x,"destinationType","hq"] call TYR_fnc_RecordGet],["destinationId",[_x,"destinationId",""] call TYR_fnc_RecordGet],
+            ["destinationPosition",+([_x,"destinationPosition",[]] call TYR_fnc_RecordGet)],["cargo",+([_x,"cargo",[]] call TYR_fnc_RecordGet)],["reason",[_x,"reason",""] call TYR_fnc_RecordGet],
+            ["status",[_x,"status","virtual"] call TYR_fnc_RecordGet],["createdAt",serverTime],["legStartAt",serverTime],["legStartPosition",_pos],["currentPosition",_pos],
+            ["arriveAt",serverTime + (_remaining max 10)],["virtualSpeed",[_x,"virtualSpeed",11] call TYR_fnc_RecordGet],["physicalSince",-1],["lastStateChange",serverTime],
+            ["escortAlive",[_x,"escortAlive",true] call TYR_fnc_RecordGet],["cargoAlive",[_x,"cargoAlive",true] call TYR_fnc_RecordGet],["finishedAt",-1]
+        ]];
+    };
+} forEach ([_snapshot,"logistics",[]] call TYR_fnc_RecordGet);
+_state set ["logistics",_logistics];
 
 _state set ["destroyedBuildings",+([_snapshot,"destroyedBuildings",[]] call TYR_fnc_RecordGet)];
 TYR_State = _state;

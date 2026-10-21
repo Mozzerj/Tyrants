@@ -1,0 +1,27 @@
+params ["_jobId"];
+if (!isServer) exitWith {false};
+private _jobs = TYR_State getOrDefault ["logistics",createHashMap];
+private _job = _jobs getOrDefault [_jobId,createHashMap];
+private _runtime = TYR_Runtime getOrDefault ["logistics",createHashMap];
+private _rr = _runtime getOrDefault [_jobId,[]];
+if (count _rr < 3) exitWith {false};
+_rr params ["_truck","_escort","_grp"];
+if (isNull _truck || {!alive _truck}) exitWith {false};
+private _pos = getPosATL _truck;
+private _dest = [_job] call TYR_fnc_LogisticsResolveDestination;
+if (count _dest < 2) exitWith {false};
+private _speed = _job getOrDefault ["virtualSpeed",11];
+_job set ["currentPosition",_pos];
+_job set ["legStartPosition",_pos];
+_job set ["legStartAt",serverTime];
+_job set ["destinationPosition",_dest];
+_job set ["arriveAt",serverTime + ((_pos distance2D _dest) / _speed) max 10];
+_job set ["status","virtual"];
+_job set ["lastStateChange",serverTime];
+if (!isNull _escort) then {{deleteVehicle _x} forEach crew _escort; deleteVehicle _escort};
+{deleteVehicle _x} forEach crew _truck;
+deleteVehicle _truck;
+if (!isNull _grp) then {deleteGroup _grp};
+_runtime deleteAt _jobId;
+["logistics-virtualize"] call TYR_fnc_StateMarkDirty;
+true

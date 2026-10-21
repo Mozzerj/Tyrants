@@ -252,3 +252,36 @@ in and individual infantry only at closer zoom. Do not loop/draw every unit at i
 DESIGN RULE - Adding a debug feature should not put its refresh work in a global menu
 refresh. Give expensive/debug-data views their own targeted update path and only run it
 while that view is visible.
+
+v4.0.15 PRODUCTION + HYBRID LOGISTICS
+-------------------------------------
+CURRENT - Factory production is represented by a local inventory plus a maximum three-item
+queue. Production cost is primarily time/capacity. Do not regress to adding generic factory
+steel/ammo/fuel income every economy tick.
+
+CURRENT - Completed ammunition stock is data attached to a physical factory/depot rather than
+one Arma object per shell/round. This keeps strategic scarcity and capture/loss meaningful
+without creating hundreds or thousands of world objects.
+
+CURRENT - Vehicle procurement consumes one completed `vehicle:<class>` item from a controlled
+vehicle factory. Do not reintroduce the old instant fuel-price purchase path as the normal
+procurement method.
+
+CURRENT - Logistics uses hybrid simulation. A job remains a lightweight server record while
+no human, hostile fighting force or active objective can interact with it. When interaction
+becomes possible it materialises as a real cargo truck + escort; after at least 30 seconds it
+may virtualise again once the area is irrelevant. This method is CURRENT, not PROVEN, until an
+Arma runtime test confirms materialisation, pathfinding and re-virtualisation.
+
+DESIGN RULE - Virtualisation is a performance optimisation, never a gameplay immunity system.
+Cargo is reserved from its origin at job creation, destroying the physical cargo truck destroys
+the manifest, and server-side relevance checks may force a convoy physical when hostile forces
+could intercept it.
+
+DESIGN RULE - Using authoritative hostile positions to decide whether a convoy must be physically
+simulated is allowed only as server simulation relevance. Those positions must never be copied
+into the AI commander's faction knowledge or normal player map as a side effect.
+
+CURRENT - `disabledAI = 1` is the primary prevention for unused playable lobby-slot AI. The
+server also removes any surviving non-player `playableUnits` when the campaign enters RUNNING.
+This should prevent staging-airbase units contaminating capture/intelligence/force calculations.

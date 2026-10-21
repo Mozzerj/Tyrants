@@ -111,6 +111,33 @@ class TYR
         class ServerCollectFactory {};
     };
 
+
+    class Production
+    {
+        file = "Production";
+        class ProductionGetCatalog {};
+        class ProductionFactoryOperational {};
+        class ProductionQueue {};
+        class ProductionComplete {};
+        class ServerQueueFactoryProduction {};
+        class ServerProductionTick {};
+        class ServerProductionAIPlan {};
+    };
+
+    class Logistics
+    {
+        file = "Logistics";
+        class LogisticsResolveDestination {};
+        class LogisticsShouldPhysical {};
+        class LogisticsCreateJob {};
+        class LogisticsMaterialize {};
+        class LogisticsVirtualize {};
+        class LogisticsArrive {};
+        class LogisticsVehicleKilled {};
+        class ServerLogisticsTick {};
+        class ServerLogisticsPlanner {};
+    };
+
     class Territory
     {
         file = "Territory";
@@ -189,6 +216,9 @@ class TYR
         file = "UI";
         class PlayerMenuRefresh {};
         class GetFactoryResource {};
+        class OpenFactoryMenu {};
+        class FactoryMenuRefresh {};
+        class FactoryQueueSelected {};
         class VehicleBuyMenu {};
         class VehicleBuy {};
         class OpenResearchMenu {};

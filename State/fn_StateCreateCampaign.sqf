@@ -68,6 +68,7 @@ private _factions = createHashMap;
         ["commander", _commander],
         ["commanderPublic", []],
         ["commandNetwork", _commandNetwork],
+        ["depotInventory",createHashMap],
         ["knowledge", createHashMapFromArray [["locations",createHashMap],["contacts",createHashMap],["log",[]]]]
     ];
     _factions set [_id, _f];
@@ -101,5 +102,6 @@ createHashMapFromArray [
     ["operations",createHashMap],
     ["commandPersonnel",createHashMap],
     ["commandOrders",createHashMap],
+    ["logistics",createHashMap],
     ["destroyedBuildings",[]]
 ]

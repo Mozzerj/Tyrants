@@ -10,6 +10,8 @@ private _resources = _picture getOrDefault ["resources",createHashMap];
 private _unknown = count (_picture getOrDefault ["unknownLocations",[]]);
 private _hostile = count (_picture getOrDefault ["knownHostileLocations",[]]);
 private _threats = count (_picture getOrDefault ["emergencyThreats",[]]);
+private _lowSupply = count (_picture getOrDefault ["lowSupplyForces",[]]);
+private _depot = _picture getOrDefault ["depotInventory",createHashMap];
 private _ammo = _resources getOrDefault ["ammo",0];
 private _fuel = _resources getOrDefault ["fuel",0];
 
@@ -23,9 +25,9 @@ if (_threats > 0) then {
         _posture = "defensive";
         _reason = format ["Command network is %1",toUpper _network];
     } else {
-        if (_forceCount < _desired || {_ammo < 1500} || {_fuel < 1000}) then {
+        if (_forceCount < _desired || {_ammo < 1500} || {_fuel < 1000} || {_lowSupply > 0 && {(_depot getOrDefault ["general_ammo",0]) < 300 && {(_depot getOrDefault ["fuel_supply",0]) < 300}}}) then {
             _posture = "consolidate";
-            _reason = format ["Force/logistics rebuild required (%1/%2 forces)",_forceCount,_desired];
+            _reason = format ["Force/logistics rebuild required (%1/%2 forces // %3 low-supply)",_forceCount,_desired,_lowSupply];
         } else {
             if (_unknown > (_hostile max 1)) then {
                 _posture = "probe";

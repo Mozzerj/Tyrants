@@ -132,23 +132,23 @@ TERRITORY, LOCATIONS AND FRONTLINES
 
 INDUSTRY, FACTORIES AND PRODUCTION
 ----------------------------------
-[DONE] Server-authoritative economy/factory service foundation exists, but the old abstract resource-output model is NOT the target design.
+[DONE-v4.0.15] Server-authoritative factory production foundation now uses time-based queues and local manufactured inventories; baseline rear economy remains separate.
 
-[PLANNED] Factories produce physical war materiel, not abstract resource income.
-[PLANNED] The primary manufacturing cost is production TIME and limited factory capacity, not an instant steel/ammo/fuel purchase price.
-[PLANNED] Players choose exactly what each controlled factory is producing from its allowed production list.
-[PLANNED] AI commanders use the same production queues and must choose what their factories manufacture.
-[PLANNED] Vehicle factories queue selected vehicles; when production finishes, the completed vehicle becomes available at/near that factory.
-[PLANNED] Munitions factories queue selected ammunition types/loads rather than generating generic 'ammo points'.
-[PLANNED] Artillery shells, rockets, SAM missiles, C-RAM ammunition, VLS missiles and other specialist ammunition can require appropriate factory production.
-[PLANNED] Factory specialisation can limit what a site can build (for example ground vehicles, heavy vehicles, aviation, general munitions or missiles).
-[PLANNED] Production queues have visible item, progress, completion time and local stock for the owning faction.
-[PLANNED] Capturing a factory changes real production capacity instead of simply increasing a resource-per-minute value.
-[PLANNED] Destroying or disabling a factory interrupts its queue and reduces the faction's ability to replace losses.
+[IN PROGRESS-v4.0.15] Factories now produce finite vehicle/ammunition stock rather than abstract factory income. Stock is location-bound data until released/moved.
+[DONE-v4.0.15] The primary manufacturing cost is production TIME and limited queue capacity rather than an instant steel/ammo/fuel purchase price.
+[DONE-v4.0.15] Players can choose products from the allowed list of a nearby controlled factory.
+[IN PROGRESS-v4.0.15] AI factions use the same factory queues through a reserve-based production planner; deeper threat-aware production scoring will expand with artillery/air-defence systems.
+[DONE-v4.0.15] Vehicle factories queue selected vehicles; completed vehicles become local factory stock and Vehicle Procurement releases one real vehicle per completed item.
+[DONE-v4.0.15] Munitions factories queue general/ammunition types into local finite stock instead of generating generic factory ammo points.
+[IN PROGRESS-v4.0.15] Artillery HE/smoke, SAM missiles, C-RAM ammo and VLS missiles are represented in specialised production catalogs; their combat/reload consumers are added in later systems.
+[DONE-v4.0.15] Indexed factories are specialised as vehicle, munitions, air-defence or strategic factories and expose type-appropriate catalogs.
+[DONE-v4.0.15] Factory UI and owning-faction map data show queued item/ETA and local completed stock.
+[DONE-v4.0.15] Capturing a factory changes manufacturing ownership; unfinished old-owner queue work is interrupted while completed local stock remains capturable.
+[DONE-v4.0.15] Destroyed/disabled factory structures pause production queue time until capacity is restored.
 [PLANNED] Infrastructure research can reduce build times, increase queue capacity, improve repair/retool speed or unlock advanced production.
 [PLANNED] Retooling a factory to a different product may itself take time so production choices have strategic consequences.
-[PLANNED] Vehicles and ammunition are finite. Replacing a lost tank, missile battery load or artillery stock should take production time.
-[PLANNED] Logistics later moves completed ammunition/stock from production sites to the units and emplacements that need it rather than teleporting infinite ammunition everywhere.
+[IN PROGRESS-v4.0.15] Produced vehicles and ammunition are finite inventory. Vehicle replacement consumes stock; artillery/SAM/C-RAM/VLS reload consumption comes with their combat-system builds.
+[IN PROGRESS-v4.0.15] Hybrid logistics moves completed non-vehicle stock from factories to HQ depot and general ammo from depot to low-supply AI forces; distant journeys virtualise when interaction is impossible.
 [PLANNED] Manpower, fuel and other support constraints may exist where they add gameplay, but factories themselves are manufacturing sites rather than abstract resource generators.
 
 
@@ -167,9 +167,9 @@ VEHICLES AND PROCUREMENT
 [DONE] Server-authoritative vehicle purchase/restore architecture.
 [DONE] Persistent vehicle IDs separated from runtime Arma object references.
 [PLANNED] Procurement research gates higher vehicle categories.
-[PLANNED] Vehicle production definitions, eligibility and build times are authoritative on the server.
-[PLANNED] Players request/queue appropriate faction vehicles at valid production facilities; completed vehicles appear only after their build time finishes.
-[PLANNED] AI uses the same vehicle-production queues and factory capacity as humans.
+[DONE-v4.0.15] Vehicle production definitions, research eligibility and build times are shared catalog rules enforced by the authoritative server queue.
+[DONE-v4.0.15] Players queue vehicles at controlled vehicle factories and can only release a class after production finishes.
+[IN PROGRESS-v4.0.15] AI production planner uses the same queue/capacity path as humans and maintains a small local ready-vehicle reserve.
 [PLANNED] Friendly named/important vehicles appear on the strategic map where appropriate.
 [PLANNED] Vehicle losses matter economically and strategically but do not corrupt persistence.
 

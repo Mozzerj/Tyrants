@@ -39,14 +39,18 @@ private _intelAge = _candidate getOrDefault ["intelAge",1e9];
 if (_targetType isEqualTo "contact" && {_intelAge > 180}) exitWith {[false,format ["Contact intelligence is stale (%1s)",round _intelAge],""]};
 
 private _positions = _picture getOrDefault ["forcePositions",createHashMap];
+private _supplies = _picture getOrDefault ["forceSupply",createHashMap];
 private _bestForce = "";
 private _bestDist = 1e12;
 {
     private _fp = _positions getOrDefault [_x,[]];
-    if (count _fp >= 2) then {
+    private _supply = _supplies getOrDefault [_x,createHashMapFromArray [["ammo",100],["fuel",100]]];
+    private _supplyOk = !_offensive || {(_supply getOrDefault ["ammo",100]) >= 25 && {(_supply getOrDefault ["fuel",100]) >= 20}};
+    if (_supplyOk && {count _fp >= 2}) then {
         private _d = _fp distance2D _pos;
         if (_d < _bestDist) then {_bestDist = _d; _bestForce = _x};
     };
 } forEach _free;
+if (_bestForce isEqualTo "" && {_offensive}) exitWith {[false,"Available forces are too low on supply for offensive action",""]};
 if (_bestForce isEqualTo "") then {_bestForce = _free # 0};
 [true,format ["Validated // force %1 // command delay ~%2s",toUpper _bestForce,round (_delay # 1)],_bestForce]

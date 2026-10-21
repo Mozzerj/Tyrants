@@ -440,6 +440,37 @@ if 'TYR_debugView' not in debug_client_map or 'diag_tickTime' not in debug_clien
 if '_showLiveEntities' not in debug_draw or '_showUnits' not in debug_draw:
     errors.append("omniscient debug map is missing level-of-detail entity culling")
 
+
+# v4.0.15 production + hybrid logistics invariants.
+state_create = read(ROOT / "State/fn_StateCreateCampaign.sqf")
+if '"depotInventory"' not in state_create or '["logistics",createHashMap]' not in state_create.replace(' ', ''):
+    errors.append("v4.0.15 state is missing faction depot inventory or top-level logistics state")
+
+production_catalog = read(ROOT / "Production/fn_ProductionGetCatalog.sqf")
+production_queue = read(ROOT / "Production/fn_ProductionQueue.sqf")
+logistics_tick = read(ROOT / "Logistics/fn_ServerLogisticsTick.sqf")
+logistics_relevance = read(ROOT / "Logistics/fn_LogisticsShouldPhysical.sqf")
+vehicle_purchase = read(ROOT / "Vehicles/fn_VehiclePurchase.sqf")
+vehicle_menu = read(ROOT / "UI/fn_VehicleBuyMenu.sqf")
+if 'productionQueue' not in production_queue or 'finishAt' not in production_queue:
+    errors.append("factory production queue is missing time-based queue records")
+if 'vehicle:' not in production_catalog or 'artillery_he' not in production_catalog or 'sam_missile' not in production_catalog or 'vls_missile' not in production_catalog:
+    errors.append("factory production catalog is missing core vehicle/ammunition products")
+if 'LogisticsMaterialize' not in logistics_tick or 'LogisticsVirtualize' not in logistics_tick:
+    errors.append("hybrid logistics tick is missing materialise/virtualise transitions")
+if 'allPlayers' not in logistics_relevance or 'allUnits' not in logistics_relevance:
+    errors.append("hybrid logistics relevance does not account for humans and hostile fighting units")
+if 'vehicle:' not in vehicle_purchase or 'inventory' not in vehicle_purchase:
+    errors.append("vehicle procurement is not consuming completed factory stock")
+if 'Cost:' in vehicle_menu and 'fuel' in vehicle_menu.lower():
+    errors.append("vehicle procurement UI still advertises the legacy instant fuel purchase model")
+if 'disabledAI = 1' not in read(ROOT / "description.ext"):
+    errors.append("unused playable lobby AI is not disabled")
+if 'playableUnits' not in read(ROOT / "Core/fn_ServerBootstrap.sqf"):
+    errors.append("server bootstrap is missing the unused playable-slot cleanup safeguard")
+if 'TYR_Deployment' in logistics_tick:
+    errors.append("logistics tick unexpectedly depends on deployment UI state")
+
 if errors:
     for e in errors:
         print(f"ERROR: {e}")

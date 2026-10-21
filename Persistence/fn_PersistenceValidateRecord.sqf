@@ -87,6 +87,10 @@ if ((_factions findIf {
 }) >= 0) exitWith {false};
 private _activeFactionIds = (_factions select {[_x,"active",false] call TYR_fnc_RecordGet}) apply {[_x,"id",""] call TYR_fnc_RecordGet};
 if ((_activeFactionIds findIf {private _fid=_x; (_depSectors findIf {(_x # 0) isEqualTo _fid && {(_x # 1) isEqualType [] && {count (_x # 1) >= 2}}}) < 0}) >= 0) exitWith {false};
+if ((_factions findIf {
+    private _depot = [_x,"depotInventory",[]] call TYR_fnc_RecordGet;
+    !(_depot isEqualType []) || {(_depot findIf {!(_x isEqualType [] && {count _x >= 2} && {(_x # 0) isEqualType ""} && {(_x # 1) isEqualType 0} && {(_x # 1) >= 0})}) >= 0}
+}) >= 0) exitWith {false};
 
 private _locations = [_snapshot,"locations",[]] call TYR_fnc_RecordGet;
 if !(_locations isEqualType []) exitWith {false};
@@ -95,7 +99,18 @@ if !([_locationIds] call _unique) exitWith {false};
 if ((_locations findIf {
     private _owner = [_x,"owner","neutral"] call TYR_fnc_RecordGet;
     private _stock = [_x,"stock",0] call TYR_fnc_RecordGet;
-    !(_owner in (["neutral"] + _knownFactions)) || {!(_stock isEqualType 0)} || {_stock < 0}
+    private _factoryType = [_x,"factoryType",""] call TYR_fnc_RecordGet;
+    private _inventory = [_x,"inventory",[]] call TYR_fnc_RecordGet;
+    private _queue = [_x,"productionQueue",[]] call TYR_fnc_RecordGet;
+    !(_owner in (["neutral"] + _knownFactions)) || {!(_stock isEqualType 0)} || {_stock < 0} ||
+    {!(_factoryType in ["","vehicle","munitions","air_defence","strategic"])} || {!(_inventory isEqualType [])} ||
+    {(_inventory findIf {!(_x isEqualType [] && {count _x >= 2} && {(_x # 0) isEqualType ""} && {(_x # 1) isEqualType 0} && {(_x # 1) >= 0})}) >= 0} ||
+    {!(_queue isEqualType [])} || {(_queue findIf {
+        private _pid = [_x,"product",""] call TYR_fnc_RecordGet;
+        private _amount = [_x,"amount",-1] call TYR_fnc_RecordGet;
+        private _finishRemaining = [_x,"finishRemaining",-1] call TYR_fnc_RecordGet;
+        (_pid isEqualTo "") || {!(_amount isEqualType 0)} || {_amount < 0} || {!(_finishRemaining isEqualType 0)} || {_finishRemaining < 0}
+    }) >= 0}
 }) >= 0) exitWith {false};
 
 // Faction knowledge is primitive, faction-scoped and may only contain observations that were actually collected.
@@ -199,8 +214,10 @@ if ((_forces findIf {
     private _pos = [_x,"position",[]] call TYR_fnc_RecordGet;
     private _classes = [_x,"unitClasses",[]] call TYR_fnc_RecordGet;
     private _operation = [_x,"operation",""] call TYR_fnc_RecordGet;
+    private _supply = [_x,"supply",[["ammo",100],["fuel",100]]] call TYR_fnc_RecordGet;
     !(_fid in _knownFactions) || {!([_pos] call _validPos)} || {!(_classes isEqualType [])} ||
-    {(_classes findIf {!(_x isEqualType "")}) >= 0} || {!(_operation isEqualType "")}
+    {(_classes findIf {!(_x isEqualType "")}) >= 0} || {!(_operation isEqualType "")} || {!(_supply isEqualType [])} ||
+    {(_supply findIf {!(_x isEqualType [] && {count _x >= 2} && {(_x # 0) in ["ammo","fuel"]} && {(_x # 1) isEqualType 0} && {(_x # 1) >= 0} && {(_x # 1) <= 100})}) >= 0}
 }) >= 0) exitWith {false};
 
 private _operations = [_snapshot,"operations",[]] call TYR_fnc_RecordGet;
@@ -251,6 +268,26 @@ if ((_commandOrders findIf {
     !(_fid in _knownFactions) || {!(_force in _forceIds)} || {!(_operation in _operationIds)} ||
     {!(_target in _locationIds)} || {!(_route isEqualType [])} ||
     {(_route findIf {!(_x in _commandPersonIds)}) >= 0}
+}) >= 0) exitWith {false};
+
+// v4.0.15 logistics is optional for older v4 checkpoints. When present it is
+// entirely primitive and must carry a valid faction, manifest and route endpoints.
+private _logistics = [_snapshot,"logistics",[]] call TYR_fnc_RecordGet;
+if !(_logistics isEqualType []) exitWith {false};
+private _logisticsIds = _logistics apply {[_x,"id",""] call TYR_fnc_RecordGet};
+if (count _logisticsIds > 0 && {!([_logisticsIds] call _unique)}) exitWith {false};
+if ((_logistics findIf {
+    private _fid = [_x,"faction",""] call TYR_fnc_RecordGet;
+    private _status = [_x,"status","virtual"] call TYR_fnc_RecordGet;
+    private _origin = [_x,"originPosition",[]] call TYR_fnc_RecordGet;
+    private _dest = [_x,"destinationPosition",[]] call TYR_fnc_RecordGet;
+    private _current = [_x,"currentPosition",[]] call TYR_fnc_RecordGet;
+    private _cargo = [_x,"cargo",[]] call TYR_fnc_RecordGet;
+    private _remaining = [_x,"remaining",0] call TYR_fnc_RecordGet;
+    !(_fid in _knownFactions) || {!(_status in ["virtual","physical","delivered","destroyed"])} ||
+    {!([_origin] call _validPos)} || {!([_dest] call _validPos)} || {!([_current] call _validPos)} ||
+    {!(_cargo isEqualType [])} || {(_cargo findIf {!(_x isEqualType [] && {count _x >= 2} && {(_x # 0) isEqualType ""} && {(_x # 0) isNotEqualTo ""} && {(_x # 1) isEqualType 0} && {(_x # 1) > 0})}) >= 0} ||
+    {!(_remaining isEqualType 0)} || {_remaining < 0}
 }) >= 0) exitWith {false};
 
 private _destroyed = [_snapshot,"destroyedBuildings",[]] call TYR_fnc_RecordGet;

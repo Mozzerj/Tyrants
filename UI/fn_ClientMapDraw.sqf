@@ -29,8 +29,20 @@ private _locations = TYR_ClientState get "locations";
         };
     };
     private _label = format ["%1  [%2]",_l # 1,_status];
-    if (_kind isEqualTo "factory" && {_current} && {(_l # 5) >= 0}) then {
-        _label = format ["%1  [%2 // STOCK %3]",_l # 1,_status,round (_l # 5)];
+    if (_kind isEqualTo "factory" && {_current}) then {
+        private _factoryType = toUpper (_l param [11,"factory"]);
+        private _queue = _l param [13,[]];
+        private _inventory = _l param [12,[]];
+        private _operational = _l param [14,true];
+        private _ready = 0;
+        {if ((_x param [1,0]) > 0) then {_ready = _ready + 1}} forEach _inventory;
+        private _productionText = if (!_operational) then {"PRODUCTION PAUSED"} else {
+            if (count _queue > 0) then {
+                private _q = _queue # 0;
+                format ["%1 // %2s",toUpper (_q param [2,_q param [1,"PRODUCT"]]),ceil (_q param [4,0])]
+            } else {"IDLE"}
+        };
+        _label = format ["%1  [%2 // %3 // %4 // STOCK TYPES %5]",_l # 1,_status,_factoryType,_productionText,_ready];
     };
     _map drawIcon [_icon,_color,_pos,20,20,0,_label,1,0.035,"PuristaMedium","right"];
 } forEach values _locations;

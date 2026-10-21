@@ -53,6 +53,20 @@ private _removeOps = [];
                 _op set ["outcomeReason","Objective captured"];
             } else {
                 if (_phase isNotEqualTo "command_pending") then {
+                    // Strategic supply is intentionally lightweight. Active operations
+                    // consume the force's abstract supply state; actual replacement
+                    // stock reaches it through hybrid physical/virtual convoys.
+                    {
+                        private _frSupplyRec = _forces getOrDefault [_x,createHashMap];
+                        if (count _frSupplyRec > 0) then {
+                            private _supply = _frSupplyRec getOrDefault ["supply",createHashMapFromArray [["ammo",100],["fuel",100]]];
+                            private _ammoUse = if (_type in ["attack","exploit","raid","probe"]) then {0.65} else {0.20};
+                            private _fuelUse = if (_type in ["exploit","withdraw"]) then {0.35} else {0.12};
+                            _supply set ["ammo",((_supply getOrDefault ["ammo",100]) - _ammoUse) max 0];
+                            _supply set ["fuel",((_supply getOrDefault ["fuel",100]) - _fuelUse) max 0];
+                            _frSupplyRec set ["supply",_supply];
+                        };
+                    } forEach _forceIds;
                     private _allArrived = true;
                     {
                         private _forceId = _x;

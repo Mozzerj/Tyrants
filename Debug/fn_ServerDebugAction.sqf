@@ -161,6 +161,15 @@ switch (_action) do {
         private _locations = [];
         {
             private _l = (TYR_State get "locations") get _x;
+            private _queueSummary = [];
+            private _queue = _l getOrDefault ["productionQueue",[]];
+            if (count _queue > 0) then {
+                private _q = _queue # 0;
+                _queueSummary = [_q getOrDefault ["display",""],((_q getOrDefault ["finishAt",serverTime])-serverTime) max 0,_q getOrDefault ["reason",""]];
+            };
+            private _invOut = [];
+            private _inv = _l getOrDefault ["inventory",createHashMap];
+            {if ((_inv getOrDefault [_x,0]) > 0) then {_invOut pushBack [_x,_inv getOrDefault [_x,0]]}} forEach keys _inv;
             _locations pushBack [
                 _x,
                 _l getOrDefault ["name",_x],
@@ -169,7 +178,11 @@ switch (_action) do {
                 _l getOrDefault ["owner","neutral"],
                 _l getOrDefault ["stock",0],
                 _l getOrDefault ["resource",""],
-                _l getOrDefault ["value",1]
+                _l getOrDefault ["value",1],
+                _l getOrDefault ["factoryType",""],
+                _queueSummary,
+                _invOut,
+                _l getOrDefault ["productionOperational",true]
             ];
         } forEach keys (TYR_State get "locations");
 
@@ -177,6 +190,11 @@ switch (_action) do {
         {
             private _f = [_x] call TYR_fnc_StateGetFaction;
             private _cmd = _f getOrDefault ["commander",createHashMap];
+            private _resources = _f getOrDefault ["resources",createHashMap];
+            private _depot = _f getOrDefault ["depotInventory",createHashMap];
+            private _depotOut = [];
+            private _depotKeys = keys _depot; _depotKeys sort true;
+            {_depotOut pushBack [_x,_depot getOrDefault [_x,0]]} forEach _depotKeys;
             _factions pushBack [
                 _x,
                 _f getOrDefault ["name",toUpper _x],
@@ -186,7 +204,9 @@ switch (_action) do {
                 _f getOrDefault ["baseConfirmed",false],
                 _f getOrDefault ["eliminated",false],
                 _cmd getOrDefault ["personality",""],
-                _cmd getOrDefault ["objective",""]
+                _cmd getOrDefault ["objective",""],
+                [_resources getOrDefault ["steel",0],_resources getOrDefault ["ammo",0],_resources getOrDefault ["fuel",0],_resources getOrDefault ["manpower",0]],
+                _depotOut
             ];
         } forEach ["west","east","independent"];
 
@@ -344,7 +364,19 @@ switch (_action) do {
             ];
         } forEach keys _orders;
 
-        [_player,"TYR_fnc_ClientDebugMapData",[[serverTime,_locations,_factions,_entities,_forces,_aiTraces,_commandNetworks,_aiOperations,_debugOrders]]] call TYR_fnc_ServerSendToPlayer;
+        private _logistics = [];
+        {
+            private _j = (TYR_State getOrDefault ["logistics",createHashMap]) get _x;
+            private _pos = +(_j getOrDefault ["currentPosition",[]]);
+            private _rr = (TYR_Runtime getOrDefault ["logistics",createHashMap]) getOrDefault [_x,[]];
+            if ((_j getOrDefault ["status",""]) isEqualTo "physical" && {count _rr > 0} && {!isNull (_rr # 0)}) then {_pos = getPosATL (_rr # 0)};
+            _logistics pushBack [
+                _x,_j getOrDefault ["faction",""],_j getOrDefault ["status","virtual"],_pos,[_j] call TYR_fnc_LogisticsResolveDestination,
+                +(_j getOrDefault ["cargo",[]]),_j getOrDefault ["reason",""],_j getOrDefault ["originId",""],_j getOrDefault ["destinationId",""]
+            ];
+        } forEach keys (TYR_State getOrDefault ["logistics",createHashMap]);
+
+        [_player,"TYR_fnc_ClientDebugMapData",[[serverTime,_locations,_factions,_entities,_forces,_aiTraces,_commandNetworks,_aiOperations,_debugOrders,_logistics]]] call TYR_fnc_ServerSendToPlayer;
     };
     case "command": {
         private _code = _args param [0,""];
@@ -357,6 +389,10 @@ switch (_action) do {
             [_player,"TYR_fnc_ClientDebugCommandResult",["SERVER",_resultText,_code]] call TYR_fnc_ServerSendToPlayer;
         };
     };
+    case "productionTick": {call TYR_fnc_ServerProductionTick};
+    case "logisticsTick": {call TYR_fnc_ServerLogisticsTick};
+    case "logisticsPlan": {call TYR_fnc_ServerLogisticsPlanner};
+    case "productionPlan": {[_args param [0,"west"]] call TYR_fnc_ServerProductionAIPlan};
     case "save": {[true] call TYR_fnc_PersistenceSave};
     case "sync": {
         {[_x,0] call TYR_fnc_ServerPublishFaction} forEach ([false] call TYR_fnc_FactionIds);

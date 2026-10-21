@@ -1,4 +1,4 @@
-# Tyrants v4.0.14 DEV
+# Tyrants v4.0.15 DEV
 
 Current development baseline for the three-faction Tyrants rewrite. It includes deployment sectors, human/AI commanders, the v4 save architecture, targeted replication, and the tactical UI.
 
@@ -87,3 +87,10 @@ Developer Debug Mode includes an actual live 12-node decision flowchart. **RUN T
 ## v4.0.14 debug console rewrite
 
 The developer console now uses fixed tool pages and direct workspace tabs instead of a dynamically reflowed accordion. Expensive views refresh independently: the truth map requests full omniscient data only while visible, AI Flow receives compact trace updates, and the tests/log/command views are event-driven. The omniscient map also uses zoom-based entity level-of-detail to reduce per-frame drawing work.
+
+
+## v4.0.15 production and hybrid logistics
+
+Factories now manufacture finite vehicle/ammunition stock into local inventories with time-based queues. Vehicle Procurement releases completed factory stock instead of paying an instant fuel price. Non-vehicle output is moved through hybrid logistics jobs: quiet rear-area journeys are lightweight virtual records, while convoys materialise as real trucks/escorts whenever players, hostile forces or active operations can interact with them. Destroying a cargo truck destroys its manifest. See `PRODUCTION_LOGISTICS.md`.
+
+Unused playable lobby-slot AI is disabled through `disabledAI = 1` with an additional running-phase server cleanup safeguard.

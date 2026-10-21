@@ -8,12 +8,30 @@ private _observedAt = [];
 private _source = "";
 private _current = false;
 private _stock = -1;
+private _factoryType = "";
+private _inventoryOut = [];
+private _queueOut = [];
+private _factoryOperational = false;
 
 if (_viewerFaction isNotEqualTo "" && {_trueOwner isEqualTo _viewerFaction}) then {
     _knownOwner = _viewerFaction;
     _source = "control";
     _current = true;
     _stock = _l getOrDefault ["stock",0];
+    if ((_l getOrDefault ["kind",""]) isEqualTo "factory") then {
+        _factoryType = _l getOrDefault ["factoryType","munitions"];
+        _factoryOperational = _l getOrDefault ["productionOperational",true];
+        private _inv = _l getOrDefault ["inventory",createHashMap];
+        private _keys = keys _inv; _keys sort true;
+        {_inventoryOut pushBack [_x,_inv getOrDefault [_x,0]]} forEach _keys;
+        {
+            _queueOut pushBack [
+                _x getOrDefault ["id",""],_x getOrDefault ["product",""],_x getOrDefault ["display",""],
+                _x getOrDefault ["amount",0],((_x getOrDefault ["finishAt",serverTime]) - serverTime) max 0,
+                _x getOrDefault ["reason",""]
+            ];
+        } forEach (_l getOrDefault ["productionQueue",[]]);
+    };
 } else {
     private _intel = [_viewerFaction,"locations",_locationId] call TYR_fnc_StateKnowledgeGet;
     if (count _intel > 0) then {
@@ -34,5 +52,9 @@ if (_viewerFaction isNotEqualTo "" && {_trueOwner isEqualTo _viewerFaction}) the
     _l getOrDefault ["value", 1],
     _observedAt,
     _source,
-    _current
+    _current,
+    _factoryType,
+    _inventoryOut,
+    _queueOut,
+    _factoryOperational
 ]

@@ -1,4 +1,4 @@
-Tyrants v4.0.14 DEV
+Tyrants v4.0.15 DEV
 Strategic AI Overhaul + Physical Command Network + Real Intelligence Tracking
 
 Current development changes:
@@ -76,3 +76,15 @@ v4.0.14 debug console rewrite:
 - Full omniscient map payload now polls only while the Truth/Order map is visible; AI Flow uses compact trace-only updates; other views are event-driven.
 - Full map refresh interval relaxed to 4 seconds and live AI trace interval to 0.55 seconds.
 - Omniscient map culls individual live entities at wide zoom and infantry until closer zoom, reducing per-frame draw work while retaining force-level strategic markers.
+
+
+v4.0.15 production + hybrid logistics foundation:
+- Factories manufacture real vehicle/ammunition stock into local inventories and time-based queues.
+- Vehicle procurement releases completed vehicles from controlled vehicle-factory stock rather than paying an instant fuel cost.
+- Factory ammunition output is moved through logistics manifests instead of teleporting directly into a faction stockpile.
+- HQ depot stock is faction-scoped; low-supply AI forces request combined ammunition/fuel convoys when required.
+- Logistics jobs remain virtual when no human, hostile force or active objective can interact with them; they materialise when interaction becomes possible and can virtualise again after leaving relevance.
+- Destroying a physical cargo truck destroys its reserved cargo manifest.
+- Omniscient debug map shows factory queue/stock and physical/virtual logistics routes.
+- Debug Economy page now exposes production/logistics ticks/planners and depot contents.
+- disabledAI=1 plus server cleanup prevents unused lobby slot AI from remaining at the airbase.

@@ -10,7 +10,7 @@ private _pages = createHashMapFromArray [
     ["movement",[281,282,283,284,285,286]],
     ["ai",[261,262,263,264]],
     ["command",[271,272,273,274,275,276,277]],
-    ["economy",[221,222,223,224,225,226,227,241,242]],
+    ["economy",[221,222,223,224,225,226,227,241,242,228,229,230,231,232]],
     ["system",[131,301,302,303,304]]
 ];
 private _all = [];
@@ -21,7 +21,7 @@ private _all = [];
 private _meta = switch (_page) do {
     case "ai": {["AI COMMAND","Run the strategic thinker, inspect its live path, or focus the map on issued orders."]};
     case "command": {["COMMAND NETWORK","Inspect and stress-test physical commander/officer routing and recovery."]};
-    case "economy": {["ECONOMY + RESEARCH","Adjust only the selected faction. Resource and research actions remain server-authoritative."]};
+    case "economy": {["PRODUCTION + LOGISTICS","Inspect depot stock, trigger production/logistics planning, and adjust legacy resources for testing."]};
     case "system": {["SYSTEM","Low-frequency state, save, performance and automated-test tools."]};
     default {["MOVEMENT","Fast navigation tools. Map teleport and camera are debug-only and do not create intelligence."]};
 };

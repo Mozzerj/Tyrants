@@ -2,7 +2,7 @@ if (!isServer) exitWith {};
 [false] call TYR_fnc_ServerSetCombatState;
 
 TYR_Runtime = createHashMapFromArray [
-    ["vehicles",createHashMap],["emplacements",createHashMap],["forces",createHashMap],["bases",createHashMap],["commandPersonnel",createHashMap],
+    ["vehicles",createHashMap],["emplacements",createHashMap],["forces",createHashMap],["bases",createHashMap],["commandPersonnel",createHashMap],["logistics",createHashMap],
     ["factoryParts",createHashMap],["captureSessions",createHashMap],["arsenal",createHashMap],["loadedLocations",createHashMap],
     ["aiDecisionTraces",createHashMap],["aiThinkLocks",createHashMap],
     ["revision",0],["saveDirty",false],["saveUrgent",false],["dirtySince",-1],["lastDirtyAt",-1],["lastSaveAt",-9999],
@@ -35,6 +35,11 @@ if (_phase isEqualTo "deployment") then {
 };
 
 if (((TYR_State get "campaign") getOrDefault ["phase","deployment"]) isEqualTo "running") then {
+    // disabledAI in description.ext is the primary fix. This is a second guard for
+    // listen-server/editor cases where unused playable lobby units can survive.
+    {
+        if (!isPlayer _x && {_x in playableUnits}) then {deleteVehicle _x};
+    } forEach allUnits;
     call TYR_fnc_ServerCreateBases;
     call TYR_fnc_ServerRestoreDestroyedBuildings;
     call TYR_fnc_ServerRestoreVehicles;

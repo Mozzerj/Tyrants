@@ -14,7 +14,7 @@ private _showUnitLabels = _scale < 0.012;
 
 // True strategic locations. These intentionally ignore faction intelligence.
 {
-    _x params ["_id","_name","_kind","_pos","_owner","_stock","_resource","_value"];
+    _x params ["_id","_name","_kind","_pos","_owner","_stock","_resource","_value",["_factoryType",""],["_queue",[]],["_inventory",[]],["_operational",true]];
     private _color = if (_owner in ["west","east","independent"]) then {[_owner,true] call TYR_fnc_FactionColor} else {[0.62,0.62,0.62,0.85]};
     private _icon = switch (_kind) do {
         case "factory": {"\A3\ui_f\data\map\markers\nato\b_installation.paa"};
@@ -23,7 +23,13 @@ private _showUnitLabels = _scale < 0.012;
     };
     private _label = format ["%1 // %2",_name,toUpper _owner];
     if (_kind isEqualTo "factory") then {
-        _label = format ["%1 // %2 // %3 STOCK %4",_name,toUpper _owner,toUpper _resource,round _stock];
+        _label = format ["%1 // %2 // %3 // %4",_name,toUpper _owner,toUpper _factoryType,if (_operational) then {"ONLINE"} else {"PAUSED"}];
+        if (count _queue > 0) then {_label = _label + (if (_operational) then {format [" // BUILD %1 ETA %2s",toUpper (_queue # 0),ceil (_queue # 1)]} else {format [" // QUEUED %1",toUpper (_queue # 0)]})};
+        if (_scale < 0.08 && {count _inventory > 0}) then {
+            private _stockText = [];
+            {_stockText pushBack format ["%1:%2",toUpper (_x # 0),_x # 1]} forEach _inventory;
+            _label = _label + format [" // STOCK %1",_stockText joinString ", "];
+        };
     };
     _map drawIcon [_icon,_color,_pos,19,19,0,_label,1,0.028,"PuristaMedium","right"];
 } forEach _locations;
@@ -193,3 +199,21 @@ private _debugOrders = _data param [8,[]];
     };
     };
 } forEach _debugOrders;
+
+
+// Hybrid logistics telemetry. Dotted intent is represented by a route line; the
+// label explicitly states whether the convoy is currently PHYSICAL or VIRTUAL.
+private _logistics = _data param [9,[]];
+{
+    _x params ["_jobId","_fid","_status","_pos","_dest","_cargo","_reason","_originId","_destinationId"];
+    if (count _pos >= 2 && {count _dest >= 2}) then {
+        private _base = [_fid,true] call TYR_fnc_FactionColor;
+        private _c = if (_status isEqualTo "physical") then {[1,0.72,0.16,0.95]} else {[_base # 0,_base # 1,_base # 2,0.72]};
+        _map drawLine [_pos,_dest,_c];
+        private _cargoText = [];
+        {_cargoText pushBack format ["%1x%2",toUpper (_x # 0),_x # 1]} forEach _cargo;
+        private _label = format ["LOG %1 // %2 // %3",toUpper _jobId,toUpper _status,_cargoText joinString ", "];
+        if (_scale < 0.10 && {_reason isNotEqualTo ""}) then {_label = _label + format [" // %1",toUpper _reason]};
+        _map drawIcon ["\A3\ui_f\data\map\markers\nato\b_support.paa",_c,_pos,18,18,0,_label,1,0.023,"PuristaMedium","right"];
+    };
+} forEach _logistics;

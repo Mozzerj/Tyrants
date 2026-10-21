@@ -41,8 +41,13 @@ private _westPublicToEast = ["west","east"] call TYR_fnc_StatePublicFaction;
 ["Enemy resources are redacted",count _westPublicToEast > 5 && {(_westPublicToEast # 5) isEqualTo [-1,-1,-1,-1]}] call _check;
 ["Enemy research and VLS targets are redacted",count _westPublicToEast > 7 && {count (_westPublicToEast # 6) isEqualTo 0} && {count (_westPublicToEast # 7) isEqualTo 0}] call _check;
 ["Enemy command network is redacted",count _westPublicToEast > 12 && {count (_westPublicToEast # 12) isEqualTo 0}] call _check;
+["Enemy HQ depot stock is redacted",count _westPublicToEast > 13 && {count (_westPublicToEast # 13) isEqualTo 0}] call _check;
 private _westPublicOwn = ["west","west"] call TYR_fnc_StatePublicFaction;
 ["Own command summary is available",count _westPublicOwn > 12 && {(_westPublicOwn # 12) isEqualType []} && {count (_westPublicOwn # 12) >= 7}] call _check;
+["Own HQ depot inventory is available",count _westPublicOwn > 13 && {(_westPublicOwn # 13) isEqualType []}] call _check;
+["Top-level logistics state exists",(TYR_State getOrDefault ["logistics",createHashMap]) isEqualType createHashMap] call _check;
+private _munitionsCatalog = ["west","munitions"] call TYR_fnc_ProductionGetCatalog;
+["Munitions production catalog contains general ammo",(_munitionsCatalog findIf {(_x # 0) isEqualTo "general_ammo"}) >= 0,str _munitionsCatalog] call _check;
 private _unknownLocationOk = true;
 private _westKnowledge = ["west","locations",""] call TYR_fnc_StateKnowledgeGet;
 {

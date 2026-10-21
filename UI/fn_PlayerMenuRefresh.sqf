@@ -11,13 +11,13 @@ private _res = _f # 5;
 (_d displayCtrl 22) ctrlSetText format ["Fuel: %1",round (_res # 2)];
 (_d displayCtrl 23) ctrlSetText format ["Manpower: %1",round (_res # 3)];
 
-private _context = "No factory in collection range";
+private _context = "No controlled factory in production range";
 private _nearFactory = false;
 {
     private _l = _x;
     if ((_l # 2) isEqualTo "factory" && {(_l # 4) isEqualTo TYR_PlayerFaction} && {player distance2D (_l # 3) < 80}) exitWith {
         _nearFactory = true;
-        _context = format ["%1 stock: %2 %3",_l # 1,round (_l # 5),toUpper (_l # 6)];
+        _context = format ["%1 // %2 // queue %3/3",_l # 1,toUpper (_l param [11,"factory"]),count (_l param [13,[]])];
     };
 } forEach values (TYR_ClientState get "locations");
 (_d displayCtrl 24) ctrlSetText _context;

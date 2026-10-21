@@ -7,15 +7,24 @@ if !(TYR_debugFaction in ["west","east","independent"]) then {TYR_debugFaction =
 (_d displayCtrl 130) ctrlSetText format ["SERVER %1 FPS // CLIENT %2 FPS // SAVE %3 // %4",round (missionNamespace getVariable ["TYR_debugServerFps",-1]),round diag_fps,missionNamespace getVariable ["TYR_debugSaveGeneration",-1],toUpper TYR_debugFaction];
 
 private _f = (TYR_ClientState get "factions") getOrDefault [TYR_debugFaction,[]];
-if (count _f >= 6) then {
-    private _r = _f # 5;
+private _debugMapData = missionNamespace getVariable ["TYR_DebugMapData",[]];
+private _debugFactions = if (_debugMapData isEqualType [] && {count _debugMapData >= 3}) then {_debugMapData # 2} else {[]};
+private _debugFactionRow = [];
+{if ((_x param [0,""]) isEqualTo TYR_debugFaction) exitWith {_debugFactionRow = _x}} forEach _debugFactions;
+if (count _f >= 4) then {
     (_d displayCtrl 205) ctrlSetText format ["TARGET // %1\n%2",toUpper (_f # 1),toUpper (_f # 3)];
-    (_d displayCtrl 221) ctrlSetText format ["STEEL %1   AMMO %2\nFUEL %3   MANPOWER %4",round (_r # 0),round (_r # 1),round (_r # 2),round (_r # 3)];
 };
+private _r = if (count _debugFactionRow > 9) then {_debugFactionRow # 9} else {if (count _f >= 6) then {_f # 5} else {[-1,-1,-1,-1]}};
+(_d displayCtrl 221) ctrlSetText format ["STEEL %1   LEGACY AMMO %2\nFUEL %3   MANPOWER %4",round (_r # 0),round (_r # 1),round (_r # 2),round (_r # 3)];
+private _depot = if (count _debugFactionRow > 10) then {_debugFactionRow # 10} else {if (count _f > 13) then {_f # 13} else {[]}};
+private _depotParts = [];
+{
+    if ((_x param [1,0]) > 0) then {_depotParts pushBack format ["%1 %2",toUpper (_x param [0,"stock"]),_x param [1,0]]};
+} forEach _depot;
+(_d displayCtrl 232) ctrlSetText format ["HQ DEPOT // %1",if (count _depotParts > 0) then {_depotParts joinString " // "} else {"EMPTY"}];
 (_d displayCtrl 131) ctrlSetText format ["CLIENT FPS %1\nSERVER FPS %2",round diag_fps,round (missionNamespace getVariable ["TYR_debugServerFps",-1])];
 
 private _cmdText = "STATUS --\nMAIN -- // OFFICERS --";
-private _debugMapData = missionNamespace getVariable ["TYR_DebugMapData",[]];
 private _networks = if (_debugMapData isEqualType [] && {count _debugMapData >= 7}) then {_debugMapData # 6} else {[]};
 {
     if ((_x param [0,""]) isEqualTo TYR_debugFaction) exitWith {

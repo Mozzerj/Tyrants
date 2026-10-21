@@ -46,21 +46,44 @@ call _refresh;
     disableSerialization;
     params ["_list"];
     private _last = -2;
+    private _lastRevision = -1;
     while {!isNull findDisplay 1201} do {
         private _sel = lbCurSel _list;
-        if (_sel isNotEqualTo _last) then {
+        private _revision = missionNamespace getVariable ["TYR_ClientLocationRevision",0];
+        if (_sel isNotEqualTo _last || {_revision isNotEqualTo _lastRevision}) then {
             _last = _sel;
+            _lastRevision = _revision;
             private _class = if (_sel >= 0) then {_list lbData _sel} else {""};
             private _d = findDisplay 1201;
             private _props = _d displayCtrl 6;
             lbClear _props;
+            (_d displayCtrl 7) ctrlEnable false;
+            (_d displayCtrl 7) ctrlSetText "NO PRODUCED STOCK";
             if (_class isNotEqualTo "" && {isClass (configFile >> "CfgVehicles" >> _class)}) then {
                 (_d displayCtrl 5) ctrlSetText getText (configFile >> "CfgVehicles" >> _class >> "editorPreview");
+                private _ready = 0;
+                private _productKey = format ["vehicle:%1",_class];
+                {
+                    private _l = _x;
+                    if (_l isEqualType [] && {count _l > 12} && {(_l # 2) isEqualTo "factory"} && {(_l # 4) isEqualTo TYR_PlayerFaction} && {(_l param [11,""]) isEqualTo "vehicle"}) then {
+                        {
+                            if ((_x param [0,""]) isEqualTo _productKey) then {_ready = _ready + (_x param [1,0])};
+                        } forEach (_l param [12,[]]);
+                    };
+                } forEach values (TYR_ClientState getOrDefault ["locations",createHashMap]);
+                private _buildTime = -1;
+                {
+                    if ((_x # 0) isEqualTo _productKey) exitWith {_buildTime = _x # 4};
+                } forEach ([TYR_PlayerFaction,"vehicle"] call TYR_fnc_ProductionGetCatalog);
                 _props lbAdd format ["Class: %1",_class];
-                _props lbAdd format ["Cost: %1 fuel",[_class] call TYR_fnc_VehicleCost];
+                _props lbAdd format ["Ready stock: %1 produced",_ready];
+                _props lbAdd format ["Factory build time: %1",if (_buildTime >= 0) then {format ["%1s",round _buildTime]} else {"LOCKED"}];
+                _props lbAdd "Release cost: 1 completed vehicle from factory stock";
                 _props lbAdd format ["Category: %1",toUpper ([_class] call TYR_fnc_VehicleCategory)];
                 _props lbAdd format ["Armour: %1",getNumber (configFile >> "CfgVehicles" >> _class >> "armor")];
                 _props lbAdd format ["Max speed: %1",getNumber (configFile >> "CfgVehicles" >> _class >> "maxSpeed")];
+                (_d displayCtrl 7) ctrlEnable (_ready > 0);
+                (_d displayCtrl 7) ctrlSetText (if (_ready > 0) then {"RELEASE PRODUCED VEHICLE"} else {"NO PRODUCED STOCK"});
             };
         };
         sleep 0.15;

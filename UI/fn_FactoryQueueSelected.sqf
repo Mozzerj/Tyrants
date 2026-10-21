@@ -1,0 +1,10 @@
+disableSerialization;
+private _d = findDisplay 1450;
+if (isNull _d) exitWith {};
+private _list = _d displayCtrl 10;
+private _sel = lbCurSel _list;
+if (_sel < 0) exitWith {};
+private _product = _list lbData _sel;
+private _factoryId = missionNamespace getVariable ["TYR_factoryMenuId",""];
+if (_product isEqualTo "" || {_factoryId isEqualTo ""}) exitWith {};
+[_factoryId,_product] remoteExecCall ["TYR_fnc_ServerQueueFactoryProduction",2];
