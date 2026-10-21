@@ -21,6 +21,7 @@ class TYR
         class ClientEndMission {};
         class ClientShowTestReport {};
         class DebugMenuRefresh {};
+        class ServerApplyDebugAction {};
         class ServerRunAutomatedTests {};
 
         class ServerBroadcastState {};
