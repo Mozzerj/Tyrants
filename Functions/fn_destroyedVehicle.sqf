@@ -1,11 +1,8 @@
-params["_vehicleClass","_position","_direction","_destroyedVehicles"];
+params ["_vehicleClass", "_position", "_direction", "_destroyedVehicles"];
 
-_simpleVehicle = createVehicle [_vehicleClass, _position, [], 0, "CAN_COLLIDE"]; 
-    
-_simpleVehicle setDamage [1,false];
-    
-_simpleVehicle setDir _direction;
+private _wreck = createVehicle [_vehicleClass, _position, [], 0, "CAN_COLLIDE"];
+_wreck setDir _direction;
+_wreck setDamage [1, false];
+_destroyedVehicles pushBack _wreck;
 
-_destroyedVehicles pushBack _simpleVehicle;
-
-_destroyedVehicles;
+_destroyedVehicles

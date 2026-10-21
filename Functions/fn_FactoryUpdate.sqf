@@ -1,58 +1,30 @@
-FactoryData  = ((GameData # 1) # 2);
-FactoryMultiplier = gameData # 0 # 0 # 0 # 5;
+if (!isServer) exitWith {};
+if (count (GameData # 1) < 3) exitWith {};
+
+private _factoryData = GameData # 1 # 2;
+private _settings = GameData # 0 # 0 param [1, []];
+private _factoryMultiplier = _settings param [6, 1];
 
 {
-    FactoryPartGroupResourceData = (_x # 6);
+    private _resource = _x # 6;
+    private _production = 0;
+    private _parts = _x # 5;
 
-    FactoryPartGroup = (_x # 5);
     {
-        
-        FactoryPart = _x;
-        
-        if (((str(FactoryPart)) find "dp_mainfactory_f") != -1) then {
-            
-            FactoryPartGroupResourceData = FactoryPartGroupResourceData + ((1-(damage FactoryPart)) * 250)
-            
-        };
-        if (((str(FactoryPart)) find "factory_main_f") != -1) then {
-            
-            FactoryPartGroupResourceData = FactoryPartGroupResourceData + ((1-(damage FactoryPart)) * 250)
-            
-        };
-        if (((str(FactoryPart)) find "dp_bigtank_f") != -1) then {
-            
-            FactoryPartGroupResourceData = FactoryPartGroupResourceData + ((1-(damage FactoryPart)) * 125)
-            
-        };
-        if (((str(FactoryPart)) find "dp_smalltank_f") != -1) then {
-            
-            FactoryPartGroupResourceData = FactoryPartGroupResourceData + ((1-(damage FactoryPart)) * 75)
-            
-        };
-        if (((str(FactoryPart)) find "storagetank_01_large_f") != -1) then {
-            
-            FactoryPartGroupResourceData = FactoryPartGroupResourceData + ((1-(damage FactoryPart)) * 125)
-            
-        };
-        if (((str(FactoryPart)) find "storagetank_01_small_f") != -1) then {
-            
-            FactoryPartGroupResourceData = FactoryPartGroupResourceData + ((1-(damage FactoryPart)) * 75)
-            
-        };
-        
-    }forEach FactoryPartGroup;
+        private _class = toLower typeOf _x;
+        private _output = 0;
 
-    FactoryPartGroupResourceData = (FactoryPartGroupResourceData * FactoryMultiplier);
-    
-    if (FactoryPartGroupResourceData > 50000) then {
-    
-        FactoryPartGroupResourceData = 50000;
-    
-    };
-    
-    (FactoryData # _forEachIndex) set [6, FactoryPartGroupResourceData];
-    
-}forEach FactoryData;
+        if (_class find "dp_mainfactory_f" >= 0 || {_class find "factory_main_f" >= 0}) then {_output = 250};
+        if (_class find "dp_bigtank_f" >= 0 || {_class find "storagetank_01_large_f" >= 0}) then {_output = 125};
+        if (_class find "dp_smalltank_f" >= 0 || {_class find "storagetank_01_small_f" >= 0}) then {_output = 75};
 
-(GameData # 1) set [2, FactoryData];
-publicVariable "GameData";
+        if (_output > 0) then {
+            _production = _production + ((1 - damage _x) * _output);
+        };
+    } forEach _parts;
+
+    _resource = (_resource + (_production * _factoryMultiplier)) min 50000;
+    _x set [6, _resource];
+} forEach _factoryData;
+
+GameData # 1 set [2, _factoryData];

@@ -1,24 +1,23 @@
+if (!isServer) exitWith {};
+
 {
-    _teamVehs = _x;
-    _TeamSide = _forEachIndex;
-
+    private _sideIndex = _forEachIndex;
+    private _updated = [];
     {
-        _vehicle = _x # 0;
-        _veh = _x # 1;
-        _Pcolor = _x # 2;
-        _mark = _x # 8;
-
-        gameData # 4 # _TeamSide set [_forEachIndex, [
-            _vehicle, 
-            _veh, 
-            _Pcolor, 
-            getAllHitPointsDamage _veh, 
-            magazinesAllTurrets _veh, 
-            fuel _veh, 
-            getDir _veh, 
-            getPos _veh,
-            _mark
-        ]];
-    } forEach _teamVehs;
-
-} forEach gameData # 4;
+        private _veh = _x # 1;
+        if (!isNull _veh && {alive _veh}) then {
+            _updated pushBack [
+                _x # 0,
+                _veh,
+                _x # 2,
+                getAllHitPointsDamage _veh,
+                magazinesAllTurrets _veh,
+                fuel _veh,
+                getDir _veh,
+                getPosATL _veh,
+                "undefined"
+            ];
+        };
+    } forEach _x;
+    GameData # 4 set [_sideIndex, _updated];
+} forEach (GameData # 4);

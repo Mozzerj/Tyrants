@@ -1,110 +1,49 @@
-[] call TYR_fnc_TYRVarCheck;
+diag_log "[TYRANTS] Server initialisation started.";
 
-TyrantsMain = profileNamespace getVariable ["Tyrants", False];
-GameData = TyrantsMain # 1;
-publicVariable "GameData";
-
-waitUntil {!isNull (findDisplay 70)};
-sleep 1;
-
-switch (gameData # 0 # 0 # 0) do {
-    case 0: {
-        
-        sleep 0.5;
-
-        while {gameData # 0 # 0 # 0 == 0} do {
-
-            execVM "Setup\GameSetupStage0\DialogSetup.sqf";
-
-            sleep 0.5;
-
-            waitUntil {isNull findDisplay 1000};
-        };
+addMissionEventHandler ["PlayerConnected", {
+    params ["_id", "_uid", "_name", "_jip", "_owner", "_idStr"];
+    if (_owner > 2 && {!isNil "GameData"}) then {
+        _owner publicVariableClient "GameData";
     };
-	case 1: { execVM "Setup\GameSetupStage1\VehicleSetup.sqf";};
-	case 2: { 
-        
-        sleep 0.5;
-
-        while {gameData # 0 # 0 # 0 == 0} do {
-
-            execVM "Setup\GameSetupStage2\FactionSetup.sqf";
-
-            sleep 0.5;
-
-            waitUntil {isNull findDisplay 1002};
-        };
-        
-    };
-
-};
-
-switch (GameData # 1) do {
-    case 0: {
-		execVM "Setup\GameSetupStage0\LocationSetup.sqf";
-	};
-};
-
-
-
-
-
-addMissionEventHandler ["BuildingChanged", {
-	params ["_from", "_to", "_isRuin"];
-
-	if (_isRuin) then {(gameData # 2 # 0)pushBack _from; publicVariable "gameData"};
-
-	
 }];
 
-waitUntil {GameData # 0 # 1 # 0 isNotEqualTo 0};
-waitUntil {GameData # 0 # 2 # 0 isNotEqualTo 0};
+[] call TYR_fnc_ServerLoadState;
+[] call TYR_fnc_ServerBuildLocations;
 
-gameData # 0 # 0 set[0, 4];
-publicVariable "gameData";
-
-execVM "Init\EastBaseInit.sqf";
-execVM "Init\WestBaseInit.sqf";
-
-
-/*
-waitUntil {!isNull (findDisplay 70)};
-sleep 1;
-
-switch ((GameData # 0 # 0 # 0)) do {
-    case 0: {
-        while {GameData # 0 # 0 # 0 isEqualTo 0} do {
-            sleep 0.5;
-            if (isNull findDisplay 1000) then {
-                execVM "Setup\GameSetup.sqf";
-            };
-        };
+addMissionEventHandler ["BuildingChanged", {
+    params ["_from", "_to", "_isRuin"];
+    if (_isRuin && {!isNull _from}) then {
+        private _record = [typeOf _from, getPosWorld _from, getDir _from];
+        (GameData # 2 # 0) pushBackUnique _record;
+        [] call TYR_fnc_ServerSaveState;
     };
+}];
 
-    default {
-        if (GameData # 0 # 2 # 0 isNotEqualTo 0) then {
-            execVM "init\EastBaseInit.sqf";
-        };
-
-        if (GameData # 0 # 1 # 0 isNotEqualTo 0) then {
-            execVM "init\WestBaseInit.sqf"; 
-        };
-    };
+if ((GameData # 0 # 0 # 0) < 3) then {
+    [] spawn TYR_fnc_ServerStartSetup;
 };
 
-
-switch (GameData # 1) do {
-    case 0: {
-		execVM "Setup\LocationSetup.sqf";
-		execVM "Setup\VehicleSetup.sqf"
-	};
+waitUntil {
+    sleep 1;
+    (GameData # 0 # 0 # 0) >= 3
 };
-waitUntil {gameData # 0 # 0 # 0 isNotEqualTo 0};
-waitUntil {gameData # 0 # 1 # 0 isNotEqualTo 0};
-waitUntil {gameData # 0 # 2 # 0 isNotEqualTo 0};
 
-sleep 2;
+// Stage 3 is base placement. Commanders submit their positions to the server.
+waitUntil {
+    sleep 1;
+    (GameData # 0 # 1 # 0) isNotEqualTo 0 &&
+    {(GameData # 0 # 2 # 0) isNotEqualTo 0}
+};
 
-execVM "GameUpdate\GameLoop.sqf";
-execVM "Init\CreateVehicles.sqf";
-execVM "Init\destroyedObjects.sqf";
+GameData # 0 # 0 set [0, 4];
+[] call TYR_fnc_ServerBroadcastState;
+[] call TYR_fnc_ServerSaveState;
+
+[0] call TYR_fnc_ServerInitBase;
+[1] call TYR_fnc_ServerInitBase;
+
+[] call TYR_fnc_ServerRestoreDestroyedObjects;
+[] call TYR_fnc_ServerRestoreVehicles;
+
+[] execVM "GameUpdate\GameLoop.sqf";
+diag_log "[TYRANTS] Server initialisation complete.";

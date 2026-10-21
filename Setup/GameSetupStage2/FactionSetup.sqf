@@ -1,25 +1,21 @@
-createDialog "SetupMenuFactions";
+if (isNil "TYR_setupVehicleCatalog") exitWith {
+    hint "Vehicle scan data was lost. Restarting vehicle setup.";
+    [] execVM "Setup\GameSetupStage1\VehicleSetup.sqf";
+};
 
-_setupMenu = findDisplay 1002;
+createDialog "TYR_SetupMenuFactions";
+private _setupMenu = findDisplay 1102;
+if (isNull _setupMenu) exitWith {};
 
-_FactionLB = _setupMenu displayCtrl 1;
-_addFaction = _setupMenu displayCtrl 2;
-_SelectedFactionLB = _setupMenu displayCtrl 3;
-
+private _available = _setupMenu displayCtrl 1;
+private _selected = _setupMenu displayCtrl 2;
 {
-
-    if (_x == "") then {
-
-        _FactionLB lbAdd "Vanilla";
-
-    }
-    else
-    {
-
-        _FactionLB lbAdd _x;
-
+    private _label = if (_x isEqualTo "") then {"Vanilla"} else {_x};
+    if (_label isEqualTo "Vanilla") then {
+        _selected lbAdd _label;
+    } else {
+        _available lbAdd _label;
     };
-    
+} forEach (TYR_setupVehicleCatalog # 0);
 
-} forEach gameData # 3 # 0;
-
+[-1, -1] execVM "Setup\GameSetupStage2\FactionMenuUpdate.sqf";

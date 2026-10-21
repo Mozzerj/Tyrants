@@ -1,82 +1,33 @@
-createDialog "SetupMenu";
+createDialog "TYR_SetupMenu";
 
-_setupMenu = findDisplay 1000;
+private _setupMenu = findDisplay 1100;
+if (isNull _setupMenu) exitWith {};
 
 if (!isNil "commanderWest") then {
-_setupMenu displayCtrl 41 ctrlSetText (name commanderWest);
+    _setupMenu displayCtrl 41 ctrlSetText (name commanderWest);
 };
-
 if (!isNil "commanderEast") then {
     _setupMenu displayCtrl 42 ctrlSetText (name commanderEast);
 };
 
 {
-    if ((str _x find "West") != -1) then {
-        _setupMenu displayCtrl 43 lbAdd (name _X);
-    }
-    else
-    {
-        _setupMenu displayCtrl 44 lbAdd (name _X);
-    };
+    private _target = if (side _x isEqualTo west) then {43} else {44};
+    (_setupMenu displayCtrl _target) lbAdd (name _x);
 } forEach allPlayers;
 
-_cb1 = _setupMenu displayCtrl 1;
-_cb1 lbAdd "60";
-_cb1 lbAdd "90";
-_cb1 lbAdd "120";
-_cb1 lbAdd "180";
+private _options = [
+    [1, ["60", "90", "120", "180"], 2],
+    [2, ["50", "100", "175", "250"], 2],
+    [3, ["15000", "20000", "30000", "40000", "50000", "75000"], 2],
+    [4, ["15000", "20000", "30000", "40000", "50000", "75000"], 2],
+    [5, ["15000", "20000", "30000", "40000", "50000", "75000"], 2],
+    [6, ["15", "20", "30", "40", "50", "75"], 2],
+    [7, ["0.5x", "1.0x", "1.5x", "2.0x", "2.5x", "3.0x"], 1],
+    [8, ["0.5x", "1.0x", "1.5x", "2.0x", "2.5x", "3.0x"], 1]
+];
 
-_cb2 = _setupMenu displayCtrl 2;
-_cb2 lbAdd "50";
-_cb2 lbAdd "100";
-_cb2 lbAdd "175";
-_cb2 lbAdd "250";
-
-_cb3 = _setupMenu displayCtrl 3;
-_cb3 lbAdd "15000";
-_cb3 lbAdd "20000";
-_cb3 lbAdd "30000";
-_cb3 lbAdd "40000";
-_cb3 lbAdd "50000";
-_cb3 lbAdd "75000";
-
-_cb4 = _setupMenu displayCtrl 4;
-_cb4 lbAdd "15000";
-_cb4 lbAdd "20000";
-_cb4 lbAdd "30000";
-_cb4 lbAdd "40000";
-_cb4 lbAdd "50000";
-_cb4 lbAdd "75000";
-
-_cb5 = _setupMenu displayCtrl 5;
-_cb5 lbAdd "15000";
-_cb5 lbAdd "20000";
-_cb5 lbAdd "30000";
-_cb5 lbAdd "40000";
-_cb5 lbAdd "50000";
-_cb5 lbAdd "75000";
-
-_cb6 = _setupMenu displayCtrl 6;
-_cb6 lbAdd "15";
-_cb6 lbAdd "20";
-_cb6 lbAdd "30";
-_cb6 lbAdd "40";
-_cb6 lbAdd "50";
-_cb6 lbAdd "75";
-
-_cb7 = _setupMenu displayCtrl 7;
-_cb7 lbAdd "0.5x";
-_cb7 lbAdd "1.0x";
-_cb7 lbAdd "1.5x";
-_cb7 lbAdd "2.0x";
-_cb7 lbAdd "2.5x";
-_cb7 lbAdd "3.0x";
-
-_cb8 = _setupMenu displayCtrl 8;
-_cb8 lbAdd "0.5x";
-_cb8 lbAdd "1.0x";
-_cb8 lbAdd "1.5x";
-_cb8 lbAdd "2.0x";
-_cb8 lbAdd "2.5x";
-_cb8 lbAdd "3.0x";
-
+{
+    private _ctrl = _setupMenu displayCtrl (_x # 0);
+    {_ctrl lbAdd _x} forEach (_x # 1);
+    _ctrl lbSetCurSel (_x # 2);
+} forEach _options;

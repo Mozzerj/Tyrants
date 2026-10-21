@@ -1,32 +1,20 @@
-basicUpdate = {
-    if (!isNil markerBLUFOR) then {markerBLUFOR setMarkerPos gameData # 0 # 1 # 0};
-    if (!isNil markerOPFOR) then {markerOPFOR setMarkerPos gameData # 0 # 2 # 0};
-    [] call TYR_fnc_FactoryUpdate;
-};
+if (!isServer) exitWith {};
 
-basicIncome = {
-
-    gameData # 0 # 1 set [1,(gameData # 0 # 1 # 1 + 250)];
-    gameData # 0 # 1 set [2,(gameData # 0 # 1 # 2 + 250)];
-    gameData # 0 # 1 set [3,(gameData # 0 # 1 # 3 + 250)];
-    gameData # 0 # 1 set [4,(gameData # 0 # 1 # 4 + 1)];
-
-    gameData # 0 # 2 set [1,(gameData # 0 # 2 # 1 + 250)];
-    gameData # 0 # 2 set [2,(gameData # 0 # 2 # 2 + 250)];
-    gameData # 0 # 2 set [3,(gameData # 0 # 2 # 3 + 250)];
-    gameData # 0 # 2 set [4,(gameData # 0 # 2 # 4 + 1)];
-
-};
-
-
-
-while {True} do {
-
+while {true} do {
     for "_i" from 0 to 4 do {
         sleep 15;
-        [] call TYR_fnc_vehicleUpdate;
+        [] call TYR_fnc_VehicleUpdate;
     };
 
-    call basicUpdate;
-    call basicIncome;
+    [] call TYR_fnc_FactoryUpdate;
+
+    for "_teamIndex" from 1 to 2 do {
+        GameData # 0 # _teamIndex set [1, (GameData # 0 # _teamIndex # 1) + 250];
+        GameData # 0 # _teamIndex set [2, (GameData # 0 # _teamIndex # 2) + 250];
+        GameData # 0 # _teamIndex set [3, (GameData # 0 # _teamIndex # 3) + 250];
+        GameData # 0 # _teamIndex set [4, (GameData # 0 # _teamIndex # 4) + 1];
+    };
+
+    [] call TYR_fnc_ServerBroadcastState;
+    [] call TYR_fnc_ServerSaveState;
 };

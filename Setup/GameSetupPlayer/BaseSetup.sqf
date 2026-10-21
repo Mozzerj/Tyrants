@@ -1,53 +1,40 @@
-_LocationChosen = false;
+if (Pside < 0) exitWith {};
+if ((GameData # 0 # (Pside + 1) # 0) isNotEqualTo 0) exitWith {};
 
-openMap [true,true];
+waitUntil {!isNil "TYR_dividerSlope" && {!isNil "TYR_dividerIntercept"}};
+openMap [true, true];
 
-pos = [0,0,0];
-_lineY = 0;
-_pointY = 1;
+TYR_baseSelectionDone = false;
+TYR_baseSelectionPos = [0, 0, 0];
 
-switch (Pside) do {
-    case 0: { lineSide = 500 };
-    case 1: { lineSide = -500 };
-};
+onMapSingleClick {
+    private _lineY = TYR_dividerSlope * (_pos # 0) + TYR_dividerIntercept;
+    private _pointY = _pos # 1;
+    private _validSide = (Pside isEqualTo 0 && {_pointY < _lineY}) || (Pside isEqualTo 1 && {_pointY > _lineY});
 
-
-LocationChoose = {
-    clicked = false;
-
-    if (((Pside == 0 && _pointY < _lineY) || (Pside == 1 && _pointY > _lineY)) && (!surfaceIsWater [pos select 0, pos select 1])) then {
+    if (_validSide && {!surfaceIsWater [_pos # 0, _pos # 1]}) then {
+        TYR_baseSelectionPos = _pos;
+        TYR_baseSelectionDone = true;
         onMapSingleClick "";
-        LocationChosen = true;
     } else {
-        onMapSingleClick "pos = _pos; clicked = true";
-        waitUntil {clicked};
-
-        _pointX = (pos select 0);
-        _pointY = (pos select 1);
-        _lineY = m * _pointX + b;
-
-        call LocationChoose;
+        hint "Choose a land position on your side of the dividing line.";
     };
 };
 
-call LocationChoose;
-
-waitUntil {LocationChosen};
-
-switch (Pside) do {
-    case 0: {
-        GameData # 0 # 1 set [0, pos];
-    };
-    case 1: {
-        GameData # 0 # 2 set [0, pos];
-    };
+waitUntil {
+    sleep 0.1;
+    TYR_baseSelectionDone
 };
 
-deleteMarkerLocal divederMarker;
-deleteMarkerLocal divederMarker1;
+[Pside, TYR_baseSelectionPos] remoteExecCall ["TYR_fnc_ServerSetBasePosition", 2];
 
+waitUntil {
+    sleep 0.25;
+    (GameData # 0 # (Pside + 1) # 0) isNotEqualTo 0
+};
+
+deleteMarkerLocal "TYR_dividerNorth";
+deleteMarkerLocal "TYR_dividerSouth";
 [0, "BLACK", 3, 1] spawn BIS_fnc_fadeEffect;
-sleep 5;
+sleep 1;
 openMap [false, false];
-
-publicVariable "GameData";

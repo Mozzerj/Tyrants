@@ -18,6 +18,47 @@ class CfgFunctions {
 
 };
 
+import CfgRemoteExec as CfgRemoteExecDefault;
+
+class CfgRemoteExec : CfgRemoteExecDefault
+{
+    class Functions
+    {
+        mode = 1;
+        jip = 0;
+
+        class BIS_fnc_effectKilledAirDestruction { allowedTargets = 0; jip = 0; };
+        class BIS_fnc_effectKilledSecondaries { allowedTargets = 0; jip = 0; };
+        class BIS_fnc_fire { allowedTargets = 0; jip = 0; };
+        class BIS_fnc_objectVar { allowedTargets = 0; jip = 0; };
+        class BIS_fnc_setCustomSoundController { allowedTargets = 0; jip = 0; };
+
+        class TYR_fnc_StartSetupClient { allowedTargets = 1; };
+        class TYR_fnc_ApplyPlayerLoadout { allowedTargets = 1; };
+        class TYR_fnc_ClientHint { allowedTargets = 0; };
+        class TYR_fnc_ClientEndMission { allowedTargets = 0; };
+        class TYR_fnc_ServerApplySettings { allowedTargets = 2; };
+        class TYR_fnc_ServerApplyVehicleCatalog { allowedTargets = 2; };
+        class TYR_fnc_ServerSetBasePosition { allowedTargets = 2; };
+        class TYR_fnc_ServerMoveBase { allowedTargets = 2; };
+        class TYR_fnc_ServerAttachAccountant { allowedTargets = 2; };
+        class TYR_fnc_ServerRegisterPlayer { allowedTargets = 2; };
+        class TYR_fnc_ServerSavePlayer { allowedTargets = 2; };
+        class TYR_fnc_ServerBeginArsenal { allowedTargets = 2; };
+        class TYR_fnc_ServerPurchaseLoadout { allowedTargets = 2; };
+        class TYR_fnc_ServerResetGame { allowedTargets = 2; };
+        class TYR_fnc_ServerCaptureRegion { allowedTargets = 2; };
+        class TYR_fnc_ServerCollectFactory { allowedTargets = 2; };
+        class TYR_fnc_ServerBuyVehicle { allowedTargets = 2; };
+    };
+
+    class Commands
+    {
+        mode = 1;
+        jip = 0;
+    };
+};
+
 
 
 

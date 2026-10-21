@@ -1,212 +1,123 @@
-waitUntil {gamedata # 0 # (pside + 1) # 0 isNotEqualTo 0};
+disableSerialization;
 
-// basic script setup
-
-sleep 2;
-
-_map = findDisplay 12;
-_mapCtrl = _map displayCtrl 51;
-marks = [];
-ctrlCount = 0;
-MapLB = missionConfigFile >> "myMissionConfig" >> "RscMapListbox";
-BaseMapLB = missionConfigFile >> "myMissionConfig" >> "RscBaseMapListbox";
-
-waitUntil {!isNull (findDisplay 46)};
-
-
-
-
-
-
-
-
-
-// create player overlay on screen to display capture time or mission info                this is the top middle thing 
-
-_OverlayBackground = (findDisplay 46) ctrlCreate [MapLB, (3000)];// id 3000 - 3999 for player overaly ctrls
-_OverlayHeader = (findDisplay 46) ctrlCreate ["RscText", (3001)];
-
-_OverlayBackground ctrlSetPosition [(safeZoneX + safeZoneW * 0.45),(safeZoneY + safeZoneH * 0.01), 0.2,  0.12];
-_OverlayHeader ctrlSetPosition [(safeZoneX + safeZoneW * 0.45),(safeZoneY + safeZoneH * 0.01), 0.2, 0.025];
-
-_OverlayBackground ctrlCommit 0;
-_OverlayHeader ctrlCommit 0;
-
-_OverlayBackground ctrlSetBackgroundColor [0,0,0,0];
-_OverlayHeader ctrlSetBackgroundColor [0,0,0,0];
-
-
-
-
-
-
-
-
-
-
-
-
-
-// marker for the player base
-_BaseBackGround = _map ctrlCreate [BaseMapLB, 3002]; // id 2000 - 2999 for map ctrls
-_BaseHeader = _map ctrlCreate ["RscText", 3003];
-
-_BaseHeader ctrlSetText "Hideout";
-
-_screenPos = _mapCtrl ctrlMapWorldToScreen (gamedata # 0 # (pside + 1) # 0); 
-
-_BaseBackGround ctrlSetPosition [_screenPos select 0, _screenPos select 1, 0.16, 0.155];
-_BaseHeader ctrlSetPosition [_screenPos select 0, _screenPos select 1, 0.16, 0.025];
-
-_BaseBackGround ctrlCommit 0;
-_BaseHeader ctrlCommit 0;
-
-
-
-
-
-
-
-
-
-
-
-
-// set the correct colour for the base
-switch (Pside) do {
-    case 0: { _BaseHeader ctrlSetBackgroundColor [0.00, 0.30, 0.60, 1.00]};
-    case 1: { _BaseHeader ctrlSetBackgroundColor [0.50, 0.00, 0.00, 1.00]};
+waitUntil {
+    sleep 0.25;
+    (GameData # 0 # (Pside + 1) # 0) isNotEqualTo 0
 };
-_BaseBackGround ctrlSetBackgroundColor [0,0,0,0.7];
+waitUntil {!isNull findDisplay 46};
 
-baseMarks = [_BaseHeader,_BaseBackGround];
+private _mainDisplay = findDisplay 46;
+private _mapLB = missionConfigFile >> "myMissionConfig" >> "RscMapListbox";
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CreateTownInfo = {
-    params["_map","_mapCtrl","_pos"];
-
-    _BackGround = _map ctrlCreate [MapLB, (ctrlCount + 2000)]; // id 2000 - 2999 for map ctrls
-    ctrlCount = ctrlCount + 1;
-
-    _Header = _map ctrlCreate ["RscText", (ctrlCount + 2000)];
-    ctrlCount = ctrlCount + 1;
-
-    _Pos = _Pos vectorAdd [0,-20,0];
-    _screenPos = _mapCtrl ctrlMapWorldToScreen _Pos; 
-
-    _BackGround ctrlSetPosition [_screenPos select 0, _screenPos select 1, 0.15,  0.12];
-    _Header ctrlSetPosition [_screenPos select 0, _screenPos select 1, 0.15, 0.025];
-
-    _BackGround ctrlCommit 0;
-    _Header ctrlCommit 0;
-
-    _Header ctrlSetBackgroundColor [0.851,0.5647,0.0863,1];
-    _BackGround ctrlSetBackgroundColor [0,0,0,0.7];
-
-    marks pushBack [_Header,_BackGround, _pos];
-
+// Persistent screen overlay used by capture/resource feedback.
+if (isNull (_mainDisplay displayCtrl 3000)) then {
+    private _overlayBackground = _mainDisplay ctrlCreate [_mapLB, 3000];
+    private _overlayHeader = _mainDisplay ctrlCreate ["RscText", 3001];
+    _overlayBackground ctrlSetPosition [safeZoneX + safeZoneW * 0.45, safeZoneY + safeZoneH * 0.01, 0.2, 0.12];
+    _overlayHeader ctrlSetPosition [safeZoneX + safeZoneW * 0.45, safeZoneY + safeZoneH * 0.01, 0.2, 0.025];
+    _overlayBackground ctrlSetBackgroundColor [0, 0, 0, 0];
+    _overlayHeader ctrlSetBackgroundColor [0, 0, 0, 0];
+    _overlayBackground ctrlCommit 0;
+    _overlayHeader ctrlCommit 0;
 };
 
-UpdateMarks = {
-    params["_Header","_Background","_Pos","_height","_width","_height1","_width1"];
+TYR_mapMarks = [];
+TYR_baseMarks = [];
 
-    _map = findDisplay 12;
-    _mapCtrl = _map displayCtrl 51;
+TYR_updateMapCard = {
+    params ["_header", "_background", "_pos", "_height", "_width"];
+    if (isNull _header || {isNull _background}) exitWith {};
 
-    _Pos = _Pos vectorAdd [0,-20,0];
-    _screenPos = _mapCtrl ctrlMapWorldToScreen _Pos; 
+    private _mapDisplay = findDisplay 12;
+    if (isNull _mapDisplay) exitWith {};
+    private _ctrl = _mapDisplay displayCtrl 51;
+    if (isNull _ctrl) exitWith {};
 
-    _BackGround ctrlSetPosition [_screenPos select 0, (_screenPos select 1), _width,  _height];
-    _Header ctrlSetPosition [_screenPos select 0, _screenPos select 1, _width1, _height1];
-
-    _Header ctrlSetScale (1 - ctrlMapScale  _mapCtrl);
-    _BackGround ctrlSetScale (1 - ctrlMapScale  _mapCtrl);
-    
-    _BackGround ctrlCommit 0;
-    _Header ctrlCommit 0;
-
+    private _screenPos = _ctrl ctrlMapWorldToScreen (_pos vectorAdd [0, -20, 0]);
+    _background ctrlSetPosition [_screenPos # 0, _screenPos # 1, _width, _height];
+    _header ctrlSetPosition [_screenPos # 0, _screenPos # 1, _width, 0.025];
+    _header ctrlSetScale (1 - ctrlMapScale _ctrl);
+    _background ctrlSetScale (1 - ctrlMapScale _ctrl);
+    _background ctrlCommit 0;
+    _header ctrlCommit 0;
 };
 
-
-
-
-
-// creates the markers on the map
-{
-
-    _yy = _X;
+TYR_refreshMapCardPositions = {
+    if (isNull findDisplay 12) exitWith {};
     {
-        _map = findDisplay 12;
-        _mapCtrl = _map displayCtrl 51;
-        _Pos = _x select 4;
+        [_x # 1, _x # 2, _x # 3, 0.12, 0.15] call TYR_updateMapCard;
+    } forEach TYR_mapMarks;
 
-        [_map,_mapCtrl,_Pos]call CreateTownInfo;
+    if (count TYR_baseMarks >= 2) then {
+        [TYR_baseMarks # 0, TYR_baseMarks # 1, GameData # 0 # (Pside + 1) # 0, 0.155, 0.16] call TYR_updateMapCard;
+    };
+};
 
-        sleep 0.02;
+TYR_createMapControls = {
+    disableSerialization;
+    private _map = findDisplay 12;
+    if (isNull _map) exitWith {};
 
-        _x set [count _x - 1,ctrlCount - 2];
+    private _mapLB = missionConfigFile >> "myMissionConfig" >> "RscMapListbox";
+    private _baseMapLB = missionConfigFile >> "myMissionConfig" >> "RscBaseMapListbox";
 
-    }forEach _yy;
+    // The map display is recreated each time it is opened, so these controls must be too.
+    TYR_mapMarks = [];
+    TYR_baseMarks = [];
 
-} forEach (GameData # 1);
-publicVariable "GameData";
+    private _baseBackground = _map ctrlCreate [_baseMapLB, 3002];
+    private _baseHeader = _map ctrlCreate ["RscText", 3003];
+    _baseHeader ctrlSetText "Hideout";
+    _baseHeader ctrlSetBackgroundColor (if (Pside isEqualTo 0) then {[0.00, 0.30, 0.60, 1.00]} else {[0.50, 0.00, 0.00, 1.00]});
+    _baseBackground ctrlSetBackgroundColor [0, 0, 0, 0.7];
+    TYR_baseMarks = [_baseHeader, _baseBackground];
 
-
-
-
-
-
-
-// adds an event handler that updates the position when it is moved so they are in the correct position relative to the map
-_map displayAddEventHandler ["MouseMoving", {
+    private _nextIdc = 2000;
     {
-        _Header =(marks # _forEachIndex # 0);
-        _BackGround = (marks # _forEachIndex # 1);
-        _pos = (marks # _forEachIndex # 2);
+        {
+            private _background = _map ctrlCreate [_mapLB, _nextIdc];
+            _nextIdc = _nextIdc + 1;
+            private _header = _map ctrlCreate ["RscText", _nextIdc];
+            _nextIdc = _nextIdc + 1;
+            _header ctrlSetText (_x # 0);
+            _header ctrlSetBackgroundColor [0.851, 0.5647, 0.0863, 1];
+            _background ctrlSetBackgroundColor [0, 0, 0, 0.7];
+            TYR_mapMarks pushBack [_x # 0, _header, _background, _x # 4];
+        } forEach _x;
+    } forEach (GameData # 1);
 
-        [_Header, _BackGround, _pos, 0.12, 0.15, 0.025, 0.15]call UpdateMarks;
+    call TYR_refreshMapCardPositions;
+    _map displayAddEventHandler ["MouseMoving", {call TYR_refreshMapCardPositions}];
+    _map displayAddEventHandler ["MouseHolding", {call TYR_refreshMapCardPositions}];
+};
 
-        
-    } forEach marks;
+if (isNil "TYR_mapEventHandler") then {
+    TYR_mapEventHandler = addMissionEventHandler ["Map", {
+        params ["_mapIsOpened", "_mapIsForced"];
+        if (_mapIsOpened) then {
+            [] spawn {
+                disableSerialization;
+                waitUntil {
+                    sleep 0.01;
+                    !isNull findDisplay 12
+                };
+                call TYR_createMapControls;
+            };
+        } else {
+            TYR_mapMarks = [];
+            TYR_baseMarks = [];
+        };
+    }];
+};
 
-    [baseMarks # 0, baseMarks # 1, (gamedata # 0 # (pside + 1) # 0), 0.155, 0.16, 0.025, 0.16]call UpdateMarks;
-}];
+// Handle the uncommon case where this script starts while the map is already open.
+if (visibleMap) then {
+    call TYR_createMapControls;
+};
 
-_map displayAddEventHandler ["MouseHolding", {
-    {
-        
-        _Header =(marks # _forEachIndex # 0);
-        _BackGround = (marks # _forEachIndex # 1);
-        _pos = (marks # _forEachIndex # 2);
-
-        [_Header, _BackGround, _pos, 0.12, 0.15, 0.025, 0.15]call UpdateMarks;
-
-    } forEach marks;
-
-    [baseMarks # 0, baseMarks # 1, (gamedata # 0 # (pside + 1) # 0), 0.155, 0.16, 0.025, 0.16]call UpdateMarks;
-}];
-
-
-
-
-
-
-
-execVM "player\PlayerLoops\mapUpdate.sqf"
-execVM "player\PlayerLoops\mapCapture.sqf"
-execVM "player\PlayerLoops\LoadoutSave.sqf"
+if (isNil "TYR_playerLoopsStarted") then {
+    TYR_playerLoopsStarted = true;
+    [] execVM "Player\PlayerLoops\mapUpdate.sqf";
+    [] execVM "Player\PlayerLoops\mapCapture.sqf";
+    [] execVM "Player\PlayerLoops\LoadoutSave.sqf";
+};

@@ -1,56 +1,36 @@
-params["_selectedFaction","_updown"];
+params ["_selectedFaction", "_direction"];
+if (isNil "TYR_setupVehicleCatalog") exitWith {};
 
-_setupMenu = findDisplay 1002;
+private _setupMenu = findDisplay 1102;
+if (isNull _setupMenu) exitWith {};
+private _selectedList = _setupMenu displayCtrl 2;
+private _availableList = _setupMenu displayCtrl 1;
+private _vehicleList = _setupMenu displayCtrl 5;
 
-_selectedFactionLB = _setupMenu displayCtrl 2;
-_FactionLB = _setupMenu displayCtrl 1;
-_AvailableVehLB = _setupMenu displayCtrl 5;
-
-switch (_updown) do {
-    case 0: { 
-        _selectedFactionText = _FactionLB lbText (_selectedFaction);
-        _FactionLB lbDelete _selectedFaction;
-
-        if (_selectedFactionText != "") then {
-            _selectedFactionLB lbAdd _selectedFactionText;
+if (_selectedFaction >= 0) then {
+    switch (_direction) do {
+        case 0: {
+            private _text = _availableList lbText _selectedFaction;
+            _availableList lbDelete _selectedFaction;
+            if (_text isNotEqualTo "") then {_selectedList lbAdd _text};
         };
-    };
-    case 1: { 
-        _selectedFactionText = _selectedFactionLB lbText (_selectedFaction);
-        _selectedFactionLB lbDelete _selectedFaction;
-
-        if (_selectedFactionText != "") then {
-            _FactionLB lbAdd _selectedFactionText;
+        case 1: {
+            private _text = _selectedList lbText _selectedFaction;
+            _selectedList lbDelete _selectedFaction;
+            if (_text isNotEqualTo "") then {_availableList lbAdd _text};
         };
     };
 };
 
-_dlcs = [];
-lbClear _AvailableVehLB;
-
-for "_i" from 0 to (lbSize _selectedFactionLB - 1) do {
-    private _item = _selectedFactionLB lbText _i;
-
-    if (_item == "Vanilla") then {
-        _dlcs pushBack ""; 
-    } 
-    else 
-    {
-        _dlcs pushBack _item; 
-    };
+private _dlcs = [];
+for "_i" from 0 to (lbSize _selectedList - 1) do {
+    private _item = _selectedList lbText _i;
+    _dlcs pushBack (if (_item isEqualTo "Vanilla") then {""} else {_item});
 };
 
-
+lbClear _vehicleList;
 {
-
-    {
-
-        if ((_x # 2) in _dlcs) then {
-
-            _AvailableVehLB lbAdd _x # 0;
-            
-        };
-            
-    } forEach _x;
-    
-} forEach gameData # 3 # 1;
+    if ((_x # 2) in _dlcs) then {
+        _vehicleList lbAdd (_x # 0);
+    };
+} forEach (TYR_setupVehicleCatalog # 1);

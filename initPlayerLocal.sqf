@@ -1,230 +1,164 @@
-// player init and basic setup
-
-
 titleCut ["", "BLACK IN", 4];
+
+waitUntil {
+    sleep 0.1;
+    !isNil "GameData"
+};
 
 player setUnitTrait ["Medic", true];
 player setUnitTrait ["UAVHacker", true];
 player setUnitTrait ["explosiveSpecialist", true];
 player setUnitTrait ["engineer", true];
 
-[] call TYR_fnc_TYRVarCheck;
-
-TyrantsMain = profileNamespace getVariable ["Tyrants", False];
-TyrantsPFP = TyrantsMain # 0;
-
+TYR_playerProfileUI = [profileName, "Private", 1];
 
 switch (playerSide) do {
-	case WEST: {Pside = 0;PColor = "ColorWest";PlayerOverlayColor =  [0.00, 0.30, 0.60, 1.00]};
-	case EAST: {Pside = 1;PColor = "ColorEast";PlayerOverlayColor =  [0.50, 0.00, 0.00, 1.00]};
-};
-
-
-// case 0: game is brand new nothing has been setup wait for server host to do setup
-switch (gameData # 0 # 0 # 0) do {
-	case 0: { execVM "Setup\GameSetupPlayer\GameInit.sqf"};
-	case 1: { execVM "Setup\GameSetupPlayer\GameInit.sqf"};
-	case 2: { execVM "Setup\GameSetupPlayer\GameInit.sqf"};
-	case 3: { execVM "Setup\GameSetupPlayer\GameInit.sqf"};
-
-};
-
-waitUntil {(gameData # 0 # 0 # 0 == 4)};
-
-execVM "Player\PlayerInit\PlayerMapCreation.sqf";
-
-{
-	if ((_x # 0) isEqualTo getPlayerUID player) exitwith {
-		
-		
-		PFPID = _forEachIndex;
-    	player setPos ([] call TYR_fnc_givePlayerLoadout) # 1;
-
-	};
-	
-} forEach gameData # 0 # 3;
-
-if (isNil "PFPID") then {
-
-	PFPID = count (gameData # 0 # 3);
-	gameData # 0 # 3 pushback ([] call TYR_fnc_getPlayerLoadout);
-
-
-};
-
-waitUntil { ((!isNil "WestBox") and (!isNil "EastBox")) };
-
-
-switch (Pside) do {
-	case 0: {
-
-		westBox addAction ["Open Arsenal", { 
-		["Open", [true]] call BIS_fnc_arsenal;
-
-		playerLoadout = ([] call TYR_fnc_getPlayerLoadout);
-
-		aresenalCloseID = addUserActionEventHandler ["ingamePause", "Activate", {
-
-			removeUserActionEventHandler ["ingamePause", "Activate", aresenalCloseID];
-			[playerLoadout] call TYR_fnc_exitArsenal;
-
-		}];
-
-		},
-		nil,
-		1.5,
-		true,
-		true,
-		"",
-		"true",
-		10
-		];
-
-		AccountantMove = {
-			WestMoveAccID = WestAccountant addAction ["Move Accountant", {
-				WestAccountant removeAction WestMoveAccID;
-				WestAccountant attachTo [player, [0, 3, 0]];
-
-				WestDropAccID = player addAction ['Drop Accountant', {
-					GameData # 0 # (Pside + 1) set [0, getPos WestAccountant];
-					publicVariable "GameData";
-					detach WestAccountant;
-					WestAccountant setPosATL (player modelToWorld [0, 3, 0]);
-					westBox setPosATL (player modelToWorld [2, 3, 0]);
-					player removeAction WestDropAccID;
-					call AccountantMove;
-				},
-				nil,
-				1.5,
-				true,
-				true,
-				"",
-				"true",
-				10
-				];
-			}];
-		};
-
-		call AccountantMove;
-
-	};
-	case 1: {
-
-		EastBox addAction ["Open Arsenal", { 
-		["Open", [true]] call BIS_fnc_arsenal;
-
-		playerLoadout = ([] call TYR_fnc_getPlayerLoadout);
-
-		aresenalCloseID = addUserActionEventHandler ["ingamePause", "Activate", {
-
-			removeUserActionEventHandler ["ingamePause", "Activate", aresenalCloseID];
-			[playerLoadout] call TYR_fnc_exitArsenal;
-
-		}];
-
-		},
-		nil,
-		1.5,
-		true,
-		true,
-		"",
-		"true",
-		10
-		];
-
-		AccountantMove = {
-			eastMoveAccID = eastAccountant addAction ["Move Accountant", {
-				eastAccountant removeAction eastMoveAccID;
-				eastAccountant attachTo [player, [0, 3, 0]];
-
-				eastDropAccID = player addAction ['Drop Accountant', {
-					GameData # 0 # (Pside + 1) set [0, getPos eastAccountant];
-					publicVariable "GameData";
-					detach eastAccountant;
-					eastAccountant setPosATL (player modelToWorld [0, 3, 0]);
-					eastBox setPosATL (player modelToWorld [2, 3, 0]);
-					player removeAction eastDropAccID;
-					call AccountantMove;
-				},
-				nil,
-				1.5,
-				true,
-				true,
-				"",
-				"true",
-				10
-				];
-			}];
-		};
-
-		call AccountantMove;
-	};
-};
-
-
-// playermenu
-
-findDisplay 46 displayAddEventHandler ["KeyDown", {
-    params ["_unit", "_key"];
-
-    if (_key == 21) then {
-
-		if (isNull findDisplay 1001) then {
-			
-			createDialog "TyrPlayerMenu";
-
-			_TyrPlayerMenu = findDisplay 1001;
-
-			_TyrPlayerMenu displayCtrl 1 ctrlSetText (TyrantsPFP # 0);
-			_TyrPlayerMenu displayCtrl 2 ctrlSetText str(TyrantsPFP # 1);
-			_TyrPlayerMenu displayCtrl 3 progressSetPosition (TyrantsPFP # 2);
-
-
-
-			// factory resource collection button
-
-			_inrange = false;
-			{
-
-				_ResourceButton = ((findDisplay 1001) displayCtrl 4);
-				if ((((getPos player) distance (_x # 4)) < 75) and (Pcolor == _x # 3)) then {
-
-					_inrange = true;
-
-				};
-
-				if (_inrange) then {
-
-					_ResourceButton ctrlSetPosition [safeZoneX + safeZoneW * 0.01375,safeZoneY + safeZoneH * 0.29777778];
-					_ResourceButton ctrlCommit 0;
-					
-				}
-				else
-				{
-					_ResourceButton ctrlSetPosition [-1,-1];
-					_ResourceButton ctrlCommit 0;
-				}
-
-			}forEach gameData # 1 # 2;
-
-
-			// buy vehicle button
-			_buyvehicle = ((findDisplay 1001) displayCtrl 5);
-			if ((getPos player) distance (gameData # 0 # (Pside + 1) # 0) < 25 ) then {
-
-				_buyvehicle ctrlSetPosition [safeZoneX + safeZoneW * 0.01367188,safeZoneY + safeZoneH * 0.34722223];
-				_buyvehicle ctrlCommit 0;
-
-			}
-			else
-			{
-
-				_buyvehicle ctrlSetPosition [-1,-1];
-				_buyvehicle ctrlCommit 0;
-
-			};
-		};
+    case west: {
+        Pside = 0;
+        PColor = "ColorWEST";
+        PlayerOverlayColor = [0.00, 0.30, 0.60, 1.00];
     };
-}];
+    case east: {
+        Pside = 1;
+        PColor = "ColorEAST";
+        PlayerOverlayColor = [0.50, 0.00, 0.00, 1.00];
+    };
+    default {
+        Pside = -1;
+        PColor = "ColorGUER";
+        PlayerOverlayColor = [0.00, 0.50, 0.00, 1.00];
+    };
+};
 
-publicVariable "gameData";
+if (Pside < 0) exitWith {
+    diag_log "[TYRANTS] Player is not on WEST/EAST; Tyrants player systems were not started.";
+};
+
+if ((GameData # 0 # 0 # 0) < 4) then {
+    [] execVM "Setup\GameSetupPlayer\GameInit.sqf";
+};
+
+waitUntil {
+    sleep 0.25;
+    (GameData # 0 # 0 # 0) isEqualTo 4
+};
+
+[] execVM "Player\PlayerInit\PlayerMapCreation.sqf";
+
+// Register once with the authoritative server. Existing records are left untouched.
+[] remoteExecCall ["TYR_fnc_ServerRegisterPlayer", 2];
+
+waitUntil {
+    sleep 0.25;
+    private _uid = getPlayerUID player;
+    (GameData # 0 # 3) findIf {(_x # 0) isEqualTo _uid} >= 0
+};
+
+TYR_playerProfileIndex = (GameData # 0 # 3) findIf {(_x # 0) isEqualTo getPlayerUID player};
+private _savedProfile = [] call TYR_fnc_givePlayerLoadout;
+player setPosATL (_savedProfile # 1);
+
+waitUntil {
+    sleep 0.25;
+    !isNil "WestBox" && {!isNil "EastBox"} && {!isNil "WestAccountant"} && {!isNil "EastAccountant"}
+};
+
+private _box = if (Pside isEqualTo 0) then {WestBox} else {EastBox};
+private _accountant = if (Pside isEqualTo 0) then {WestAccountant} else {EastAccountant};
+
+if (isNil "TYR_arsenalClosedEH") then {
+    TYR_arsenalClosedEH = [missionNamespace, "arsenalClosed", {
+        if (missionNamespace getVariable ["TYR_arsenalPurchaseActive", false]) then {
+            missionNamespace setVariable ["TYR_arsenalPurchaseActive", false];
+            [] call TYR_fnc_ExitArsenal;
+        };
+    }] call BIS_fnc_addScriptedEventHandler;
+};
+
+_box addAction [
+    "Open Arsenal",
+    {
+        missionNamespace setVariable ["TYR_arsenalPurchaseActive", true];
+        [] remoteExecCall ["TYR_fnc_ServerBeginArsenal", 2];
+        ["Open", [true]] call BIS_fnc_arsenal;
+    },
+    nil,
+    1.5,
+    true,
+    true,
+    "",
+    "true",
+    10
+];
+
+TYR_addAccountantMoveAction = {
+    private _accountantLocal = if (Pside isEqualTo 0) then {WestAccountant} else {EastAccountant};
+    private _moveId = _accountantLocal addAction [
+        "Move Accountant",
+        {
+            params ["_target", "_caller", "_actionId"];
+            _target removeAction _actionId;
+            [Pside] remoteExecCall ["TYR_fnc_ServerAttachAccountant", 2];
+
+            private _dropId = _caller addAction [
+                "Drop Accountant",
+                {
+                    params ["_player", "_caller", "_actionId", "_accountant"];
+                    private _newPos = _player modelToWorld [0, 3, 0];
+                    _player removeAction _actionId;
+                    [Pside, _newPos] remoteExecCall ["TYR_fnc_ServerMoveBase", 2];
+                    call TYR_addAccountantMoveAction;
+                },
+                _target,
+                1.5,
+                true,
+                true,
+                "",
+                "true",
+                10
+            ];
+        },
+        nil,
+        1.5,
+        true,
+        true,
+        "",
+        "true",
+        10
+    ];
+};
+call TYR_addAccountantMoveAction;
+
+waitUntil {!isNull findDisplay 46};
+findDisplay 46 displayAddEventHandler ["KeyDown", {
+    params ["_display", "_key"];
+    if (_key isEqualTo 21 && {isNull findDisplay 1200}) then {
+        createDialog "TYR_PlayerMenu";
+        private _menu = findDisplay 1200;
+        if (!isNull _menu) then {
+            _menu displayCtrl 1 ctrlSetText (TYR_playerProfileUI # 0);
+            _menu displayCtrl 2 ctrlSetText str (TYR_playerProfileUI # 1);
+            _menu displayCtrl 3 progressSetPosition (TYR_playerProfileUI # 2);
+
+            private _resourceButton = _menu displayCtrl 4;
+            private _inRange = (GameData # 1 # 2) findIf {
+                player distance2D (_x # 4) < 75 && {PColor isEqualTo (_x # 3)}
+            } >= 0;
+            _resourceButton ctrlSetPosition (if (_inRange) then {
+                [safeZoneX + safeZoneW * 0.01375, safeZoneY + safeZoneH * 0.29777778]
+            } else {
+                [-1, -1]
+            });
+            _resourceButton ctrlCommit 0;
+
+            private _buyButton = _menu displayCtrl 5;
+            _buyButton ctrlSetPosition (if (player distance2D (GameData # 0 # (Pside + 1) # 0) < 25) then {
+                [safeZoneX + safeZoneW * 0.01367188, safeZoneY + safeZoneH * 0.34722223]
+            } else {
+                [-1, -1]
+            });
+            _buyButton ctrlCommit 0;
+        };
+    };
+    false
+}];
