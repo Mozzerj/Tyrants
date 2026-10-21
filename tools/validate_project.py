@@ -363,9 +363,35 @@ if 'search nearby' in placement_click.lower() or 'for "_a" from' in placement_cl
 if 'TYR_fnc_DeploymentFindCollisions' not in placement_check:
     errors.append("server deployment validation is not checking the HQ footprint collisions")
 
+# v4.0.12 physical command-network invariants.
+command_tick = read(ROOT / "Command/fn_ServerCommandTick.sqf")
+command_queue = read(ROOT / "Command/fn_ServerCommandQueueOrder.sqf")
+command_deliver = read(ROOT / "Command/fn_ServerCommandDeliverOrders.sqf")
+ai_think = read(ROOT / "AI/fn_AICommanderThink.sqf")
+ai_ops = read(ROOT / "AI/fn_AIOperationsTick.sqf")
+victory = read(ROOT / "World/fn_ServerVictoryEvaluate.sqf")
+base_create = read(ROOT / "World/fn_ServerCreateBases.sqf")
+save_build = read(ROOT / "Persistence/fn_PersistenceBuildSnapshot.sqf")
+debug_map = read(ROOT / "Debug/fn_ServerDebugAction.sqf")
+if 'command-collapse' not in command_tick or 'successionAt' not in command_tick or 'replacementAt' not in command_tick:
+    errors.append("physical command tick is missing collapse, succession or replacement handling")
+if 'TYR_fnc_ServerCommandQueueOrder' not in ai_think or 'command_pending' not in ai_ops:
+    errors.append("AI strategic orders are bypassing command-network propagation")
+if 'deliverAt' not in command_queue or 'reroutes' not in command_deliver:
+    errors.append("command orders are missing propagation delay/rerouting state")
+if 'TYR_fnc_ServerVictoryEvaluate' in base_create:
+    errors.append("legacy accountant/base death still triggers victory")
+if 'command-collapse' not in victory:
+    errors.append("victory logic is not tied to sustained command collapse")
+if 'commandPersonnel' not in save_build or 'commandOrders' not in save_build:
+    errors.append("command personnel/orders are missing from persistence snapshot")
+if '_commandNetworks' not in debug_map:
+    errors.append("omniscient debug map is missing command-network telemetry")
+
 if errors:
     for e in errors:
         print(f"ERROR: {e}")
     print(f"FAIL: {len(errors)} integrity error(s).")
     sys.exit(1)
 print("PASS: Tyrants v4 static architecture checks found no integrity errors.")
+

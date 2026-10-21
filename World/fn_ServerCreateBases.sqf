@@ -21,10 +21,6 @@ private _respawnNames = createHashMapFromArray [["west","respawn_west"],["east",
             _accountant setVariable ["TYR_baseFaction",_fid,true];
             _accountant setVariable ["TYR_isAccountant",true,true];
             _accountant disableAI "PATH";
-            _accountant addEventHandler ["Killed",{
-                params ["_unit"];
-                [_unit getVariable ["TYR_baseFaction",""]] call TYR_fnc_ServerVictoryEvaluate;
-            }];
             private _mName = _respawnNames get _fid;
             deleteMarker _mName;
             private _m = createMarker [_mName,_pos];

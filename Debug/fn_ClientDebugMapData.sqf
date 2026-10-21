@@ -14,6 +14,15 @@ missionNamespace setVariable ["TYR_DebugAITraces",_data param [5,[]]];
     if (!isNull _map && {!(_map getVariable ["TYR_debugDrawAttached",false])}) then {
         _map setVariable ["TYR_debugDrawAttached",true];
         _map ctrlAddEventHandler ["Draw",{_this call TYR_fnc_ClientDebugMapDraw}];
+        _map ctrlAddEventHandler ["MouseButtonDown",{
+            params ["_mapCtrl","_button","_mouseX","_mouseY"];
+            if (_button isEqualTo 0 && {missionNamespace getVariable ["TYR_DebugMapTeleportMode",false]}) exitWith {
+                private _world = _mapCtrl ctrlMapScreenToWorld [_mouseX,_mouseY];
+                [_world] call TYR_fnc_DebugMapTeleport;
+                true
+            };
+            false
+        }];
         _map ctrlMapAnimAdd [0,0.08,[worldSize * 0.5,worldSize * 0.5,0]];
         ctrlMapAnimCommit _map;
     };

@@ -68,6 +68,7 @@ private _id = ["force"] call TYR_fnc_StateNextId;
     ["active",true]
 ]];
 
+[_id] call TYR_fnc_ServerCommandAssignForce;
 ["ai-force"] call TYR_fnc_StateMarkDirty;
 [_factionId] call TYR_fnc_ServerPublishFaction;
 _id

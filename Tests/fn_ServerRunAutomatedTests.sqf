@@ -27,11 +27,22 @@ private _publicSectorCount = if (_publicCampaign isEqualType [] && {count _publi
     private _f = [_x] call TYR_fnc_StateGetFaction;
     [format ["Faction %1 has resources",_x],count (_f getOrDefault ["resources",createHashMap]) isEqualTo 4] call _check;
     [format ["Faction %1 has commander",_x],count (_f getOrDefault ["commander",createHashMap]) > 0] call _check;
+    private _network = _f getOrDefault ["commandNetwork",createHashMap];
+    [format ["Faction %1 has physical command-network state",_x],count _network > 0] call _check;
+    if ((_campaign getOrDefault ["phase","deployment"]) isEqualTo "running" && {_f getOrDefault ["active",false]}) then {
+        private _main = _network getOrDefault ["main",""];
+        private _officers = _network getOrDefault ["officers",[]];
+        [format ["Faction %1 has a main command node",_x],_main isNotEqualTo "",_main] call _check;
+        [format ["Faction %1 has command officers",_x],count _officers > 0,str _officers] call _check;
+    };
 } forEach _ids;
 private _westPublicToEast = ["west","east"] call TYR_fnc_StatePublicFaction;
 ["Enemy HQ is absent from public faction replication",count _westPublicToEast > 4 && {count (_westPublicToEast # 4) isEqualTo 0}] call _check;
 ["Enemy resources are redacted",count _westPublicToEast > 5 && {(_westPublicToEast # 5) isEqualTo [-1,-1,-1,-1]}] call _check;
 ["Enemy research and VLS targets are redacted",count _westPublicToEast > 7 && {count (_westPublicToEast # 6) isEqualTo 0} && {count (_westPublicToEast # 7) isEqualTo 0}] call _check;
+["Enemy command network is redacted",count _westPublicToEast > 12 && {count (_westPublicToEast # 12) isEqualTo 0}] call _check;
+private _westPublicOwn = ["west","west"] call TYR_fnc_StatePublicFaction;
+["Own command summary is available",count _westPublicOwn > 12 && {(_westPublicOwn # 12) isEqualType []} && {count (_westPublicOwn # 12) >= 7}] call _check;
 private _unknownLocationOk = true;
 private _westKnowledge = ["west","locations",""] call TYR_fnc_StateKnowledgeGet;
 {

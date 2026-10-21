@@ -80,3 +80,22 @@ if (count _f > 4 && {_f # 2} && {count (_f # 4) >= 2}) then {
         _map drawIcon [_icon,[_fid,true] call TYR_fnc_FactionColor,getPosATL _x,17,17,getDir _x,_label,0,0.022,"PuristaMedium","right"];
     };
 } forEach vehicles;
+
+// Own command personnel are always known to their faction. Enemy command personnel
+// still require normal intelligence collection and never arrive through this path.
+if (count _f > 12) then {
+    private _commandSummary = _f # 12;
+    if (_commandSummary isEqualType [] && {count _commandSummary >= 8}) then {
+        private _status = _commandSummary # 0;
+        {
+            if (_x isEqualType [] && {count _x >= 5}) then {
+                _x params ["_id","_role","_name","_pos","_alive"];
+                if (_alive && {count _pos >= 2}) then {
+                    private _icon = if (_role isEqualTo "commander") then {"\A3\ui_f\data\map\markers\nato\b_hq.paa"} else {"\A3\ui_f\data\map\markers\nato\b_inf.paa"};
+                    private _label = format ["%1 // %2 // COMMAND %3",toUpper _role,_name,toUpper _status];
+                    _map drawIcon [_icon,[TYR_PlayerFaction,true] call TYR_fnc_FactionColor,_pos,if (_role isEqualTo "commander") then {24} else {17},if (_role isEqualTo "commander") then {24} else {17},0,_label,1,0.024,"PuristaMedium","right"];
+                };
+            };
+        } forEach (_commandSummary # 7);
+    };
+};

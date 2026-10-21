@@ -1,5 +1,5 @@
-Tyrants v4.0.10 DEV
-Real Intelligence Tracking + Runtime Test Harness
+Tyrants v4.0.12 DEV
+Physical Command Network + Runtime Testing Tools + Real Intelligence Tracking
 
 Current development changes:
 - Server truth and faction knowledge remain strictly separate.
@@ -25,3 +25,29 @@ Deployment placement baseline:
 
 Method notes:
 - TYRANTS_METHOD_NOTES.txt records proven, failed and current engine-specific approaches.
+
+
+v4.0.11 developer testing additions:
+- Restored direct Splendid Camera access from the Developer Operations Console.
+- Splendid Camera is isolated from normal intelligence collection so debug flying does not reveal enemies to the faction.
+- Added toggleable left-click teleporting on the embedded debug/intelligence maps.
+- Added an in-console multiline command runner with LOCAL and SERVER execution.
+- Enabled the standard Arma Debug Console for the host/logged-in admin in this DEV mission.
+- Preserved v4.0.10 intelligence tracking, HQ placement and deployment behaviour.
+
+
+v4.0.12 physical command network:
+- Each active faction now has one physical named Main Commander and three physical named command officers.
+- AI force leaders act as physical force commanders linked to the command hierarchy.
+- New AI strategic operations enter COMMAND_PENDING and are delivered after a network-dependent propagation delay.
+- Losing officers increases order delay; broken command routes reroute pending orders and restart their delivery delay.
+- Main Commander death triggers a 30-second succession window before the highest-ranking surviving officer is promoted.
+- Missing officers are replaced slowly (180s, 2 manpower each) while a functioning commander/HQ route remains.
+- Total command loss causes COMMAND COLLAPSE. Existing delivered orders continue locally, while new strategic orders stop.
+- A functioning HQ with 5 manpower can produce an emergency commander after 120s; otherwise sustained collapse reaches elimination at 240s.
+- Victory now comes from sustained command collapse rather than killing the old accountant NPC.
+- Own command personnel appear on the faction map; hostile command personnel still require real intelligence.
+- Omniscient debug map shows commander/officer/force-command links, network status and pending orders.
+- Debug console adds COMMAND NETWORK controls for teleporting to and killing command personnel during testing.
+- Command personnel, network state and pending command orders persist in the v4 save journal.
+- Debug COMMAND NETWORK panel includes a fast-forward timer action so succession/replacement/collapse timing can be tested without waiting several minutes.

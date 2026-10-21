@@ -1,4 +1,4 @@
-# Tyrants v4.0.10 DEV
+# Tyrants v4.0.12 DEV
 
 Current development baseline for the three-faction Tyrants rewrite. It includes deployment sectors, human/AI commanders, the v4 save architecture, targeted replication, and the tactical UI.
 
@@ -58,3 +58,20 @@ Player restore positions are now land-validated. Out-of-bounds/water positions (
 
 Faction intelligence now stores real last-known enemy contacts rather than receiving live enemy truth. Human visual observations are server-validated, UAVs can create observations, AI force leaders can generate contacts from real line of sight, and lost contacts stop moving until they are seen again. The normal map shows contact age and identification level. The developer console contains an omniscient truth map, faction-intelligence map, intelligence log, automated checks, and a manual runtime test task list for engine behaviours that cannot be proven outside Arma.
 
+
+
+## v4.0.11 developer testing tools
+
+- Developer Operations Console can launch Arma's Splendid Camera directly.
+- While Splendid Camera is active, ordinary faction visual-intelligence reporting is suppressed so free-camera reconnaissance does not contaminate the intelligence test.
+- Splendid Camera's normal Space action can teleport the player under the camera cursor for rapid runtime testing.
+- Omniscient/faction debug maps have a toggleable left-click teleport mode for arbitrary map movement.
+- Developer Operations Console includes a multiline command runner with LOCAL and SERVER execution.
+- Standard Arma Debug Console is enabled for the mission host/logged-in admin in this DEV build.
+
+
+## v4.0.12 physical command network
+
+Each active faction now fields a physical Main Commander, three physical command officers, and physical force commanders represented by AI force leaders. Strategic AI orders are no longer applied instantly: they are queued through the command network, delayed by network health, and rerouted when command personnel are lost. Existing delivered orders continue when the network collapses.
+
+Commander death starts a succession period; surviving senior officers can assume command. Lost officers are replaced slowly when manpower and a functioning HQ route remain. If all strategic command personnel are lost, the faction enters Command Collapse. Recovery is possible through an emergency commander while the HQ/replacement route and manpower remain; sustained collapse ultimately eliminates the faction. Enemy command personnel are not revealed for free.

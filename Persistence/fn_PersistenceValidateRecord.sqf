@@ -213,6 +213,39 @@ if ((_operations findIf {
     {(_assigned findIf {!(_x in _forceIds)}) >= 0}
 }) >= 0) exitWith {false};
 
+// v4.0.12 command sections are optional when reading an older v4 checkpoint, but
+// when present they must remain primitive, faction-scoped and internally referential.
+private _commandPersonnel = [_snapshot,"commandPersonnel",[]] call TYR_fnc_RecordGet;
+if !(_commandPersonnel isEqualType []) exitWith {false};
+private _commandPersonIds = _commandPersonnel apply {[_x,"id",""] call TYR_fnc_RecordGet};
+if !([_commandPersonIds] call _unique) exitWith {false};
+if ((_commandPersonnel findIf {
+    private _fid = [_x,"faction",""] call TYR_fnc_RecordGet;
+    private _role = [_x,"role",""] call TYR_fnc_RecordGet;
+    private _name = [_x,"name",""] call TYR_fnc_RecordGet;
+    private _alive = [_x,"alive",false] call TYR_fnc_RecordGet;
+    private _pos = [_x,"position",[]] call TYR_fnc_RecordGet;
+    private _rank = [_x,"rank",-1] call TYR_fnc_RecordGet;
+    !(_fid in _knownFactions) || {!(_role in ["commander","officer"])} || {_name isEqualTo ""} ||
+    {!(_alive isEqualType true)} || {!(_rank isEqualType 0)} || {_rank < 0} ||
+    {count _pos > 0 && {!([_pos] call _validPos)}}
+}) >= 0) exitWith {false};
+
+private _commandOrders = [_snapshot,"commandOrders",[]] call TYR_fnc_RecordGet;
+if !(_commandOrders isEqualType []) exitWith {false};
+private _commandOrderIds = _commandOrders apply {[_x,"id",""] call TYR_fnc_RecordGet};
+if !([_commandOrderIds] call _unique) exitWith {false};
+if ((_commandOrders findIf {
+    private _fid = [_x,"faction",""] call TYR_fnc_RecordGet;
+    private _force = [_x,"force",""] call TYR_fnc_RecordGet;
+    private _operation = [_x,"operation",""] call TYR_fnc_RecordGet;
+    private _target = [_x,"target",""] call TYR_fnc_RecordGet;
+    private _route = [_x,"route",[]] call TYR_fnc_RecordGet;
+    !(_fid in _knownFactions) || {!(_force in _forceIds)} || {!(_operation in _operationIds)} ||
+    {!(_target in _locationIds)} || {!(_route isEqualType [])} ||
+    {(_route findIf {!(_x in _commandPersonIds)}) >= 0}
+}) >= 0) exitWith {false};
+
 private _destroyed = [_snapshot,"destroyedBuildings",[]] call TYR_fnc_RecordGet;
 if !(_destroyed isEqualType []) exitWith {false};
 if ((_destroyed findIf {!(_x isEqualType "")}) >= 0) exitWith {false};

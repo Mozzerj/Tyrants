@@ -49,3 +49,30 @@ The task list can be marked PASS/FAIL from the console. It covers visual contact
 
 Use **OMNISCIENT MAP** only as server truth for comparison. Use **FACTION INTEL MAP** to verify what the player's faction actually knows. **INTELLIGENCE LOG** shows collected observation events and their source.
 
+
+
+## v4.0.11 rapid testing tools
+
+With **Developer Debug Mode** enabled, open the Developer Operations Console:
+
+- **VIEWS / MOVEMENT -> OPEN SPLENDID CAMERA** starts Arma's free developer camera. Use its normal controls to fly anywhere; Space teleports the player under the cursor. Exiting the camera returns to normal play. Debug-camera viewing is excluded from faction intelligence collection.
+- **MAP CLICK TELEPORT** toggles arbitrary teleporting directly from either the omniscient map or faction-intelligence map. When enabled, left-click the embedded map to move the player/locally-controlled vehicle to that position.
+- **TESTING -> COMMAND CONSOLE** opens a multiline SQF runner. **RUN LOCAL** executes on the client. **RUN SERVER** routes the same text through the debug-mode-gated authoritative server endpoint and returns the result.
+- The mission host/logged-in admin can also use Arma's standard Debug Console because this DEV build sets `enableDebugConsole = 1`.
+
+These tools are intentionally developer-only and must not be copied into a production/public build without revisiting access control.
+
+
+## v4.0.12 physical command-network test
+
+Enable **Developer Debug Mode**, open **COMMAND NETWORK**, and select the faction under **FACTION TARGET**.
+
+- Use **TP TO MAIN COMMANDER** to verify that the commander is a physical NPC at/near the faction HQ.
+- Use **KILL ONE OFFICER**, then run **RUN COMMANDER THINK**. The omniscient map should show a degraded command network and new orders should spend longer in `COMMAND_PENDING`.
+- Use **KILL MAIN COMMANDER**. The faction should enter succession rather than being eliminated immediately; after about 30 seconds a surviving officer should become commander.
+- Use **KILL ALL COMMAND**. Existing forces with already-delivered orders should continue those orders, while the commander AI should stop issuing new strategic orders.
+- With sufficient manpower and a functioning HQ, an emergency commander can appear after the collapse recovery timer. Repeatedly destroying replacements faster than they recover should eventually create sustained collapse.
+- Compare **OMNISCIENT MAP** against the normal faction map: own command personnel are known, but enemy command personnel must not be revealed merely because the server knows who they are.
+- Save/reload while an officer is dead or an order is pending and verify the command state returns without resurrecting killed personnel.
+
+**FAST-FORWARD COMMAND TIMER** advances whichever command timer is currently relevant for the selected faction. During succession it promotes the surviving successor immediately; while missing officers it advances the replacement attempt; during full collapse it advances emergency recovery when a valid HQ/manpower route exists, otherwise it moves the collapse close to the elimination deadline. This exists only to avoid waiting minutes during developer tests.

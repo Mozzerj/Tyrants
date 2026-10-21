@@ -58,6 +58,23 @@ _factionKeys sort true;
     _rk sort true;
     private _unlocked = _rk select {_research getOrDefault [_x, false]};
     private _commander = _f getOrDefault ["commander", createHashMap];
+    private _commandNetwork = _f getOrDefault ["commandNetwork",createHashMap];
+    private _successionAt = _commandNetwork getOrDefault ["successionAt",-1];
+    private _replacementAt = _commandNetwork getOrDefault ["replacementAt",-1];
+    private _collapseSince = _commandNetwork getOrDefault ["collapseSince",-1];
+    private _lastLossAt = _commandNetwork getOrDefault ["lastLossAt",-1];
+    private _lastStatusChange = _commandNetwork getOrDefault ["lastStatusChange",-1];
+    private _commandNetworkOut = [
+        ["status",_commandNetwork getOrDefault ["status","forming"]],
+        ["main",_commandNetwork getOrDefault ["main",""]],
+        ["officers",+(_commandNetwork getOrDefault ["officers",[]])],
+        ["targetOfficers",_commandNetwork getOrDefault ["targetOfficers",3]],
+        ["successionRemaining",if (_successionAt < 0) then {-1} else {(_successionAt - serverTime) max 0}],
+        ["replacementRemaining",if (_replacementAt < 0) then {-1} else {(_replacementAt - serverTime) max 0}],
+        ["collapseElapsed",if (_collapseSince < 0) then {-1} else {(serverTime - _collapseSince) max 0}],
+        ["lastLossAge",if (_lastLossAt < 0) then {-1} else {(serverTime - _lastLossAt) max 0}],
+        ["lastStatusAge",if (_lastStatusChange < 0) then {-1} else {(serverTime - _lastStatusChange) max 0}]
+    ];
     private _knowledge = _f getOrDefault ["knowledge",createHashMap];
     private _knownLocations = _knowledge getOrDefault ["locations",createHashMap];
     private _knowledgeLocationIds = keys _knownLocations;
@@ -111,6 +128,7 @@ _factionKeys sort true;
         ["vlsTargets",+(_f getOrDefault ["vlsTargets",[]])],
         ["vehiclePool",+(_f getOrDefault ["vehiclePool",[]])],
         ["commander",[_commander] call _pairs],
+        ["commandNetwork",_commandNetworkOut],
         ["knowledge",[["locations",_knowledgeLocationsOut],["contacts",_knowledgeContactsOut],["log",_knowledgeLogOut]]]
     ];
 } forEach _factionKeys;
@@ -235,6 +253,8 @@ _forceKeys sort true;
         ["position",_pos],
         ["unitClasses",_classes],
         ["operation",_f getOrDefault ["operation",""]],
+        ["commandOfficer",_f getOrDefault ["commandOfficer",""]],
+        ["commandState",_f getOrDefault ["commandState","local"]],
         ["active",count _classes > 0]
     ];
 } forEach _forceKeys;
@@ -252,9 +272,50 @@ _operationKeys sort true;
         ["target",_o getOrDefault ["target",""]],
         ["phase",_o getOrDefault ["phase","assemble"]],
         ["forces",+(_o getOrDefault ["forces",[]])],
-        ["created",_o getOrDefault ["created",0]]
+        ["created",_o getOrDefault ["created",0]],
+        ["orderId",_o getOrDefault ["orderId",""]],
+        ["commandDelay",_o getOrDefault ["commandDelay",0]],
+        ["commandDeliveredAt",_o getOrDefault ["commandDeliveredAt",-1]]
     ];
 } forEach _operationKeys;
+
+private _commandPersonnelOut = [];
+private _commandPersonnel = TYR_State getOrDefault ["commandPersonnel",createHashMap];
+private _runtimeCommand = TYR_Runtime getOrDefault ["commandPersonnel",createHashMap];
+private _commandPersonIds = keys _commandPersonnel;
+_commandPersonIds sort true;
+{
+    private _c = _commandPersonnel get _x;
+    private _obj = _runtimeCommand getOrDefault [_x,objNull];
+    private _pos = +(_c getOrDefault ["position",[]]);
+    if (!isNull _obj) then {_pos = getPosATL _obj};
+    _commandPersonnelOut pushBack [
+        ["id",_x],["faction",_c getOrDefault ["faction",""]],["role",_c getOrDefault ["role","officer"]],
+        ["name",_c getOrDefault ["name",_x]],["rank",_c getOrDefault ["rank",0]],["alive",_c getOrDefault ["alive",false]],
+        ["position",_pos],["class",_c getOrDefault ["class",""]],["createdAt",_c getOrDefault ["createdAt",0]],
+        ["deathAt",_c getOrDefault ["deathAt",-1]]
+    ];
+} forEach _commandPersonIds;
+
+private _commandOrdersOut = [];
+private _commandOrders = TYR_State getOrDefault ["commandOrders",createHashMap];
+private _commandOrderIds = keys _commandOrders;
+_commandOrderIds sort true;
+{
+    private _o = _commandOrders get _x;
+    private _forceId = _o getOrDefault ["force",""];
+    private _operationId = _o getOrDefault ["operation",""];
+    if (_forceId in keys _forces && {_operationId in keys _operations}) then {
+        _commandOrdersOut pushBack [
+            ["id",_x],["faction",_o getOrDefault ["faction",""]],["force",_forceId],
+            ["operation",_operationId],["target",_o getOrDefault ["target",""]],
+            ["issuedAge",(serverTime - (_o getOrDefault ["issuedAt",serverTime])) max 0],
+            ["remaining",((_o getOrDefault ["deliverAt",serverTime]) - serverTime) max 0],
+            ["status",_o getOrDefault ["status","pending"]],["route",+(_o getOrDefault ["route",[]])],
+            ["reroutes",_o getOrDefault ["reroutes",0]]
+        ];
+    };
+} forEach _commandOrderIds;
 
 [
     ["campaign",_campaignOut],
@@ -265,5 +326,7 @@ _operationKeys sort true;
     ["emplacements",_emplacementsOut],
     ["forces",_forcesOut],
     ["operations",_operationsOut],
+    ["commandPersonnel",_commandPersonnelOut],
+    ["commandOrders",_commandOrdersOut],
     ["destroyedBuildings",+(TYR_State getOrDefault ["destroyedBuildings",[]])]
 ]

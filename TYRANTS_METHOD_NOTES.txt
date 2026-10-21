@@ -148,3 +148,38 @@ CURRENT - Developer testing has two layers:
      AI physical sight and save/reload presentation.
 Do not mark those engine behaviours PROVEN until the manual tasks pass in runtime.
 
+
+
+v4.0.11 RAPID TESTING TOOLS
+----------------------------
+CURRENT - Use `[] call BIS_fnc_camera` for the Arma Splendid Camera. This is the engine's documented developer camera and provides fast free-camera movement plus its native Space-to-teleport-under-cursor behaviour. Tyrants sets `TYR_DebugCameraActive` while launching it and the client observation loop ignores normal visual-intelligence reports during debug-camera use so testing does not pollute faction knowledge.
+
+CURRENT - Arbitrary debug-map teleport uses `ctrlMapScreenToWorld` from the embedded map's MouseButtonDown event, then moves the local player/vehicle. This is developer-only and avoids needing pre-authored teleport targets.
+
+CURRENT - The in-mission command runner uses `call compile` locally or a Developer-Debug-Mode-gated `ServerDebugAction` case on the authoritative server. Server results are sent only back to the requesting player. Standard Arma Debug Console is additionally enabled with `enableDebugConsole = 1` for host/logged-in admin access in DEV builds.
+
+DESIGN RULE - Free/debug camera observation must never create normal faction intelligence. Debug truth inspection and real in-game observation remain separate.
+
+
+v4.0.12 PHYSICAL COMMAND NETWORK
+--------------------------------
+CURRENT - Strategic AI operations must be queued as `command_pending` and delivered by
+`ServerCommandDeliverOrders`; do not set a new AI operation directly to MOVE. This is the
+mechanism that makes command damage affect gameplay rather than only UI/status text.
+
+CURRENT - Command personnel are persistent state records plus server-owned physical NPCs.
+Never save Object/Group references. The save snapshot stores IDs, role, name, alive state and
+position; runtime objects are rebuilt from those records.
+
+DESIGN RULE - Killing the accountant/base helper NPC is no longer a victory condition. A
+faction is eliminated only after sustained command collapse (or a future explicit command-
+network victory path). Existing troops remain physical and continue their last delivered orders.
+
+CURRENT - Main Commander loss uses a succession timer, surviving officers provide rerouting,
+and officer losses increase command-order delay. Replacement officers consume manpower and
+arrive slowly. Total command loss can recover through a functioning HQ replacement route, but
+repeated kills can outpace replacement and cause elimination.
+
+DESIGN RULE - Own command personnel may be replicated to their own faction. Enemy command
+personnel are not replicated as command identities/positions; they must be discovered through
+the intelligence system. The omniscient debug map is the exception for developer testing only.

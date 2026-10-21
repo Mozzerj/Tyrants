@@ -4,7 +4,7 @@ if (!hasInterface) exitWith {};
     private _lastReportAt = -9999;
     while {true} do {
         sleep 0.35;
-        if (!isNull player && {alive player} && {!isNil "TYR_ClientState"} && {!isNil "TYR_PlayerFaction"}) then {
+        if (!isNull player && {alive player} && {!isNil "TYR_ClientState"} && {!isNil "TYR_PlayerFaction"} && {!(missionNamespace getVariable ["TYR_DebugCameraActive",false])}) then {
             private _campaign = TYR_ClientState getOrDefault ["campaign",[]];
             if (count _campaign > 0 && {(_campaign # 0) isEqualTo "running"}) then {
                 private _target = cursorObject;

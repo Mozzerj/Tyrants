@@ -43,27 +43,31 @@ private _removeOps = [];
                     if (count _fr > 0) then {_fr set ["operation",""]};
                 } forEach _forceIds;
             } else {
-                private _targetPos = _l get "position";
-                {
-                    private _grp = _runtime getOrDefault [_x,grpNull];
-                    if (!isNull _grp && {count units _grp > 0}) then {
-                        private _leader = leader _grp;
-                        if (_leader distance2D _targetPos > 140) then {
-                            if (count waypoints _grp < 2) then {
-                                private _wp = _grp addWaypoint [_targetPos,30];
-                                _wp setWaypointType "MOVE";
-                                _wp setWaypointBehaviour "AWARE";
-                                _wp setWaypointCombatMode "RED";
-                            };
-                        } else {
-                            if !(_targetId in keys _sessions) then {
-                                _sessions set [_targetId,createHashMapFromArray [
-                                    ["location",_targetId],["attacker",_fid],["owner",-1],["progress",0],["last",serverTime]
-                                ]];
+                // Pending strategic orders do not move a force until the physical
+                // command network has propagated the order to that force commander.
+                if ((_op getOrDefault ["phase","move"]) isNotEqualTo "command_pending") then {
+                    private _targetPos = _l get "position";
+                    {
+                        private _grp = _runtime getOrDefault [_x,grpNull];
+                        if (!isNull _grp && {count units _grp > 0}) then {
+                            private _leader = leader _grp;
+                            if (_leader distance2D _targetPos > 140) then {
+                                if (count waypoints _grp < 2) then {
+                                    private _wp = _grp addWaypoint [_targetPos,30];
+                                    _wp setWaypointType "MOVE";
+                                    _wp setWaypointBehaviour "AWARE";
+                                    _wp setWaypointCombatMode "RED";
+                                };
+                            } else {
+                                if !(_targetId in keys _sessions) then {
+                                    _sessions set [_targetId,createHashMapFromArray [
+                                        ["location",_targetId],["attacker",_fid],["owner",-1],["progress",0],["last",serverTime]
+                                    ]];
+                                };
                             };
                         };
-                    };
-                } forEach _forceIds;
+                    } forEach _forceIds;
+                };
             };
         };
     };

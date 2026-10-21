@@ -163,6 +163,21 @@ class TYR
         class ServerRequestForce {};
     };
 
+    class Command
+    {
+        file = "Command";
+        class CommandNetworkGet {};
+        class CommandOrderDelay {};
+        class ServerCommandCreate {};
+        class ServerCommandSpawnPerson {};
+        class ServerCommandPersonKilled {};
+        class ServerCommandRestore {};
+        class ServerCommandAssignForce {};
+        class ServerCommandQueueOrder {};
+        class ServerCommandDeliverOrders {};
+        class ServerCommandTick {};
+    };
+
     class UI
     {
         file = "UI";
@@ -195,6 +210,9 @@ class TYR
         class CommanderMenuRefresh {};
         class DebugMenuRefresh {};
         class DebugTeleport {};
+        class DebugCamera {};
+        class DebugMapTeleport {};
+        class DebugRunCommand {};
         class ClientObservationTick {};
     };
 
@@ -206,6 +224,7 @@ class TYR
         class ClientDebugTeleport {};
         class ClientDebugMapData {};
         class ClientDebugMapDraw {};
+        class ClientDebugCommandResult {};
     };
 
     class Tests

@@ -1,6 +1,7 @@
-onLoadName = "Tyrants v4.0.10 DEV";
-onLoadMission = "Three-faction strategic warfare // development baseline v4.0.10";
+onLoadName = "Tyrants v4.0.12 DEV";
+onLoadMission = "Three-faction strategic warfare // development baseline v4.0.12";
 author = "Mozzerj";
+enableDebugConsole = 1; // DEV: host/logged-in admins may also use Arma standard Debug Console.
 
 import RscMapControl;
 #include "Dialogs.hpp"
@@ -132,6 +133,7 @@ class CfgRemoteExec : CfgRemoteExecDefault
         class TYR_fnc_ClientDebugState {allowedTargets=1;};
         class TYR_fnc_ClientDebugTeleport {allowedTargets=1;};
         class TYR_fnc_ClientDebugMapData {allowedTargets=1;};
+        class TYR_fnc_ClientDebugCommandResult {allowedTargets=1;};
         class TYR_fnc_ClientShowTestReport {allowedTargets=1;};
     };
     class Commands

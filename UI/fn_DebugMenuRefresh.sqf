@@ -25,9 +25,16 @@ TYR_debugToggleSection = {
 
 TYR_debugSetView = {
     params ["_view"];
-    if !(_view in ["map","intel","flow","tasks","log"]) then {_view = "map"};
+    if !(_view in ["map","intel","flow","tasks","log","commands"]) then {_view = "map"};
     missionNamespace setVariable ["TYR_debugView",_view];
     [] call TYR_fnc_DebugMenuRefresh;
+};
+
+TYR_debugToggleMapTeleport = {
+    private _enabled = !(missionNamespace getVariable ["TYR_DebugMapTeleportMode",false]);
+    missionNamespace setVariable ["TYR_DebugMapTeleportMode",_enabled];
+    [] call TYR_fnc_DebugMenuRefresh;
+    hint (if (_enabled) then {"Debug map teleport enabled: left-click the map to move instantly."} else {"Debug map teleport disabled."});
 };
 
 if (isNil "TYR_DebugTaskDefinitions") then {
@@ -86,8 +93,9 @@ private _sections = [
     ["economy",220,[221,222,223,224,225,226,227]],
     ["research",240,[241,242]],
     ["ai",260,[261,262,263]],
-    ["views",280,[281,282,283]],
-    ["testing",290,[291,292,293,294]],
+    ["commandnet",270,[271,272,273,274,276,277,275]],
+    ["views",280,[281,282,284,285,286,283]],
+    ["testing",290,[291,292,293,294,295]],
     ["system",300,[301,302,303,304,131]]
 ];
 
@@ -102,6 +110,7 @@ private _y = safeZoneY + safeZoneH * 0.135;
         case "economy": {"ECONOMY"};
         case "research": {"RESEARCH"};
         case "ai": {"AI COMMAND"};
+        case "commandnet": {"COMMAND NETWORK"};
         case "views": {"VIEWS / MOVEMENT"};
         case "testing": {"TESTING"};
         default {"SYSTEM"};
@@ -116,7 +125,7 @@ private _y = safeZoneY + safeZoneH * 0.135;
         if (_expanded) then {
             private _h = safeZoneH * 0.040;
             if (_x in [205,131]) then {_h = safeZoneH * 0.050};
-            if (_x in [221,283]) then {_h = safeZoneH * 0.060};
+            if (_x in [221,271,283]) then {_h = safeZoneH * 0.060};
             _ctrl ctrlSetPosition [safeZoneX+safeZoneW*0.04,_y,safeZoneW*0.25,_h];
             _ctrl ctrlCommit 0;
             _y = _y + _h + safeZoneH * 0.007;
@@ -130,6 +139,18 @@ if (count _f >= 6) then {
     (_d displayCtrl 205) ctrlSetText format ["TARGET // %1\n%2",toUpper (_f # 1),toUpper (_f # 3)];
     (_d displayCtrl 221) ctrlSetText format ["STEEL %1   AMMO %2\nFUEL %3   MANPOWER %4",round (_r # 0),round (_r # 1),round (_r # 2),round (_r # 3)];
 };
+private _cmdText = "STATUS --\nCOMMAND NODES --";
+private _debugMapData = missionNamespace getVariable ["TYR_DebugMapData",[]];
+private _networks = if (_debugMapData isEqualType [] && {count _debugMapData >= 7}) then {_debugMapData # 6} else {[]};
+{
+    if ((_x param [0,""]) isEqualTo TYR_debugFaction) exitWith {
+        private _nodes = _x param [4,[]];
+        private _aliveMain = {_x # 1 isEqualTo "commander" && {_x # 4}} count _nodes;
+        private _aliveOfficers = {_x # 1 isEqualTo "officer" && {_x # 4}} count _nodes;
+        _cmdText = format ["STATUS %1 // PENDING %2\nMAIN %3 // OFFICERS %4",toUpper (_x param [1,"--"]),_x param [6,0],_aliveMain,_aliveOfficers];
+    };
+} forEach _networks;
+(_d displayCtrl 271) ctrlSetText _cmdText;
 
 (_d displayCtrl 130) ctrlSetText format ["SAVE %1 // %2",missionNamespace getVariable ["TYR_debugSaveGeneration",-1],toUpper TYR_debugFaction];
 (_d displayCtrl 131) ctrlSetText format ["CLIENT FPS %1\nSERVER FPS %2",round diag_fps,round (missionNamespace getVariable ["TYR_debugServerFps",-1])];
@@ -140,18 +161,26 @@ private _mapIds = [1000,1001];
 private _flowIds = [2099,2100,2101,2102,2103,2104,2105,2106,2111,2112,2113,2114,2115,2120];
 private _taskIds = [2199,2200,2201,2202,2203,2204,2205];
 private _logIds = [2299,2300,2301];
+private _commandIds = [2399,2400,2401,2402,2403,2404,2405,2406];
 private _mapVisible = _view in ["map","intel"];
 {(_d displayCtrl _x) ctrlShow _mapVisible} forEach _mapIds;
 {(_d displayCtrl _x) ctrlShow (_view isEqualTo "flow")} forEach _flowIds;
 {(_d displayCtrl _x) ctrlShow (_view isEqualTo "tasks")} forEach _taskIds;
 {(_d displayCtrl _x) ctrlShow (_view isEqualTo "log")} forEach _logIds;
+{(_d displayCtrl _x) ctrlShow (_view isEqualTo "commands")} forEach _commandIds;
+
+private _mapTeleportEnabled = missionNamespace getVariable ["TYR_DebugMapTeleportMode",false];
+(_d displayCtrl 285) ctrlSetText format ["MAP CLICK TELEPORT // %1",if (_mapTeleportEnabled) then {"ON"} else {"OFF"}];
+(_d displayCtrl 286) ctrlSetText format ["LEFT-CLICK TP // %1",if (_mapTeleportEnabled) then {"ENABLED"} else {"OFF"}];
 
 if (_mapVisible) then {
-    (_d displayCtrl 1001) ctrlSetText (if (_view isEqualTo "intel") then {
+    private _instruction = if (_view isEqualTo "intel") then {
         "YOUR FACTION INTELLIGENCE // last-known contacts only // compare against omniscient truth"
     } else {
         "OMNISCIENT SERVER TRUTH // refresh 3s // intelligence restrictions intentionally bypassed"
-    });
+    };
+    if (_mapTeleportEnabled) then {_instruction = _instruction + " // LEFT CLICK = TELEPORT"};
+    (_d displayCtrl 1001) ctrlSetText _instruction;
 };
 
 if (_view isEqualTo "tasks") then {
@@ -204,6 +233,13 @@ if (_view isEqualTo "log") then {
     };
     if (count _log isEqualTo 0) then {_list lbAdd "No collected intelligence yet. Observe an enemy to create the first entry."};
     (_d displayCtrl 2300) ctrlSetText format ["FACTION INTELLIGENCE LOG // %1 ENTRIES",count _log];
+};
+
+if (_view isEqualTo "commands") then {
+    private _lastCommand = missionNamespace getVariable ["TYR_DebugLastCommand",""];
+    private _editor = _d displayCtrl 2401;
+    if ((ctrlText _editor) isEqualTo "" && {_lastCommand isNotEqualTo ""}) then {_editor ctrlSetText _lastCommand};
+    (_d displayCtrl 2404) ctrlSetText (missionNamespace getVariable ["TYR_DebugCommandResult","Result appears here. Script errors still appear in the Arma RPT."]);
 };
 
 if (_view isEqualTo "flow") then {

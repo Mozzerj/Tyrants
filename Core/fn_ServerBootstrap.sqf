@@ -2,7 +2,7 @@ if (!isServer) exitWith {};
 [false] call TYR_fnc_ServerSetCombatState;
 
 TYR_Runtime = createHashMapFromArray [
-    ["vehicles",createHashMap],["emplacements",createHashMap],["forces",createHashMap],["bases",createHashMap],
+    ["vehicles",createHashMap],["emplacements",createHashMap],["forces",createHashMap],["bases",createHashMap],["commandPersonnel",createHashMap],
     ["factoryParts",createHashMap],["captureSessions",createHashMap],["arsenal",createHashMap],["loadedLocations",createHashMap],
     ["aiDecisionTraces",createHashMap],["aiObjectiveScores",createHashMap],
     ["revision",0],["saveDirty",false],["saveUrgent",false],["dirtySince",-1],["lastDirtyAt",-1],["lastSaveAt",-9999],
@@ -39,7 +39,9 @@ if (((TYR_State get "campaign") getOrDefault ["phase","deployment"]) isEqualTo "
     call TYR_fnc_ServerRestoreDestroyedBuildings;
     call TYR_fnc_ServerRestoreVehicles;
     call TYR_fnc_ServerRestoreEmplacements;
+    call TYR_fnc_ServerCommandRestore;
     call TYR_fnc_AIForceRestore;
+    call TYR_fnc_ServerCommandRestore;
     {
         private _obj = (TYR_Runtime get "emplacements") getOrDefault [_x,objNull];
         private _rec = (TYR_State get "emplacements") get _x;

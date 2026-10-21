@@ -41,6 +41,25 @@ private _factions = _state get "factions";
         _f set ["research",_research];
         private _cmd = _f get "commander";
         {if (_x isEqualType [] && {count _x >= 2}) then {_cmd set [_x # 0,_x # 1]}} forEach ([_x,"commander",[]] call TYR_fnc_RecordGet);
+        private _network = _f getOrDefault ["commandNetwork",createHashMap];
+        private _networkSaved = [_x,"commandNetwork",[]] call TYR_fnc_RecordGet;
+        if (_networkSaved isEqualType [] && {count _networkSaved > 0}) then {
+            _network set ["status",[_networkSaved,"status","forming"] call TYR_fnc_RecordGet];
+            _network set ["main",[_networkSaved,"main",""] call TYR_fnc_RecordGet];
+            _network set ["officers",+([_networkSaved,"officers",[]] call TYR_fnc_RecordGet)];
+            _network set ["targetOfficers",[_networkSaved,"targetOfficers",3] call TYR_fnc_RecordGet];
+            private _successionRemaining = [_networkSaved,"successionRemaining",-1] call TYR_fnc_RecordGet;
+            private _replacementRemaining = [_networkSaved,"replacementRemaining",-1] call TYR_fnc_RecordGet;
+            private _collapseElapsed = [_networkSaved,"collapseElapsed",-1] call TYR_fnc_RecordGet;
+            private _lastLossAge = [_networkSaved,"lastLossAge",-1] call TYR_fnc_RecordGet;
+            private _lastStatusAge = [_networkSaved,"lastStatusAge",-1] call TYR_fnc_RecordGet;
+            _network set ["successionAt",if (_successionRemaining < 0) then {-1} else {serverTime + _successionRemaining}];
+            _network set ["replacementAt",if (_replacementRemaining < 0) then {-1} else {serverTime + _replacementRemaining}];
+            _network set ["collapseSince",if (_collapseElapsed < 0) then {-1} else {serverTime - _collapseElapsed}];
+            _network set ["lastLossAt",if (_lastLossAge < 0) then {-1} else {serverTime - _lastLossAge}];
+            _network set ["lastStatusChange",if (_lastStatusAge < 0) then {serverTime} else {serverTime - _lastStatusAge}];
+        };
+        _f set ["commandNetwork",_network];
         private _knowledgeSaved = [_x,"knowledge",[]] call TYR_fnc_RecordGet;
         private _knowledge = createHashMapFromArray [["locations",createHashMap],["contacts",createHashMap],["log",[]]];
         private _knownLocations = _knowledge get "locations";
@@ -145,7 +164,8 @@ private _forces = createHashMap;
         _forces set [_id,createHashMapFromArray [
             ["id",_id],["faction",[_x,"faction",""] call TYR_fnc_RecordGet],["role",[_x,"role","infantry"] call TYR_fnc_RecordGet],
             ["position",+([_x,"position",[0,0,0]] call TYR_fnc_RecordGet)],["unitClasses",+([_x,"unitClasses",[]] call TYR_fnc_RecordGet)],
-            ["operation",[_x,"operation",""] call TYR_fnc_RecordGet],["active",[_x,"active",true] call TYR_fnc_RecordGet]
+            ["operation",[_x,"operation",""] call TYR_fnc_RecordGet],["commandOfficer",[_x,"commandOfficer",""] call TYR_fnc_RecordGet],
+            ["commandState",[_x,"commandState","local"] call TYR_fnc_RecordGet],["active",[_x,"active",true] call TYR_fnc_RecordGet]
         ]];
     };
 } forEach ([_snapshot,"forces",[]] call TYR_fnc_RecordGet);
@@ -158,11 +178,44 @@ private _operations = createHashMap;
         _operations set [_id,createHashMapFromArray [
             ["id",_id],["faction",[_x,"faction",""] call TYR_fnc_RecordGet],["type",[_x,"type","attack"] call TYR_fnc_RecordGet],
             ["target",[_x,"target",""] call TYR_fnc_RecordGet],["phase",[_x,"phase","assemble"] call TYR_fnc_RecordGet],
-            ["forces",+([_x,"forces",[]] call TYR_fnc_RecordGet)],["created",[_x,"created",0] call TYR_fnc_RecordGet]
+            ["forces",+([_x,"forces",[]] call TYR_fnc_RecordGet)],["created",[_x,"created",0] call TYR_fnc_RecordGet],
+            ["orderId",[_x,"orderId",""] call TYR_fnc_RecordGet],["commandDelay",[_x,"commandDelay",0] call TYR_fnc_RecordGet],
+            ["commandDeliveredAt",[_x,"commandDeliveredAt",-1] call TYR_fnc_RecordGet]
         ]];
     };
 } forEach ([_snapshot,"operations",[]] call TYR_fnc_RecordGet);
 _state set ["operations",_operations];
+
+private _commandPersonnel = createHashMap;
+{
+    private _id = [_x,"id",""] call TYR_fnc_RecordGet;
+    if (_id isNotEqualTo "") then {
+        _commandPersonnel set [_id,createHashMapFromArray [
+            ["id",_id],["faction",[_x,"faction",""] call TYR_fnc_RecordGet],["role",[_x,"role","officer"] call TYR_fnc_RecordGet],
+            ["name",[_x,"name",_id] call TYR_fnc_RecordGet],["rank",[_x,"rank",0] call TYR_fnc_RecordGet],
+            ["alive",[_x,"alive",false] call TYR_fnc_RecordGet],["position",+([_x,"position",[]] call TYR_fnc_RecordGet)],
+            ["class",[_x,"class",""] call TYR_fnc_RecordGet],["createdAt",[_x,"createdAt",0] call TYR_fnc_RecordGet],
+            ["deathAt",[_x,"deathAt",-1] call TYR_fnc_RecordGet]
+        ]];
+    };
+} forEach ([_snapshot,"commandPersonnel",[]] call TYR_fnc_RecordGet);
+_state set ["commandPersonnel",_commandPersonnel];
+
+private _commandOrders = createHashMap;
+{
+    private _id = [_x,"id",""] call TYR_fnc_RecordGet;
+    if (_id isNotEqualTo "") then {
+        _commandOrders set [_id,createHashMapFromArray [
+            ["id",_id],["faction",[_x,"faction",""] call TYR_fnc_RecordGet],["force",[_x,"force",""] call TYR_fnc_RecordGet],
+            ["operation",[_x,"operation",""] call TYR_fnc_RecordGet],["target",[_x,"target",""] call TYR_fnc_RecordGet],
+            ["issuedAt",serverTime - ([_x,"issuedAge",0] call TYR_fnc_RecordGet)],
+            ["deliverAt",serverTime + ([_x,"remaining",0] call TYR_fnc_RecordGet)],
+            ["status",[_x,"status","pending"] call TYR_fnc_RecordGet],["route",+([_x,"route",[]] call TYR_fnc_RecordGet)],
+            ["reroutes",[_x,"reroutes",0] call TYR_fnc_RecordGet]
+        ]];
+    };
+} forEach ([_snapshot,"commandOrders",[]] call TYR_fnc_RecordGet);
+_state set ["commandOrders",_commandOrders];
 
 _state set ["destroyedBuildings",+([_snapshot,"destroyedBuildings",[]] call TYR_fnc_RecordGet)];
 TYR_State = _state;

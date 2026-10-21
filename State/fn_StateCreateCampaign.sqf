@@ -48,6 +48,11 @@ private _factions = createHashMap;
         ["objective", ""],
         ["reserveRatio", 0.2]
     ];
+    private _commandNetwork = createHashMapFromArray [
+        ["status","forming"],["main",""],["officers",[]],["targetOfficers",3],
+        ["successionAt",-1],["replacementAt",-1],["collapseSince",-1],
+        ["lastLossAt",-1],["lastStatusChange",0]
+    ];
     private _f = createHashMapFromArray [
         ["id", _id],
         ["name", _names get _id],
@@ -62,6 +67,7 @@ private _factions = createHashMap;
         ["vehiclePool", _pool],
         ["commander", _commander],
         ["commanderPublic", []],
+        ["commandNetwork", _commandNetwork],
         ["knowledge", createHashMapFromArray [["locations",createHashMap],["contacts",createHashMap],["log",[]]]]
     ];
     _factions set [_id, _f];
@@ -93,5 +99,7 @@ createHashMapFromArray [
     ["emplacements",createHashMap],
     ["forces",createHashMap],
     ["operations",createHashMap],
+    ["commandPersonnel",createHashMap],
+    ["commandOrders",createHashMap],
     ["destroyedBuildings",[]]
 ]

@@ -139,3 +139,21 @@ class TYR_UI_Progress
     colorFrame[] = {0.13,0.15,0.18,1};
     texture = "#(argb,8,8,3)color(1,1,1,1)";
 };
+
+class TYR_UI_EditMulti
+{
+    type = 2;
+    idc = -1;
+    style = 16;
+    font = "EtelkaMonospacePro";
+    sizeEx = 0.027;
+    text = "";
+    autocomplete = "";
+    canModify = 1;
+    colorText[] = {0.92,0.94,0.96,1};
+    colorDisabled[] = {0.42,0.44,0.47,1};
+    colorSelection[] = {0.851,0.5647,0.0863,1};
+    colorBackground[] = {0.025,0.03,0.036,1};
+    soundSelect[] = {"",0,1};
+    shadow = 0;
+};

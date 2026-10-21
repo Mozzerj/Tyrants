@@ -52,6 +52,70 @@ switch (_action) do {
         private _fid = _args param [0,""];
         [_fid] call TYR_fnc_AICommanderThink;
     };
+    case "commandTick": {call TYR_fnc_ServerCommandTick};
+    case "commandTp": {
+        private _fid = _args param [0,""];
+        private _network = [_fid] call TYR_fnc_CommandNetworkGet;
+        private _mainId = _network getOrDefault ["main",""];
+        private _rec = (TYR_State getOrDefault ["commandPersonnel",createHashMap]) getOrDefault [_mainId,createHashMap];
+        private _obj = (TYR_Runtime getOrDefault ["commandPersonnel",createHashMap]) getOrDefault [_mainId,objNull];
+        private _pos = if (!isNull _obj) then {getPosATL _obj} else {+(_rec getOrDefault ["position",[]])};
+        if (count _pos >= 2) then {
+            private _safe = [[(_pos # 0)+3,_pos # 1,0.2],_pos] call TYR_fnc_FindSafeSpawnPosition;
+            [_player,"TYR_fnc_ClientDebugTeleport",[_safe,format ["%1 COMMAND",_fid]]] call TYR_fnc_ServerSendToPlayer;
+        };
+    };
+    case "commandKillMain": {
+        private _fid = _args param [0,""];
+        private _network = [_fid] call TYR_fnc_CommandNetworkGet;
+        private _id = _network getOrDefault ["main",""];
+        private _obj = (TYR_Runtime getOrDefault ["commandPersonnel",createHashMap]) getOrDefault [_id,objNull];
+        if (!isNull _obj && {alive _obj}) then {_obj setDamage 1};
+    };
+    case "commandKillOfficer": {
+        private _fid = _args param [0,""];
+        private _network = [_fid] call TYR_fnc_CommandNetworkGet;
+        private _personnel = TYR_State getOrDefault ["commandPersonnel",createHashMap];
+        private _runtimeCommand = TYR_Runtime getOrDefault ["commandPersonnel",createHashMap];
+        private _id = "";
+        {
+            private _r = _personnel getOrDefault [_x,createHashMap];
+            private _obj = _runtimeCommand getOrDefault [_x,objNull];
+            if (_r getOrDefault ["alive",false] && {!isNull _obj} && {alive _obj}) exitWith {_id = _x};
+        } forEach (_network getOrDefault ["officers",[]]);
+        if (_id isNotEqualTo "") then {(_runtimeCommand get _id) setDamage 1};
+    };
+    case "commandKillAll": {
+        private _fid = _args param [0,""];
+        private _personnel = TYR_State getOrDefault ["commandPersonnel",createHashMap];
+        private _runtimeCommand = TYR_Runtime getOrDefault ["commandPersonnel",createHashMap];
+        {
+            private _r = _personnel get _x;
+            if ((_r getOrDefault ["faction",""]) isEqualTo _fid && {_r getOrDefault ["alive",false]}) then {
+                private _obj = _runtimeCommand getOrDefault [_x,objNull];
+                if (!isNull _obj && {alive _obj}) then {_obj setDamage 1};
+            };
+        } forEach keys _personnel;
+    };
+    case "commandFastTimer": {
+        private _fid = _args param [0,""];
+        private _f = [_fid] call TYR_fnc_StateGetFaction;
+        private _network = [_fid] call TYR_fnc_CommandNetworkGet;
+        private _status = _network getOrDefault ["status","forming"];
+        if (_status isEqualTo "succession") then {_network set ["successionAt",serverTime]};
+        if (_status in ["operational","degraded","isolated"] && {(_network getOrDefault ["replacementAt",-1]) > 0}) then {_network set ["replacementAt",serverTime]};
+        if (_status isEqualTo "collapsed") then {
+            private _res = _f getOrDefault ["resources",createHashMap];
+            private _baseRec = (TYR_Runtime getOrDefault ["bases",createHashMap]) getOrDefault [_fid,createHashMap];
+            private _box = _baseRec getOrDefault ["box",objNull];
+            if (!isNull _box && {(_res getOrDefault ["manpower",0]) >= 5}) then {
+                _network set ["replacementAt",serverTime];
+            } else {
+                _network set ["collapseSince",serverTime - 239];
+            };
+        };
+        call TYR_fnc_ServerCommandTick;
+    };
     case "teleport": {
         private _fid = _args param [0,""];
         if (_fid in ["west","east","independent"]) then {
@@ -158,7 +222,78 @@ switch (_action) do {
             ];
         } forEach ["west","east","independent"];
 
-        [_player,"TYR_fnc_ClientDebugMapData",[[serverTime,_locations,_factions,_entities,_forces,_aiTraces]]] call TYR_fnc_ServerSendToPlayer;
+        private _commandNetworks = [];
+        private _commandPersonnel = TYR_State getOrDefault ["commandPersonnel",createHashMap];
+        private _runtimeCommand = TYR_Runtime getOrDefault ["commandPersonnel",createHashMap];
+        private _allForces = TYR_State getOrDefault ["forces",createHashMap];
+        private _runtimeForces = TYR_Runtime getOrDefault ["forces",createHashMap];
+        private _orders = TYR_State getOrDefault ["commandOrders",createHashMap];
+        {
+            private _fid = _x;
+            private _network = [_fid] call TYR_fnc_CommandNetworkGet;
+            private _nodes = [];
+            private _links = [];
+            private _nodeIds = [];
+            {
+                private _id = _x;
+                private _rec = _commandPersonnel get _id;
+                if ((_rec getOrDefault ["faction",""]) isEqualTo _fid) then {
+                    private _obj = _runtimeCommand getOrDefault [_id,objNull];
+                    private _pos = +(_rec getOrDefault ["position",[]]);
+                    if (!isNull _obj) then {_pos = getPosATL _obj};
+                    _nodes pushBack [_id,_rec getOrDefault ["role","officer"],_rec getOrDefault ["name",_id],_pos,_rec getOrDefault ["alive",false],""];
+                    _nodeIds pushBack _id;
+                };
+            } forEach keys _commandPersonnel;
+
+            private _mainId = _network getOrDefault ["main",""];
+            {
+                if (_mainId isNotEqualTo "" && {_x isNotEqualTo _mainId}) then {_links pushBack [_mainId,_x,"command"]};
+            } forEach (_network getOrDefault ["officers",[]]);
+
+            {
+                private _forceId = _x;
+                private _fr = _allForces get _forceId;
+                if ((_fr getOrDefault ["faction",""]) isEqualTo _fid && {_fr getOrDefault ["active",true]}) then {
+                    private _grp = _runtimeForces getOrDefault [_forceId,grpNull];
+                    private _pos = +(_fr getOrDefault ["position",[]]);
+                    private _alive = false;
+                    if (!isNull _grp && {count units _grp > 0}) then {
+                        private _ldr = leader _grp;
+                        _pos = getPosATL _ldr;
+                        _alive = alive _ldr;
+                    };
+                    private _nodeId = format ["force:%1",_forceId];
+                    _nodes pushBack [_nodeId,"force_commander",format ["FORCE %1",toUpper _forceId],_pos,_alive,_fr getOrDefault ["commandState","local"]];
+                    _nodeIds pushBack _nodeId;
+                    private _route = _fr getOrDefault ["commandOfficer",""];
+                    if (_route isNotEqualTo "") then {_links pushBack [_route,_nodeId,_fr getOrDefault ["commandState","local"]]};
+                };
+            } forEach keys _allForces;
+
+            private _pending = 0;
+            {
+                private _order = _orders get _x;
+                if ((_order getOrDefault ["faction",""]) isEqualTo _fid) then {_pending = _pending + 1};
+            } forEach keys _orders;
+            _commandNetworks pushBack [
+                _fid,_network getOrDefault ["status","forming"],_network getOrDefault ["collapseSince",-1],
+                _network getOrDefault ["replacementAt",-1],_nodes,_links,_pending
+            ];
+        } forEach ["west","east","independent"];
+
+        [_player,"TYR_fnc_ClientDebugMapData",[[serverTime,_locations,_factions,_entities,_forces,_aiTraces,_commandNetworks]]] call TYR_fnc_ServerSendToPlayer;
+    };
+    case "command": {
+        private _code = _args param [0,""];
+        if (_code isEqualType "" && {_code isNotEqualTo ""}) then {
+            if ((count _code) > 8000) then {_code = _code select [0,8000]};
+            diag_log format ["[TYRANTS DEBUG COMMAND][SERVER][%1] %2",name _player,_code];
+            private _result = call compile _code;
+            private _resultText = str _result;
+            diag_log format ["[TYRANTS DEBUG COMMAND][SERVER] RESULT %1",_resultText];
+            [_player,"TYR_fnc_ClientDebugCommandResult",["SERVER",_resultText,_code]] call TYR_fnc_ServerSendToPlayer;
+        };
     };
     case "save": {[true] call TYR_fnc_PersistenceSave};
     case "sync": {

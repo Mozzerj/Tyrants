@@ -52,20 +52,20 @@ The campaign ends when only one hostile faction with a functioning command struc
 
 COMMAND NETWORK FEATURES
 ------------------------
-[PLANNED] One named Main Commander per faction.
-[PLANNED] Multiple named command officers per faction, ideally 3-5 depending on campaign settings.
-[PLANNED] Officers assigned to regions, forces or specialist commands.
-[PLANNED] Order propagation time based on the available command route.
-[PLANNED] Rerouting when a relay officer is lost.
-[PLANNED] Last-known-orders behaviour for disconnected forces.
-[PLANNED] Acting commander succession after the Main Commander is killed.
-[PLANNED] Officer and commander replacement timers.
-[PLANNED] Replacement requires an operational command location and can require manpower/resources.
-[PLANNED] Multiple simultaneous officer losses increase disruption and replacement pressure.
+[DONE-v4.0.12] One named Main Commander per faction.
+[DONE-v4.0.12] Three named command officers per active faction; campaign-scaled counts can be added later.
+[IN PROGRESS-v4.0.12] Force commanders are linked to surviving command officers; regional/specialist assignments are still planned.
+[DONE-v4.0.12] Order propagation time is based on command-network status.
+[DONE-v4.0.12] Pending orders reroute when their command route is broken.
+[DONE-v4.0.12] Forces continue already-delivered orders when strategic command is lost.
+[DONE-v4.0.12] Surviving senior officers can succeed the Main Commander after a disruption timer.
+[DONE-v4.0.12] Officer and emergency commander replacement timers are implemented.
+[IN PROGRESS-v4.0.12] Replacement currently requires the physical HQ route and manpower; destructible command-post logic is still planned.
+[DONE-v4.0.12] Multiple officer losses increase order delay and replacement pressure.
 [PLANNED] Physical command posts that improve communication and enable replacements.
 [PLANNED] Destroying or capturing command posts can prevent or slow command recovery.
-[PLANNED] Command Integrity status shown to the owning faction without revealing enemy personnel locations for free.
-[PLANNED] AI commanders use exactly the same command-delay and replacement system as human-controlled factions.
+[DONE-v4.0.12] Owning factions receive command status/personnel; enemy command identity/position is not replicated for free.
+[IN PROGRESS-v4.0.12] AI strategic orders use the physical command-delay/replacement system; human strategic-order UI still needs routing through the same queue.
 
 
 FACTIONS AND CAMPAIGN
@@ -98,7 +98,7 @@ INTELLIGENCE AND RECONNAISSANCE
 -------------------------------
 HARD RULE: server truth is not faction knowledge. A faction only knows enemy information that one of its real intelligence sources actually collected.
 
-[IN PROGRESS] Enemy commanders, officers, units, emplacements, factories and location ownership begin unknown unless actually observed. v4.0.10 adds persistent last-known contacts for enemy units, vehicles, aircraft, naval units and emplacements; physical command personnel are still to come.
+[IN PROGRESS] Enemy commanders, officers, units, emplacements, factories and location ownership begin unknown unless actually observed. v4.0.10 adds persistent last-known contacts for enemy units, vehicles, aircraft, naval units and emplacements; physical command personnel now exist in v4.0.12; named hostile identification still requires future intelligence refinement.
 [DONE-v4.0.10] Human players create intelligence through real visual observation. Cursor/normal-view and optical observations are sent to the server and validated for enemy faction, range and unobstructed line of sight before becoming faction knowledge.
 [IN PROGRESS-v4.0.10] UAVs/drones only report what they can physically observe. Connected player UAVs and physical UAV entities now create line-of-sight contacts; more exact camera/sensor modelling can be refined later. When contact is lost, live tracking stops and the map keeps only the last observed position/time.
 [PLANNED] Spies are assigned by the player to real map areas/routes/sites and only report what they can observe there; they do not reveal a whole region for free.

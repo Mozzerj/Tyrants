@@ -9,7 +9,20 @@ if ((_f getOrDefault ["controller","human"]) isNotEqualTo "ai" || {!(_f getOrDef
 private _cmd = _f get "commander";
 private _personality = _cmd getOrDefault ["personality","balanced"];
 private _posture = _cmd getOrDefault ["posture","balanced"];
-private _trace = [format ["1 // INPUT\nPERSONALITY %1 // POSTURE %2",toUpper _personality,toUpper _posture]];
+private _network = [_factionId] call TYR_fnc_CommandNetworkGet;
+private _commandStatus = _network getOrDefault ["status","forming"];
+private _trace = [format ["1 // INPUT\nPERSONALITY %1 // POSTURE %2 // COMMAND %3",toUpper _personality,toUpper _posture,toUpper _commandStatus]];
+
+if (_commandStatus in ["collapsed","eliminated"]) exitWith {
+    _trace pushBack "2 // FORCE STATE\nLOCAL CONTROL ONLY";
+    _trace pushBack "3 // RESEARCH\nBLOCKED BY COMMAND COLLAPSE";
+    _trace pushBack "4 // OPERATION CHECK\nNO STRATEGIC ORDERS";
+    _trace pushBack "5 // OBJECTIVE\nNONE";
+    _trace pushBack "6 // DECISION\nHOLD LAST ORDERS // COMMAND NETWORK DOWN";
+    private _traces = TYR_Runtime getOrDefault ["aiDecisionTraces",createHashMap];
+    _traces set [_factionId,[serverTime,_trace]];
+    TYR_Runtime set ["aiDecisionTraces",_traces];
+};
 
 private _activeForces = [];
 private _availableForces = [];
@@ -65,12 +78,18 @@ if (!_hasOperation) then {
             private _forceId = _availableForces # 0;
             _operations set [_opId,createHashMapFromArray [
                 ["id",_opId],["faction",_factionId],["type","attack"],["target",_objective],
-                ["phase","move"],["forces",[_forceId]],["created",serverTime]
+                ["phase","command_pending"],["forces",[_forceId]],["created",serverTime]
             ]];
-            ((TYR_State get "forces") get _forceId) set ["operation",_opId];
-            _cmd set ["objective",_objective];
-            ["ai-operation"] call TYR_fnc_StateMarkDirty;
-            _decisionText = format ["ASSIGN %1 -> %2",toUpper _forceId,toUpper _objectiveName];
+            private _queued = [_factionId,_forceId,_opId,_objective] call TYR_fnc_ServerCommandQueueOrder;
+            if (_queued) then {
+                _cmd set ["objective",_objective];
+                ["ai-operation"] call TYR_fnc_StateMarkDirty;
+                private _delayInfo = [_factionId] call TYR_fnc_CommandOrderDelay;
+                _decisionText = format ["ORDER QUEUED %1 -> %2 // ~%3s PROPAGATION",toUpper _forceId,toUpper _objectiveName,round (_delayInfo # 1)];
+            } else {
+                _operations deleteAt _opId;
+                _decisionText = format ["HOLD // NO COMMAND ROUTE TO %1",toUpper _forceId];
+            };
         } else {
             _decisionText = format ["WAIT // NO FREE FORCE FOR %1",toUpper _objectiveName];
         };

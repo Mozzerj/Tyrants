@@ -14,6 +14,9 @@ private _runtime = TYR_Runtime get "forces";
                 _u setVariable ["TYR_factionId",_f get "faction",true];
             };
         } forEach (_f getOrDefault ["unitClasses",[]]);
-        if (count units _grp > 0) then {_runtime set [_id,_grp]} else {_f set ["active",false];deleteGroup _grp};
+        if (count units _grp > 0) then {
+            _runtime set [_id,_grp];
+            [_id] call TYR_fnc_ServerCommandAssignForce;
+        } else {_f set ["active",false];deleteGroup _grp};
     };
 } forEach keys _forces;

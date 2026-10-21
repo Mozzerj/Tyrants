@@ -33,6 +33,7 @@ private _changedLocations = [];
 _campaign set ["phase","running"];
 [true] call TYR_fnc_ServerSetCombatState;
 call TYR_fnc_ServerCreateBases;
+call TYR_fnc_ServerCommandRestore;
 ["deployment-complete",true] call TYR_fnc_StateMarkDirty;
 // Starting control is published only to each owning faction by StateObserveLocation.
 call TYR_fnc_ServerPublishDeployment;
