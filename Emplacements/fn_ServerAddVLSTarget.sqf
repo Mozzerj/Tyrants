@@ -1,0 +1,18 @@
+params ["_emplacementId","_position"];
+if (!isServer) exitWith {};
+private _owner = remoteExecutedOwner;
+private _access = [_owner,_emplacementId,25] call TYR_fnc_VLSAccess;
+if (count _access isEqualTo 0) exitWith {};
+private _player = _access # 0;
+if !(_position isEqualType [] && {count _position >= 2}) exitWith {};
+if ((_position # 0) < 0 || {(_position # 1) < 0} || {(_position # 0) > worldSize} || {(_position # 1) > worldSize}) exitWith {};
+private _fid = _access # 1;
+if !([_fid,"infra.offensive"] call TYR_fnc_StateResearchUnlocked) exitWith {};
+private _f = [_fid] call TYR_fnc_StateGetFaction;
+private _targets = _f getOrDefault ["vlsTargets",[]];
+if (count _targets >= 18) exitWith {[_player,"TYR_fnc_ClientHint",["VLS target list is full."]] call TYR_fnc_ServerSendToPlayer};
+_targets pushBack [_position # 0,_position # 1,0];
+_f set ["vlsTargets",_targets];
+["vls-target"] call TYR_fnc_StateMarkDirty;
+[_fid] call TYR_fnc_ServerPublishFaction;
+[_player,"TYR_fnc_ClientVLSState",[_emplacementId,+_targets,round (vehicleAmmo (_access # 2) * 18)]] call TYR_fnc_ServerSendToPlayer;

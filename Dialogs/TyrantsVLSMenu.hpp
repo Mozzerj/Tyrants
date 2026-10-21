@@ -1,307 +1,112 @@
 class TyrantsVLSMenu
 {
-	idd = 1204;
-	
-	class ControlsBackground
-	{
-		class Background
-		{
-			type = 0;
-			idc = -1;
-			x = safeZoneX + safeZoneW * 0;
-			y = safeZoneY + safeZoneH * 0;
-			w = safeZoneW * 0.2225;
-			h = safeZoneH * 1.01;
-			style = 0;
-			text = "";
-			colorBackground[] = {0.2,0.2,0.2,0.7};
-			colorText[] = {1,1,1,1};
-			font = "PuristaMedium";
-			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1);
-			
-		};
-		class TitleBackground
-		{
-			type = 0;
-			idc = -1;
-			x = safeZoneX + safeZoneW * 0;
-			y = safeZoneY + safeZoneH * 0;
-			w = safeZoneW * 0.2225;
-			h = safeZoneH * 0.06555556;
-			style = 0;
-			text = "";
-			colorBackground[] = {0,0,0,1};
-			colorText[] = {1,1,1,1};
-			font = "PuristaMedium";
-			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1.5);
-			
-		};
-		class TitleBar
-		{
-			type = 0;
-			idc = -1;
-			x = safeZoneX + safeZoneW * 0;
-			y = safeZoneY + safeZoneH * 0;
-			w = safeZoneW * 0.2225;
-			h = safeZoneH * 0.04555556;
-			style = 0;
-			text = "VLS System";
-			colorBackground[] = {0.851,0.5647,0.0863,1};
-			colorText[] = {1,1,1,1};
-			font = "PuristaMedium";
-			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1.5);
-			
-		};
-		class ButtonBackground
-		{
-			type = 0;
-			idc = -1;
-			x = safeZoneX + safeZoneW * 0.2225;
-			y = safeZoneY + safeZoneH * 0;
-			w = safeZoneW * 0.7825;
-			h = safeZoneH *  0.04555556;
-			style = 0;
-			text = "";
-			colorBackground[] = {0.2,0.2,0.2,0.7};
-			colorText[] = {1,1,1,1};
-			font = "PuristaMedium";
-			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1);
-			
-		};
-		class LaunchBackground
-		{
-			type = 0;
-			idc = -1;
-			x = safeZoneX + safeZoneW * 0.01875;
-			y = safeZoneY + safeZoneH * 0.66444445;
-			w = safeZoneW * 0.1875;
-			h = safeZoneH * 0.28111112;
-			style = 0;
-			text = "";
-			colorBackground[] = {0.102,0.102,0.102,1};
-			colorText[] = {0.5098,0.3059,0.3765,1};
-			font = "PuristaMedium";
-			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1);
-			
-		};
-		class Timer
-		{
-			type = 0;
-			idc = -1;
-			x = safeZoneX + safeZoneW * 0.01875;
-			y = safeZoneY + safeZoneH * 0.88444445;
-			w = safeZoneW * 0.1875;
-			h = safeZoneH * 0.06111112;
-			style = 0+2;
-			text = "Do Not Press Unless Authorised";
-			colorBackground[] = {0,0,0,0};
-			colorText[] = {0.6,0,0,1};
-			font = "PuristaMedium";
-			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25)  * 1.3);
-			
-		};
-		
-	};
-	class Controls
-	{
-		class AddTarget
-		{
-			type = 1;
-			idc = 4;
-			x = safeZoneX + safeZoneW * 0.11375;
-			y = safeZoneY + safeZoneH * 0.49777778;
-			w = safeZoneW * 0.0975;
-			h = safeZoneH * 0.04;
-			style = 0+2;
-			text = "Add Target";
-			borderSize = 0;
-			colorBackground[] = {0.851,0.5647,0.0863,1};
-			colorBackgroundActive[] = {1,0.6531,0.0918,1};
-			colorBackgroundDisabled[] = {0.2,0.2,0.2,1};
-			colorBorder[] = {0,0,0,0};
-			colorDisabled[] = {0.2,0.2,0.2,1};
-			colorFocused[] = {0.851,0.5647,0.0863,1};
-			colorShadow[] = {0,0,0,0};
-			colorText[] = {0,0,0,1};
-			font = "PuristaMedium";
-			offsetPressedX = 0.01;
-			offsetPressedY = 0.01;
-			offsetX = 0.01;
-			offsetY = 0.01;
-			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1.5);
-			soundClick[] = {"\A3\ui_f\data\sound\RscButton\soundClick",0.09,1.0};
-			soundEnter[] = {"\A3\ui_f\data\sound\RscButton\soundEnter",0.09,1.0};
-			soundEscape[] = {"\A3\ui_f\data\sound\RscButton\soundEscape",0.09,1.0};
-			soundPush[] = {"\A3\ui_f\data\sound\RscButton\soundPush",0.09,1.0};
-			onButtonClick = "execVM 'Emplacements\VLS\VLSAddTarget.sqf'";
-			
-		};
-		class Targets
-		{
-			type = 5;
-			idc = 1;
-			x = safeZoneX + safeZoneW * 0.01875;
-			y = safeZoneY + safeZoneH * 0.07777778;
-			w = safeZoneW * 0.1875;
-			h = safeZoneH * 0.39777778;
-			style = 16;
-			colorBackground[] = {0.851,0.5647,0.0863,1};
-			colorDisabled[] = {0.2,0.2,0.2,1};
-			colorSelect[] = {0.851,0.5647,0.0863,1};
-			colorText[] = {1,1,1,1};
-			font = "PuristaMedium";
-			maxHistoryDelay = 0;
-			rowHeight = 0;
-			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1);
-			soundSelect[] = {"\A3\ui_f\data\sound\RscListbox\soundSelect",0.09,1.0};
-			class ListScrollBar
-			{
-				color[] = {1,1,1,1};
-				thumb = "\A3\ui_f\data\gui\cfg\scrollbar\thumb_ca.paa";
-				arrowFull = "\A3\ui_f\data\gui\cfg\scrollbar\arrowFull_ca.paa";
-				arrowEmpty = "\A3\ui_f\data\gui\cfg\scrollbar\arrowEmpty_ca.paa";
-				border = "\A3\ui_f\data\gui\cfg\scrollbar\border_ca.paa";
-				
-			};
-			
-		};
-		class RemoveTarget
-		{
-			type = 1;
-			idc = 3;
-			x = safeZoneX + safeZoneW * 0.01375;
-			y = safeZoneY + safeZoneH * 0.49777778;
-			w = safeZoneW * 0.0975;
-			h = safeZoneH * 0.04;
-			style = 0+2;
-			text = "RemoveTarget";
-			borderSize = 0;
-			colorBackground[] = {0.851,0.5647,0.0863,1};
-			colorBackgroundActive[] = {1,0.6531,0.0918,1};
-			colorBackgroundDisabled[] = {0.2,0.2,0.2,1};
-			colorBorder[] = {0,0,0,0};
-			colorDisabled[] = {0.2,0.2,0.2,1};
-			colorFocused[] = {0.851,0.5647,0.0863,1};
-			colorShadow[] = {0,0,0,0};
-			colorText[] = {0,0,0,1};
-			font = "PuristaMedium";
-			offsetPressedX = 0.01;
-			offsetPressedY = 0.01;
-			offsetX = 0.01;
-			offsetY = 0.01;
-			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1.5);
-			soundClick[] = {"\A3\ui_f\data\sound\RscButton\soundClick",0.09,1.0};
-			soundEnter[] = {"\A3\ui_f\data\sound\RscButton\soundEnter",0.09,1.0};
-			soundEscape[] = {"\A3\ui_f\data\sound\RscButton\soundEscape",0.09,1.0};
-			soundPush[] = {"\A3\ui_f\data\sound\RscButton\soundPush",0.09,1.0};
-			onButtonClick = "[lbCurSel 1]execVM 'Emplacements\VLS\VLSRemoveTarget.sqf'";
-			
-		};
-		class LaunchButton
-		{
-			type = 1;
-			idc = 4;
-			x = safeZoneX + safeZoneW * 0.03875;
-			y = safeZoneY + safeZoneH * 0.69333334;
-			w = safeZoneW * 0.1475;
-			h = safeZoneH * 0.18666667;
-			style = 0+2;
-			text = "";
-			borderSize = 0;
-			colorBackground[] = {0.6,0,0,1};
-			colorBackgroundActive[] = {0.6,0,0,1};
-			colorBackgroundDisabled[] = {0.2,0.2,0.2,1};
-			colorBorder[] = {0,0,0,0};
-			colorDisabled[] = {0.2,0.2,0.2,1};
-			colorFocused[] = {0.6,0,0,1};
-			colorShadow[] = {0,0,0,0};
-			colorText[] = {0,0,0,1};
-			font = "PuristaMedium";
-			offsetPressedX = 0.01;
-			offsetPressedY = 0.01;
-			offsetX = 0.01;
-			offsetY = 0.01;
-			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1.5);
-			soundClick[] = {"\A3\ui_f\data\sound\RscButton\soundClick",0.09,1.0};
-			soundEnter[] = {"\A3\ui_f\data\sound\RscButton\soundEnter",0.09,1.0};
-			soundEscape[] = {"\A3\ui_f\data\sound\RscButton\soundEscape",0.09,1.0};
-			soundPush[] = {"\A3\ui_f\data\sound\RscButton\soundPush",0.09,1.0};
-			onButtonClick = "[1]execVM 'Emplacements\VLS\VLSLaunch.sqf'";
-			
-		};
-		class ButtonCover
-		{
-			type = 1;
-			idc = 11;
-			x = safeZoneX + safeZoneW * 0.01375;
-			y = safeZoneY + safeZoneH * 0.64444445;
-			w = safeZoneW * 0.1975;
-			h = safeZoneH * 0.30888889;
-			style = 0+2;
-			text = "Initiate Launch";
-			borderSize = 0;
-			colorBackground[] = {0.302,0.302,0.302,0.5};
-			colorBackgroundActive[] = {0.302,0.302,0.302,0.5};
-			colorBackgroundDisabled[] = {0.302,0.302,0.302,0.5};
-			colorBorder[] = {0,0,0,0};
-			colorDisabled[] = {0.2,0.2,0.2,1};
-			colorFocused[] = {0.302,0.302,0.302,0.5};
-			colorShadow[] = {0.302,0.302,0.302,0.5};
-			colorText[] = {0,0,0,0};
-			font = "PuristaMedium";
-			offsetPressedX = 0.01;
-			offsetPressedY = 0.01;
-			offsetX = 0.01;
-			offsetY = 0.01;
-			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1.5);
-			soundClick[] = {"\A3\ui_f\data\sound\RscButton\soundClick",0.09,1.0};
-			soundEnter[] = {"\A3\ui_f\data\sound\RscButton\soundEnter",0.09,1.0};
-			soundEscape[] = {"\A3\ui_f\data\sound\RscButton\soundEscape",0.09,1.0};
-			soundPush[] = {"\A3\ui_f\data\sound\RscButton\soundPush",0.09,1.0};
-			onButtonClick = "[0]execVM 'Emplacements\VLS\VLSLaunch.sqf'";
-			
-		};
-		class Timer_copy1
-		{
-			type = 0;
-			idc = -1;
-			x = safeZoneX + safeZoneW * 0.01875;
-			y = safeZoneY + safeZoneH * 0.56666667;
-			w = safeZoneW * 0.1875;
-			h = safeZoneH * 0.06111112;
-			style = 0+2;
-			text = "10:00";
-			colorBackground[] = {0,0,0,1};
-			colorText[] = {0.6,0,0,1};
-			font = "PuristaMedium";
-			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 3);
-			
-		};
-		class MapBackground
-		{
-			type = 0;
-			idc = -1;
-			x = safeZoneX + safeZoneW * 0.2225;
-			y = safeZoneY + safeZoneH * 0.04555556;
-			w = safeZoneW * 0.7775;
-			h = safeZoneH * 1;
-			style = 0;
-			text = "";
-			colorBackground[] = {0,0,0,1};
-			colorText[] = {0.4118,0.5294,0.4902,1};
-			font = "PuristaMedium";
-			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1);
-			
-		};
-		class Map : RscMapControl {
-			idc = 1000;
-			x = safeZoneX + safeZoneW * 0.2225;
-			y = safeZoneY + safeZoneH * 0.04555556;
-			w = safeZoneW * 0.7775;
-			h = safeZoneH * 1;
-		};
-		
-	};
-	
-};
+    idd = 1204;
+    movingEnable = 0;
+    enableSimulation = 1;
+    onUnload = "[] call TYR_fnc_VLSMenuCleanup;";
 
+    class ControlsBackground
+    {
+        class Backdrop: TYR_UI_Text
+        {
+            x = safeZoneX;
+            y = safeZoneY;
+            w = safeZoneW;
+            h = safeZoneH;
+            colorBackground[] = {0.015,0.02,0.025,0.97};
+        };
+        class Header: TYR_UI_Text
+        {
+            x = safeZoneX;
+            y = safeZoneY;
+            w = safeZoneW;
+            h = safeZoneH * 0.065;
+            text = "TYRANTS // STRATEGIC LAUNCH CONTROL";
+            sizeEx = 0.042;
+            colorBackground[] = {0.055,0.065,0.075,1};
+        };
+        class Accent: TYR_UI_Text
+        {
+            x = safeZoneX;
+            y = safeZoneY;
+            w = safeZoneW * 0.007;
+            h = safeZoneH;
+            colorBackground[] = {0.851,0.5647,0.0863,1};
+        };
+        class SidePanel: TYR_UI_Text
+        {
+            x = safeZoneX + safeZoneW * 0.02;
+            y = safeZoneY + safeZoneH * 0.085;
+            w = safeZoneW * 0.29;
+            h = safeZoneH * 0.875;
+            colorBackground[] = {0.035,0.043,0.052,0.98};
+        };
+        class MapFrame: TYR_UI_Text
+        {
+            x = safeZoneX + safeZoneW * 0.325;
+            y = safeZoneY + safeZoneH * 0.085;
+            w = safeZoneW * 0.655;
+            h = safeZoneH * 0.875;
+            colorBackground[] = {0.01,0.012,0.015,1};
+        };
+    };
+
+    class Controls
+    {
+        class SystemTitle: TYR_UI_Text {x=safeZoneX+safeZoneW*0.04; y=safeZoneY+safeZoneH*0.105; w=safeZoneW*0.25; h=safeZoneH*0.035; sizeEx=0.032; colorText[]={0.851,0.5647,0.0863,1}; text="VLS BATTERY";};
+        class Ammo: TYR_UI_Text {idc=12; x=safeZoneX+safeZoneW*0.04; y=safeZoneY+safeZoneH*0.145; w=safeZoneW*0.12; h=safeZoneH*0.03; text="MISSILES: --";};
+        class TargetCount: TYR_UI_Text {idc=13; x=safeZoneX+safeZoneW*0.17; y=safeZoneY+safeZoneH*0.145; w=safeZoneW*0.12; h=safeZoneH*0.03; text="TARGETS: -- / 18";};
+        class Status: TYR_UI_Text {idc=2; x=safeZoneX+safeZoneW*0.04; y=safeZoneY+safeZoneH*0.182; w=safeZoneW*0.25; h=safeZoneH*0.05; sizeEx=0.024; colorText[]={0.58,0.63,0.68,1}; text="Synchronising launch state...";};
+
+        class Targets: TYR_UI_List
+        {
+            idc = 1;
+            x = safeZoneX + safeZoneW * 0.04;
+            y = safeZoneY + safeZoneH * 0.245;
+            w = safeZoneW * 0.25;
+            h = safeZoneH * 0.30;
+            onLBSelChanged = "_this call TYR_fnc_VLSFocusTarget;";
+        };
+        class AddTarget: TYR_UI_ButtonAccent {idc=4; x=safeZoneX+safeZoneW*0.04; y=safeZoneY+safeZoneH*0.56; w=safeZoneW*0.12; h=safeZoneH*0.045; text="ADD TARGET"; onButtonClick="[] call TYR_fnc_VLSAddTargetMode;";};
+        class RemoveTarget: TYR_UI_Button {idc=3; x=safeZoneX+safeZoneW*0.17; y=safeZoneY+safeZoneH*0.56; w=safeZoneW*0.12; h=safeZoneH*0.045; text="REMOVE"; onButtonClick="[lbCurSel 1] call TYR_fnc_VLSRemoveTargetAction;";};
+
+        class LaunchLabel: TYR_UI_Text {x=safeZoneX+safeZoneW*0.04; y=safeZoneY+safeZoneH*0.635; w=safeZoneW*0.25; h=safeZoneH*0.03; text="LAUNCH AUTHORISATION"; colorText[]={0.851,0.5647,0.0863,1};};
+        class LaunchButton: TYR_UI_ButtonDanger {idc=10; x=safeZoneX+safeZoneW*0.065; y=safeZoneY+safeZoneH*0.705; w=safeZoneW*0.20; h=safeZoneH*0.12; sizeEx=0.04; text="LAUNCH"; onButtonClick="[1] call TYR_fnc_VLSLaunchControl;";};
+        class ButtonCover: TYR_UI_Button
+        {
+            idc = 11;
+            x = safeZoneX + safeZoneW * 0.055;
+            y = safeZoneY + safeZoneH * 0.685;
+            w = safeZoneW * 0.22;
+            h = safeZoneH * 0.16;
+            text = "OPEN SAFETY COVER";
+            sizeEx = 0.03;
+            colorBackground[] = {0.22,0.24,0.27,1};
+            colorBackgroundActive[] = {0.30,0.32,0.35,1};
+            onButtonClick = "[0] call TYR_fnc_VLSLaunchControl;";
+        };
+        class LaunchHint: TYR_UI_Text {idc=14; x=safeZoneX+safeZoneW*0.04; y=safeZoneY+safeZoneH*0.865; w=safeZoneW*0.25; h=safeZoneH*0.05; style=2; sizeEx=0.023; colorText[]={0.55,0.58,0.62,1}; text="Safety closed. Select targets before arming.";};
+        class Close: TYR_UI_Button {x=safeZoneX+safeZoneW*0.04; y=safeZoneY+safeZoneH*0.92; w=safeZoneW*0.25; h=safeZoneH*0.035; text="EXIT LAUNCH CONTROL"; onButtonClick="closeDialog 0;";};
+
+        class Map: RscMapControl
+        {
+            idc = 1000;
+            x = safeZoneX + safeZoneW * 0.335;
+            y = safeZoneY + safeZoneH * 0.095;
+            w = safeZoneW * 0.635;
+            h = safeZoneH * 0.855;
+        };
+        class MapInstruction: TYR_UI_Text
+        {
+            idc = 15;
+            x = safeZoneX + safeZoneW * 0.355;
+            y = safeZoneY + safeZoneH * 0.11;
+            w = safeZoneW * 0.40;
+            h = safeZoneH * 0.035;
+            colorBackground[] = {0.02,0.025,0.03,0.80};
+            colorText[] = {0.90,0.92,0.94,1};
+            text = "MAP READY // press ADD TARGET, then click directly on this map";
+            sizeEx = 0.025;
+        };
+    };
+};

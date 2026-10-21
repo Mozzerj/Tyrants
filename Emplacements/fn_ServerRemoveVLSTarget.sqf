@@ -1,0 +1,15 @@
+params ["_emplacementId","_index"];
+if (!isServer) exitWith {};
+private _owner = remoteExecutedOwner;
+private _access = [_owner,_emplacementId,25] call TYR_fnc_VLSAccess;
+if (count _access isEqualTo 0) exitWith {};
+private _player = _access # 0;
+private _fid = _access # 1;
+private _f = [_fid] call TYR_fnc_StateGetFaction;
+private _targets = _f getOrDefault ["vlsTargets",[]];
+if !(_index isEqualType 0 && {_index >= 0} && {_index < count _targets}) exitWith {};
+_targets deleteAt _index;
+_f set ["vlsTargets",_targets];
+["vls-target"] call TYR_fnc_StateMarkDirty;
+[_fid] call TYR_fnc_ServerPublishFaction;
+[_player,"TYR_fnc_ClientVLSState",[_emplacementId,+_targets,round (vehicleAmmo (_access # 2) * 18)]] call TYR_fnc_ServerSendToPlayer;

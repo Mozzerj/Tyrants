@@ -1,0 +1,12 @@
+params [["_emplacementId",""]];
+if (!isServer) exitWith {};
+private _owner = remoteExecutedOwner;
+private _player = [_owner] call TYR_fnc_FindPlayerByOwner;
+if (isNull _player) exitWith {};
+private _access = [_owner,_emplacementId,25] call TYR_fnc_VLSAccess;
+if (count _access isEqualTo 0) exitWith { [_player,"TYR_fnc_ClientHint",["Move within 25m of your VLS."]] call TYR_fnc_ServerSendToPlayer };
+private _fid = _access # 1;
+private _obj = _access # 2;
+private _f = [_fid] call TYR_fnc_StateGetFaction;
+private _ammo = round (vehicleAmmo _obj * 18);
+[_player,"TYR_fnc_ClientVLSState",[_emplacementId,+(_f getOrDefault ["vlsTargets",[]]),_ammo]] call TYR_fnc_ServerSendToPlayer;

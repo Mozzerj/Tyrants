@@ -6,15 +6,11 @@ on:
   pull_request:
     branches: [main, dev]
 
-permissions:
-  contents: read
-
 jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
       - name: Check out mission source
         uses: actions/checkout@v4
-
       - name: Run Tyrants static validator
         run: python3 tools/validate_project.py

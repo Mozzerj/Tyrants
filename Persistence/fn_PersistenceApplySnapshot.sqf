@@ -1,0 +1,132 @@
+params ["_snapshot"];
+if (!isServer) exitWith {false};
+
+private _state = call TYR_fnc_StateCreateCampaign;
+private _campaignSaved = [_snapshot,"campaign",[]] call TYR_fnc_RecordGet;
+private _campaign = _state get "campaign";
+_campaign set ["id",[_campaignSaved,"id",_campaign get "id"] call TYR_fnc_RecordGet];
+_campaign set ["created",[_campaignSaved,"created",systemTime] call TYR_fnc_RecordGet];
+_campaign set ["phase",[_campaignSaved,"phase","running"] call TYR_fnc_RecordGet];
+_campaign set ["nextId",[_campaignSaved,"nextId",1] call TYR_fnc_RecordGet];
+private _depSaved = [_campaignSaved,"deployment",[]] call TYR_fnc_RecordGet;
+private _dep = createHashMapFromArray [["rotation",[_depSaved,"rotation",0] call TYR_fnc_RecordGet],["buffer",[_depSaved,"buffer",2500] call TYR_fnc_RecordGet],["sectors",createHashMap]];
+{if (_x isEqualType [] && {count _x >= 2}) then {(_dep get "sectors") set [_x # 0,+(_x # 1)]}} forEach ([_depSaved,"sectors",[]] call TYR_fnc_RecordGet);
+_campaign set ["deployment",_dep];
+private _settingsSaved = [_campaignSaved,"settings",[]] call TYR_fnc_RecordGet;
+private _settings = _campaign get "settings";
+{_settings set [_x # 0,_x # 1]} forEach _settingsSaved;
+
+private _defs = call TYR_fnc_GetResearchDefinitions;
+private _factions = _state get "factions";
+{
+    private _id = [_x,"id",""] call TYR_fnc_RecordGet;
+    if (_id in ["west","east","independent"]) then {
+        private _f = _factions get _id;
+        _f set ["name",[_x,"name",_f get "name"] call TYR_fnc_RecordGet];
+        _f set ["active",[_x,"active",true] call TYR_fnc_RecordGet];
+        _f set ["eliminated",[_x,"eliminated",false] call TYR_fnc_RecordGet];
+        _f set ["controller",[_x,"controller","ai"] call TYR_fnc_RecordGet];
+        _f set ["basePosition",+([_x,"basePosition",[]] call TYR_fnc_RecordGet)];
+        _f set ["baseConfirmed",[_x,"baseConfirmed",false] call TYR_fnc_RecordGet];
+        _f set ["vlsTargets",+([_x,"vlsTargets",[]] call TYR_fnc_RecordGet)];
+        _f set ["vehiclePool",+([_x,"vehiclePool",[]] call TYR_fnc_RecordGet)];
+        private _resSaved = [_x,"resources",[]] call TYR_fnc_RecordGet;
+        private _r = _f get "resources";
+        {
+            _r set [_x,[_resSaved,_x,_r get _x] call TYR_fnc_RecordGet];
+        } forEach ["steel","ammo","fuel","manpower"];
+        private _research = createHashMap;
+        {_research set [_x # 0,false]} forEach _defs;
+        {if (_x in keys _research) then {_research set [_x,true]}} forEach ([_x,"research",[]] call TYR_fnc_RecordGet);
+        _f set ["research",_research];
+        private _cmd = _f get "commander";
+        {if (_x isEqualType [] && {count _x >= 2}) then {_cmd set [_x # 0,_x # 1]}} forEach ([_x,"commander",[]] call TYR_fnc_RecordGet);
+    };
+} forEach ([_snapshot,"factions",[]] call TYR_fnc_RecordGet);
+
+private _loadedLocationState = createHashMap;
+{
+    private _id = [_x,"id",""] call TYR_fnc_RecordGet;
+    if (_id isNotEqualTo "") then {
+        _loadedLocationState set [_id,createHashMapFromArray [
+            ["owner",[_x,"owner","neutral"] call TYR_fnc_RecordGet],
+            ["stock",[_x,"stock",0] call TYR_fnc_RecordGet]
+        ]];
+    };
+} forEach ([_snapshot,"locations",[]] call TYR_fnc_RecordGet);
+TYR_Runtime set ["loadedLocations",_loadedLocationState];
+
+private _players = createHashMap;
+{
+    private _uid = [_x,"uid",""] call TYR_fnc_RecordGet;
+    if (_uid isNotEqualTo "") then {
+        private _loadedPos = +([_x,"position",[]] call TYR_fnc_RecordGet);
+        if !([_loadedPos] call TYR_fnc_IsValidLandPosition) then {_loadedPos = []};
+        _players set [_uid,createHashMapFromArray [
+            ["uid",_uid],
+            ["faction",[_x,"faction",""] call TYR_fnc_RecordGet],
+            ["position",_loadedPos],
+            ["direction",[_x,"direction",0] call TYR_fnc_RecordGet],
+            ["loadout",+([_x,"loadout",[]] call TYR_fnc_RecordGet)]
+        ]];
+    };
+} forEach ([_snapshot,"players",[]] call TYR_fnc_RecordGet);
+_state set ["players",_players];
+
+private _vehicles = createHashMap;
+{
+    private _id = [_x,"id",""] call TYR_fnc_RecordGet;
+    if (_id isNotEqualTo "") then {
+        _vehicles set [_id,createHashMapFromArray [
+            ["id",_id],["faction",[_x,"faction",""] call TYR_fnc_RecordGet],["class",[_x,"class",""] call TYR_fnc_RecordGet],
+            ["position",+([_x,"position",[0,0,0]] call TYR_fnc_RecordGet)],["direction",[_x,"direction",0] call TYR_fnc_RecordGet],
+            ["damage",[_x,"damage",0] call TYR_fnc_RecordGet],["fuel",[_x,"fuel",1] call TYR_fnc_RecordGet],
+            ["ammo",[_x,"ammo",1] call TYR_fnc_RecordGet],["cargo",+([_x,"cargo",[[],[],[],[]]] call TYR_fnc_RecordGet)]
+        ]];
+    };
+} forEach ([_snapshot,"vehicles",[]] call TYR_fnc_RecordGet);
+_state set ["vehicles",_vehicles];
+
+private _emps = createHashMap;
+{
+    private _id = [_x,"id",""] call TYR_fnc_RecordGet;
+    if (_id isNotEqualTo "") then {
+        _emps set [_id,createHashMapFromArray [
+            ["id",_id],["faction",[_x,"faction",""] call TYR_fnc_RecordGet],["key",[_x,"key",""] call TYR_fnc_RecordGet],
+            ["class",[_x,"class",""] call TYR_fnc_RecordGet],["position",+([_x,"position",[0,0,0]] call TYR_fnc_RecordGet)],
+            ["direction",[_x,"direction",0] call TYR_fnc_RecordGet],["damage",[_x,"damage",0] call TYR_fnc_RecordGet],
+            ["ammo",[_x,"ammo",1] call TYR_fnc_RecordGet]
+        ]];
+    };
+} forEach ([_snapshot,"emplacements",[]] call TYR_fnc_RecordGet);
+_state set ["emplacements",_emps];
+
+private _forces = createHashMap;
+{
+    private _id = [_x,"id",""] call TYR_fnc_RecordGet;
+    if (_id isNotEqualTo "") then {
+        _forces set [_id,createHashMapFromArray [
+            ["id",_id],["faction",[_x,"faction",""] call TYR_fnc_RecordGet],["role",[_x,"role","infantry"] call TYR_fnc_RecordGet],
+            ["position",+([_x,"position",[0,0,0]] call TYR_fnc_RecordGet)],["unitClasses",+([_x,"unitClasses",[]] call TYR_fnc_RecordGet)],
+            ["operation",[_x,"operation",""] call TYR_fnc_RecordGet],["active",[_x,"active",true] call TYR_fnc_RecordGet]
+        ]];
+    };
+} forEach ([_snapshot,"forces",[]] call TYR_fnc_RecordGet);
+_state set ["forces",_forces];
+
+private _operations = createHashMap;
+{
+    private _id = [_x,"id",""] call TYR_fnc_RecordGet;
+    if (_id isNotEqualTo "") then {
+        _operations set [_id,createHashMapFromArray [
+            ["id",_id],["faction",[_x,"faction",""] call TYR_fnc_RecordGet],["type",[_x,"type","attack"] call TYR_fnc_RecordGet],
+            ["target",[_x,"target",""] call TYR_fnc_RecordGet],["phase",[_x,"phase","assemble"] call TYR_fnc_RecordGet],
+            ["forces",+([_x,"forces",[]] call TYR_fnc_RecordGet)],["created",[_x,"created",0] call TYR_fnc_RecordGet]
+        ]];
+    };
+} forEach ([_snapshot,"operations",[]] call TYR_fnc_RecordGet);
+_state set ["operations",_operations];
+
+_state set ["destroyedBuildings",+([_snapshot,"destroyedBuildings",[]] call TYR_fnc_RecordGet)];
+TYR_State = _state;
+true

@@ -1,0 +1,11 @@
+disableSerialization;
+private _display = findDisplay 1300;
+if (isNull _display) exitWith {};
+private _map = _display displayCtrl 1000;
+_map ctrlEnable true;
+ctrlSetFocus _map;
+_map ctrlAddEventHandler ["Draw",{_this call TYR_fnc_DeploymentMapDraw}];
+_map ctrlMapAnimAdd [0,0.055,[worldSize*0.5,worldSize*0.5,0]];
+ctrlMapAnimCommit _map;
+[] call TYR_fnc_DeploymentOverlayBuild;
+[] call TYR_fnc_DeploymentMenuRefresh;

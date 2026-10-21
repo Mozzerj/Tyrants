@@ -1,0 +1,10 @@
+params [["_selection",-1]];
+private _d = findDisplay 1203;
+if (isNull _d) exitWith {};
+private _list = _d displayCtrl 1;
+if (_selection < 0) then {_selection = lbCurSel _list};
+if (_selection < 0) exitWith {};
+private _key = _list lbData _selection;
+private _pos = missionNamespace getVariable ["TYR_emplacementPendingPos",[]];
+if (count _pos < 2) exitWith {(_d displayCtrl 4) ctrlSetText "DESIGNATE A POSITION FIRST"};
+[_key,_pos] remoteExecCall ["TYR_fnc_ServerPurchaseEmplacement",2];

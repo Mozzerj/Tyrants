@@ -1,41 +1,3 @@
-class TYR_DBG_Text
-{
-    type = 0;
-    idc = -1;
-    style = 0;
-    font = "PuristaMedium";
-    sizeEx = 0.03;
-    colorText[] = {1,1,1,1};
-    colorBackground[] = {0,0,0,0};
-    text = "";
-};
-
-class TYR_DBG_Button
-{
-    type = 1;
-    idc = -1;
-    style = 2;
-    font = "PuristaMedium";
-    sizeEx = 0.028;
-    text = "";
-    borderSize = 0;
-    colorText[] = {0.05,0.05,0.05,1};
-    colorDisabled[] = {0.4,0.4,0.4,1};
-    colorBackground[] = {0.851,0.5647,0.0863,1};
-    colorBackgroundDisabled[] = {0.2,0.2,0.2,1};
-    colorBackgroundActive[] = {1,0.68,0.12,1};
-    colorFocused[] = {0.851,0.5647,0.0863,1};
-    colorShadow[] = {0,0,0,0};
-    colorBorder[] = {0,0,0,0};
-    offsetX = 0;
-    offsetY = 0;
-    offsetPressedX = 0.002;
-    offsetPressedY = 0.002;
-    soundEnter[] = {"",0,1};
-    soundPush[] = {"",0,1};
-    soundClick[] = {"\A3\ui_f\data\sound\RscButton\soundClick",0.09,1};
-    soundEscape[] = {"",0,1};
-};
 
 class TyrDebugMenu
 {
@@ -43,79 +5,46 @@ class TyrDebugMenu
     movingEnable = 0;
     enableSimulation = 1;
     onLoad = "[] call TYR_fnc_DebugMenuRefresh;";
-
     class ControlsBackground
     {
-        class Backdrop: TYR_DBG_Text
-        {
-            x = safeZoneX + safeZoneW * 0.19;
-            y = safeZoneY + safeZoneH * 0.12;
-            w = safeZoneW * 0.62;
-            h = safeZoneH * 0.76;
-            colorBackground[] = {0.035,0.04,0.045,0.97};
-        };
-        class Header: TYR_DBG_Text
-        {
-            idc = 100;
-            x = safeZoneX + safeZoneW * 0.19;
-            y = safeZoneY + safeZoneH * 0.12;
-            w = safeZoneW * 0.62;
-            h = safeZoneH * 0.055;
-            style = 2;
-            sizeEx = 0.045;
-            text = "DEBUG";
-            colorText[] = {0.05,0.05,0.05,1};
-            colorBackground[] = {0.851,0.5647,0.0863,1};
-        };
+        class Backdrop: TYR_UI_Text {x=safeZoneX; y=safeZoneY; w=safeZoneW; h=safeZoneH; colorBackground[]={0.015,0.02,0.025,0.98};};
+        class Header: TYR_UI_Text {x=safeZoneX; y=safeZoneY; w=safeZoneW; h=safeZoneH*0.065; text="TYRANTS V4 // DEVELOPER CONSOLE"; sizeEx=0.042; colorBackground[]={0.055,0.065,0.075,1};};
+        class Accent: TYR_UI_Text {x=safeZoneX; y=safeZoneY; w=safeZoneW*0.007; h=safeZoneH; colorBackground[]={0.851,0.5647,0.0863,1};};
+        class TargetPanel: TYR_UI_Text {x=safeZoneX+safeZoneW*0.13; y=safeZoneY+safeZoneH*0.15; w=safeZoneW*0.74; h=safeZoneH*0.55; colorBackground[]={0.035,0.043,0.052,0.98};};
     };
-
     class Controls
     {
-        class FriendlyTitle: TYR_DBG_Text {idc=101; x=safeZoneX+safeZoneW*0.215; y=safeZoneY+safeZoneH*0.195; w=safeZoneW*0.27; h=safeZoneH*0.035; sizeEx=0.032; text="FRIENDLY";};
-        class EnemyTitle: TYR_DBG_Text {idc=102; x=safeZoneX+safeZoneW*0.515; y=safeZoneY+safeZoneH*0.195; w=safeZoneW*0.27; h=safeZoneH*0.035; sizeEx=0.032; text="OPPONENT";};
+        class Status: TYR_UI_Text {idc=130; x=safeZoneX+safeZoneW*0.15; y=safeZoneY+safeZoneH*0.09; w=safeZoneW*0.70; h=safeZoneH*0.035; colorText[]={0.55,0.60,0.65,1}; text="Server state";};
+        class West: TYR_UI_Button {x=safeZoneX+safeZoneW*0.15; y=safeZoneY+safeZoneH*0.17; w=safeZoneW*0.17; h=safeZoneH*0.045; text="WEST / NATO"; onButtonClick="['west'] call TYR_debugSelect;";};
+        class East: TYR_UI_Button {x=safeZoneX+safeZoneW*0.415; y=safeZoneY+safeZoneH*0.17; w=safeZoneW*0.17; h=safeZoneH*0.045; text="EAST / CSAT"; onButtonClick="['east'] call TYR_debugSelect;";};
+        class Independent: TYR_UI_Button {x=safeZoneX+safeZoneW*0.68; y=safeZoneY+safeZoneH*0.17; w=safeZoneW*0.17; h=safeZoneH*0.045; text="INDEPENDENT / AAF"; onButtonClick="['independent'] call TYR_debugSelect;";};
 
-        class FSteel: TYR_DBG_Text {idc=110; x=safeZoneX+safeZoneW*0.215; y=safeZoneY+safeZoneH*0.24; w=safeZoneW*0.13; h=safeZoneH*0.03;};
-        class FAmmo: TYR_DBG_Text {idc=111; x=safeZoneX+safeZoneW*0.215; y=safeZoneY+safeZoneH*0.275; w=safeZoneW*0.13; h=safeZoneH*0.03;};
-        class FFuel: TYR_DBG_Text {idc=112; x=safeZoneX+safeZoneW*0.215; y=safeZoneY+safeZoneH*0.31; w=safeZoneW*0.13; h=safeZoneH*0.03;};
-        class FMan: TYR_DBG_Text {idc=113; x=safeZoneX+safeZoneW*0.215; y=safeZoneY+safeZoneH*0.345; w=safeZoneW*0.13; h=safeZoneH*0.03;};
+        class Target: TYR_UI_Text {idc=101; x=safeZoneX+safeZoneW*0.16; y=safeZoneY+safeZoneH*0.24; w=safeZoneW*0.68; h=safeZoneH*0.04; style=2; sizeEx=0.032; colorText[]={0.851,0.5647,0.0863,1}; text="TARGET";};
+        class Steel: TYR_UI_Text {idc=110; x=safeZoneX+safeZoneW*0.16; y=safeZoneY+safeZoneH*0.30; w=safeZoneW*0.15; h=safeZoneH*0.07; style=2; text="STEEL";};
+        class Ammo: TYR_UI_Text {idc=111; x=safeZoneX+safeZoneW*0.335; y=safeZoneY+safeZoneH*0.30; w=safeZoneW*0.15; h=safeZoneH*0.07; style=2; text="AMMO";};
+        class Fuel: TYR_UI_Text {idc=112; x=safeZoneX+safeZoneW*0.51; y=safeZoneY+safeZoneH*0.30; w=safeZoneW*0.15; h=safeZoneH*0.07; style=2; text="FUEL";};
+        class Man: TYR_UI_Text {idc=113; x=safeZoneX+safeZoneW*0.685; y=safeZoneY+safeZoneH*0.30; w=safeZoneW*0.15; h=safeZoneH*0.07; style=2; text="MANPOWER";};
 
-        class ESteel: TYR_DBG_Text {idc=120; x=safeZoneX+safeZoneW*0.515; y=safeZoneY+safeZoneH*0.24; w=safeZoneW*0.13; h=safeZoneH*0.03;};
-        class EAmmo: TYR_DBG_Text {idc=121; x=safeZoneX+safeZoneW*0.515; y=safeZoneY+safeZoneH*0.275; w=safeZoneW*0.13; h=safeZoneH*0.03;};
-        class EFuel: TYR_DBG_Text {idc=122; x=safeZoneX+safeZoneW*0.515; y=safeZoneY+safeZoneH*0.31; w=safeZoneW*0.13; h=safeZoneH*0.03;};
-        class EMan: TYR_DBG_Text {idc=123; x=safeZoneX+safeZoneW*0.515; y=safeZoneY+safeZoneH*0.345; w=safeZoneW*0.13; h=safeZoneH*0.03;};
+        class AddSteel: TYR_UI_ButtonAccent {x=safeZoneX+safeZoneW*0.16; y=safeZoneY+safeZoneH*0.39; w=safeZoneW*0.15; h=safeZoneH*0.04; text="+10K STEEL"; onButtonClick="['resource',[TYR_debugFaction,'steel',10000]] call TYR_debugSend;";};
+        class AddAmmo: TYR_UI_Button {x=safeZoneX+safeZoneW*0.335; y=safeZoneY+safeZoneH*0.39; w=safeZoneW*0.15; h=safeZoneH*0.04; text="+10K AMMO"; onButtonClick="['resource',[TYR_debugFaction,'ammo',10000]] call TYR_debugSend;";};
+        class AddFuel: TYR_UI_Button {x=safeZoneX+safeZoneW*0.51; y=safeZoneY+safeZoneH*0.39; w=safeZoneW*0.15; h=safeZoneH*0.04; text="+10K FUEL"; onButtonClick="['resource',[TYR_debugFaction,'fuel',10000]] call TYR_debugSend;";};
+        class AddMan: TYR_UI_Button {x=safeZoneX+safeZoneW*0.685; y=safeZoneY+safeZoneH*0.39; w=safeZoneW*0.15; h=safeZoneH*0.04; text="+100 MANPOWER"; onButtonClick="['resource',[TYR_debugFaction,'manpower',100]] call TYR_debugSend;";};
 
-        class FSteelAdd: TYR_DBG_Button {x=safeZoneX+safeZoneW*0.35; y=safeZoneY+safeZoneH*0.24; w=safeZoneW*0.12; h=safeZoneH*0.03; text="+10K STEEL"; onButtonClick="['resource',[Pside,1,10000]] remoteExecCall ['TYR_fnc_ServerDebugAction',2];";};
-        class FAmmoAdd: TYR_DBG_Button {x=safeZoneX+safeZoneW*0.35; y=safeZoneY+safeZoneH*0.275; w=safeZoneW*0.12; h=safeZoneH*0.03; text="+10K AMMO"; onButtonClick="['resource',[Pside,2,10000]] remoteExecCall ['TYR_fnc_ServerDebugAction',2];";};
-        class FFuelAdd: TYR_DBG_Button {x=safeZoneX+safeZoneW*0.35; y=safeZoneY+safeZoneH*0.31; w=safeZoneW*0.12; h=safeZoneH*0.03; text="+10K FUEL"; onButtonClick="['resource',[Pside,3,10000]] remoteExecCall ['TYR_fnc_ServerDebugAction',2];";};
-        class FManAdd: TYR_DBG_Button {x=safeZoneX+safeZoneW*0.35; y=safeZoneY+safeZoneH*0.345; w=safeZoneW*0.12; h=safeZoneH*0.03; text="+100 MANPOWER"; onButtonClick="['resource',[Pside,4,100]] remoteExecCall ['TYR_fnc_ServerDebugAction',2];";};
+        class Boost: TYR_UI_Button {x=safeZoneX+safeZoneW*0.16; y=safeZoneY+safeZoneH*0.47; w=safeZoneW*0.15; h=safeZoneH*0.045; text="BOOST ALL"; onButtonClick="['boost',[TYR_debugFaction]] call TYR_debugSend;";};
+        class Max: TYR_UI_Button {x=safeZoneX+safeZoneW*0.335; y=safeZoneY+safeZoneH*0.47; w=safeZoneW*0.15; h=safeZoneH*0.045; text="MAX RESOURCES"; onButtonClick="['max',[TYR_debugFaction]] call TYR_debugSend;";};
+        class Unlock: TYR_UI_Button {x=safeZoneX+safeZoneW*0.51; y=safeZoneY+safeZoneH*0.47; w=safeZoneW*0.15; h=safeZoneH*0.045; text="UNLOCK RESEARCH"; onButtonClick="['unlockResearch',[TYR_debugFaction]] call TYR_debugSend;";};
+        class Reset: TYR_UI_ButtonDanger {x=safeZoneX+safeZoneW*0.685; y=safeZoneY+safeZoneH*0.47; w=safeZoneW*0.15; h=safeZoneH*0.045; text="RESET RESEARCH"; onButtonClick="['resetResearch',[TYR_debugFaction]] call TYR_debugSend;";};
 
-        class ESteelAdd: TYR_DBG_Button {x=safeZoneX+safeZoneW*0.65; y=safeZoneY+safeZoneH*0.24; w=safeZoneW*0.12; h=safeZoneH*0.03; text="+10K STEEL"; onButtonClick="['resource',[1-Pside,1,10000]] remoteExecCall ['TYR_fnc_ServerDebugAction',2];";};
-        class EAmmoAdd: TYR_DBG_Button {x=safeZoneX+safeZoneW*0.65; y=safeZoneY+safeZoneH*0.275; w=safeZoneW*0.12; h=safeZoneH*0.03; text="+10K AMMO"; onButtonClick="['resource',[1-Pside,2,10000]] remoteExecCall ['TYR_fnc_ServerDebugAction',2];";};
-        class EFuelAdd: TYR_DBG_Button {x=safeZoneX+safeZoneW*0.65; y=safeZoneY+safeZoneH*0.31; w=safeZoneW*0.12; h=safeZoneH*0.03; text="+10K FUEL"; onButtonClick="['resource',[1-Pside,3,10000]] remoteExecCall ['TYR_fnc_ServerDebugAction',2];";};
-        class EManAdd: TYR_DBG_Button {x=safeZoneX+safeZoneW*0.65; y=safeZoneY+safeZoneH*0.345; w=safeZoneW*0.12; h=safeZoneH*0.03; text="+100 MANPOWER"; onButtonClick="['resource',[1-Pside,4,100]] remoteExecCall ['TYR_fnc_ServerDebugAction',2];";};
+        class SpawnForce: TYR_UI_ButtonAccent {x=safeZoneX+safeZoneW*0.16; y=safeZoneY+safeZoneH*0.55; w=safeZoneW*0.15; h=safeZoneH*0.045; text="SPAWN AI FORCE"; onButtonClick="['spawnForce',[TYR_debugFaction]] call TYR_debugSend;";};
+        class Think: TYR_UI_Button {x=safeZoneX+safeZoneW*0.335; y=safeZoneY+safeZoneH*0.55; w=safeZoneW*0.15; h=safeZoneH*0.045; text="COMMANDER THINK"; onButtonClick="['think',[TYR_debugFaction]] call TYR_debugSend;";};
+        class Teleport: TYR_UI_Button {x=safeZoneX+safeZoneW*0.51; y=safeZoneY+safeZoneH*0.55; w=safeZoneW*0.15; h=safeZoneH*0.045; text="TP TO TARGET HQ"; onButtonClick="[TYR_debugFaction] call TYR_fnc_DebugTeleport;";};
+        class Tick: TYR_UI_Button {x=safeZoneX+safeZoneW*0.685; y=safeZoneY+safeZoneH*0.55; w=safeZoneW*0.15; h=safeZoneH*0.045; text="ECONOMY TICK"; onButtonClick="['factoryTick',[]] call TYR_debugSend;";};
 
-        class FBoost: TYR_DBG_Button {x=safeZoneX+safeZoneW*0.215; y=safeZoneY+safeZoneH*0.39; w=safeZoneW*0.125; h=safeZoneH*0.038; text="BOOST ALL"; onButtonClick="['boostResources',[Pside]] remoteExecCall ['TYR_fnc_ServerDebugAction',2];";};
-        class FMax: TYR_DBG_Button {x=safeZoneX+safeZoneW*0.345; y=safeZoneY+safeZoneH*0.39; w=safeZoneW*0.125; h=safeZoneH*0.038; text="MAX ALL"; onButtonClick="['maxResources',[Pside]] remoteExecCall ['TYR_fnc_ServerDebugAction',2];";};
-        class EBoost: TYR_DBG_Button {x=safeZoneX+safeZoneW*0.515; y=safeZoneY+safeZoneH*0.39; w=safeZoneW*0.125; h=safeZoneH*0.038; text="BOOST ALL"; onButtonClick="['boostResources',[1-Pside]] remoteExecCall ['TYR_fnc_ServerDebugAction',2];";};
-        class EMax: TYR_DBG_Button {x=safeZoneX+safeZoneW*0.645; y=safeZoneY+safeZoneH*0.39; w=safeZoneW*0.125; h=safeZoneH*0.038; text="MAX ALL"; onButtonClick="['maxResources',[1-Pside]] remoteExecCall ['TYR_fnc_ServerDebugAction',2];";};
-
-        class ProgressTitle: TYR_DBG_Text {x=safeZoneX+safeZoneW*0.215; y=safeZoneY+safeZoneH*0.455; w=safeZoneW*0.555; h=safeZoneH*0.03; text="PROGRESSION / WORLD"; colorText[]={0.851,0.5647,0.0863,1};};
-        class FUnlock: TYR_DBG_Button {x=safeZoneX+safeZoneW*0.215; y=safeZoneY+safeZoneH*0.495; w=safeZoneW*0.125; h=safeZoneH*0.038; text="UNLOCK FRIENDLY"; onButtonClick="['unlockResearch',[Pside]] remoteExecCall ['TYR_fnc_ServerDebugAction',2];";};
-        class FReset: TYR_DBG_Button {x=safeZoneX+safeZoneW*0.345; y=safeZoneY+safeZoneH*0.495; w=safeZoneW*0.125; h=safeZoneH*0.038; text="RESET FRIENDLY"; onButtonClick="['resetResearch',[Pside]] remoteExecCall ['TYR_fnc_ServerDebugAction',2];";};
-        class EUnlock: TYR_DBG_Button {x=safeZoneX+safeZoneW*0.515; y=safeZoneY+safeZoneH*0.495; w=safeZoneW*0.125; h=safeZoneH*0.038; text="UNLOCK ENEMY"; onButtonClick="['unlockResearch',[1-Pside]] remoteExecCall ['TYR_fnc_ServerDebugAction',2];";};
-        class EReset: TYR_DBG_Button {x=safeZoneX+safeZoneW*0.645; y=safeZoneY+safeZoneH*0.495; w=safeZoneW*0.125; h=safeZoneH*0.038; text="RESET ENEMY"; onButtonClick="['resetResearch',[1-Pside]] remoteExecCall ['TYR_fnc_ServerDebugAction',2];";};
-
-        class FillFactories: TYR_DBG_Button {x=safeZoneX+safeZoneW*0.215; y=safeZoneY+safeZoneH*0.545; w=safeZoneW*0.125; h=safeZoneH*0.038; text="FILL FACTORIES"; onButtonClick="['fillFactories',[]] remoteExecCall ['TYR_fnc_ServerDebugAction',2];";};
-        class FactoryTick: TYR_DBG_Button {x=safeZoneX+safeZoneW*0.345; y=safeZoneY+safeZoneH*0.545; w=safeZoneW*0.125; h=safeZoneH*0.038; text="FACTORY TICK"; onButtonClick="['factoryTick',[]] remoteExecCall ['TYR_fnc_ServerDebugAction',2];";};
-        class RefillVLS: TYR_DBG_Button {x=safeZoneX+safeZoneW*0.515; y=safeZoneY+safeZoneH*0.545; w=safeZoneW*0.125; h=safeZoneH*0.038; text="REFILL VLS"; onButtonClick="['refillVLS',[Pside]] remoteExecCall ['TYR_fnc_ServerDebugAction',2];";};
-        class SaveNow: TYR_DBG_Button {x=safeZoneX+safeZoneW*0.645; y=safeZoneY+safeZoneH*0.545; w=safeZoneW*0.125; h=safeZoneH*0.038; text="SAVE NOW"; onButtonClick="['save',[]] remoteExecCall ['TYR_fnc_ServerDebugAction',2];";};
-
-        class PlayerTitle: TYR_DBG_Text {x=safeZoneX+safeZoneW*0.215; y=safeZoneY+safeZoneH*0.61; w=safeZoneW*0.555; h=safeZoneH*0.03; text="PLAYER / TEST"; colorText[]={0.851,0.5647,0.0863,1};};
-        class Heal: TYR_DBG_Button {x=safeZoneX+safeZoneW*0.215; y=safeZoneY+safeZoneH*0.65; w=safeZoneW*0.125; h=safeZoneH*0.038; text="HEAL PLAYER"; onButtonClick="player setDamage 0;";};
-        class TpHome: TYR_DBG_Button {x=safeZoneX+safeZoneW*0.345; y=safeZoneY+safeZoneH*0.65; w=safeZoneW*0.125; h=safeZoneH*0.038; text="TP FRIENDLY BASE"; onButtonClick="player setPosATL ((GameData # 0 # (Pside + 1) # 0) vectorAdd [5,5,0]);";};
-        class TpEnemy: TYR_DBG_Button {x=safeZoneX+safeZoneW*0.515; y=safeZoneY+safeZoneH*0.65; w=safeZoneW*0.125; h=safeZoneH*0.038; text="TP ENEMY BASE"; onButtonClick="player setPosATL ((GameData # 0 # ((1-Pside) + 1) # 0) vectorAdd [5,5,0]);";};
-        class RunTests: TYR_DBG_Button {x=safeZoneX+safeZoneW*0.645; y=safeZoneY+safeZoneH*0.65; w=safeZoneW*0.125; h=safeZoneH*0.038; text="RUN AUTOTEST"; onButtonClick="[] remoteExecCall ['TYR_fnc_ServerRunAutomatedTests',2];";};
-
-        class Close: TYR_DBG_Button {x=safeZoneX+safeZoneW*0.345; y=safeZoneY+safeZoneH*0.79; w=safeZoneW*0.31; h=safeZoneH*0.045; text="CLOSE DEBUG MENU"; onButtonClick="closeDialog 0;";};
+        class Perf: TYR_UI_Text {idc=131; x=safeZoneX+safeZoneW*0.16; y=safeZoneY+safeZoneH*0.63; w=safeZoneW*0.30; h=safeZoneH*0.03; text="Client FPS: --";};
+        class Save: TYR_UI_ButtonAccent {x=safeZoneX+safeZoneW*0.48; y=safeZoneY+safeZoneH*0.62; w=safeZoneW*0.11; h=safeZoneH*0.04; text="SAVE NOW"; onButtonClick="['save',[]] call TYR_debugSend;";};
+        class Sync: TYR_UI_Button {x=safeZoneX+safeZoneW*0.60; y=safeZoneY+safeZoneH*0.62; w=safeZoneW*0.11; h=safeZoneH*0.04; text="SYNC"; onButtonClick="['sync',[]] call TYR_debugSend;";};
+        class Tests: TYR_UI_Button {x=safeZoneX+safeZoneW*0.72; y=safeZoneY+safeZoneH*0.62; w=safeZoneW*0.11; h=safeZoneH*0.04; text="AUTOTEST"; onButtonClick="[] remoteExecCall ['TYR_fnc_ServerRunAutomatedTests',2];";};
+        class Close: TYR_UI_Button {x=safeZoneX+safeZoneW*0.40; y=safeZoneY+safeZoneH*0.76; w=safeZoneW*0.20; h=safeZoneH*0.05; text="RETURN TO GAME"; onButtonClick="closeDialog 0;";};
+        class Note: TYR_UI_TextMulti {x=safeZoneX+safeZoneW*0.20; y=safeZoneY+safeZoneH*0.83; w=safeZoneW*0.60; h=safeZoneH*0.07; style=2; colorText[]={0.5,0.54,0.58,1}; text="V4 debug actions mutate server state directly and only replicate the affected faction. Persistence remains debounced unless SAVE NOW is pressed.";};
     };
 };

@@ -1,0 +1,20 @@
+params ["_factionId","_key"];
+if (!isServer) exitWith {[false,"Server only"]};
+private _f = [_factionId] call TYR_fnc_StateGetFaction;
+if (count _f isEqualTo 0 || {!(_f getOrDefault ["active",false])}) exitWith {[false,"Faction unavailable"]};
+private _defs = call TYR_fnc_GetResearchDefinitions;
+private _i = _defs findIf {(_x # 0) isEqualTo _key};
+if (_i < 0) exitWith {[false,"Unknown research"]};
+private _def = _defs # _i;
+private _research = _f get "research";
+if (_research getOrDefault [_key,false]) exitWith {[false,"Research already unlocked"]};
+private _missing = (_def # 4) select {!(_research getOrDefault [_x,false])};
+if (count _missing > 0) exitWith {[false,format ["Missing prerequisite: %1",_missing joinString ", "]]};
+private _r = _f get "resources";
+private _cost = _def # 3;
+if ((_r getOrDefault ["steel",0]) < _cost) exitWith {[false,format ["Need %1 steel",_cost]]};
+_r set ["steel",(_r get "steel")-_cost];
+_research set [_key,true];
+["research"] call TYR_fnc_StateMarkDirty;
+[_factionId] call TYR_fnc_ServerPublishFaction;
+[true,format ["Unlocked %1",_def # 1]]

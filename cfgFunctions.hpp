@@ -1,0 +1,203 @@
+class TYR
+{
+    tag = "TYR";
+
+    class Core
+    {
+        file = "Core";
+        class RecordGet {};
+        class FactionIds {};
+        class FactionSide {};
+        class SideFaction {};
+        class FactionColor {};
+        class FindPlayerByOwner {};
+        class ServerSendToPlayer {};
+        class ServerBootstrap {};
+        class ServerScheduler {};
+    };
+
+    class State
+    {
+        file = "State";
+        class StateCreateCampaign {};
+        class StateGetFaction {};
+        class StateGetLocation {};
+        class StateNextId {};
+        class StateMarkDirty {};
+        class StateChangeResource {};
+        class StateResearchUnlocked {};
+        class StatePublicFaction {};
+        class StatePublicCampaign {};
+        class StatePublicLocation {};
+    };
+
+    class Persistence
+    {
+        file = "Persistence";
+        class PersistenceBuildSnapshot {};
+        class PersistenceValidateRecord {};
+        class PersistenceApplySnapshot {};
+        class PersistenceLoad {};
+        class PersistenceSave {};
+        class PersistenceQueue {};
+        class PersistenceManager {};
+        class PersistenceReset {};
+    };
+
+    class Network
+    {
+        file = "Network";
+        class ServerRequestState {};
+        class ServerPublishFaction {};
+        class ServerPublishDeployment {};
+        class ServerPublishLocation {};
+        class ClientReceiveSnapshot {};
+        class ClientReceiveDeployment {};
+        class ClientReceiveFaction {};
+        class ClientReceiveLocation {};
+        class ClientHint {};
+        class ClientCaptureStatus {};
+        class ClientEndMission {};
+        class ClientVLSState {};
+    };
+
+    class World
+    {
+        file = "World";
+        class ServerBuildLocations {};
+        class DeploymentCheckPosition {};
+        class IsValidLandPosition {};
+        class FindSafeSpawnPosition {};
+        class ServerSetCombatState {};
+        class ServerGenerateDeployment {};
+        class ServerAutoSelectBase {};
+        class ServerConfirmBase {};
+        class ServerFinalizeDeployment {};
+        class ServerCreateBases {};
+        class ServerRegisterDestroyedBuilding {};
+        class ServerRestoreDestroyedBuildings {};
+        class ServerVictoryEvaluate {};
+    };
+
+    class Players
+    {
+        file = "Players";
+        class ClientInit {};
+        class ClientRestorePlayer {};
+        class ClientApplyLoadout {};
+        class ClientAttachBaseActions {};
+        class ClientOpenArsenal {};
+        class LoadoutCost {};
+        class ServerRegisterPlayer {};
+        class ServerSavePlayer {};
+        class ServerBeginArsenal {};
+        class ServerPurchaseLoadout {};
+    };
+
+    class Economy
+    {
+        file = "Economy";
+        class ServerEconomyTick {};
+        class ServerCollectFactory {};
+    };
+
+    class Territory
+    {
+        file = "Territory";
+        class ServerBeginCapture {};
+        class ServerTerritoryTick {};
+    };
+
+    class Research
+    {
+        file = "Research";
+        class GetResearchDefinitions {};
+        class ResearchPurchase {};
+        class ServerPurchaseResearch {};
+    };
+
+    class Vehicles
+    {
+        file = "Vehicles";
+        class VehicleCategory {};
+        class VehicleCost {};
+        class VehiclePurchase {};
+        class ServerPurchaseVehicle {};
+        class ServerVehicleKilled {};
+        class ServerRestoreVehicles {};
+    };
+
+    class Emplacements
+    {
+        file = "Emplacements";
+        class GetEmplacementDefinitions {};
+        class ServerPurchaseEmplacement {};
+        class ServerRestoreEmplacements {};
+        class VLSAccess {};
+        class ServerGetVLSState {};
+        class ServerAddVLSTarget {};
+        class ServerRemoveVLSTarget {};
+        class ServerLaunchVLS {};
+        class CruiseMissileLaunch {};
+    };
+
+    class AI
+    {
+        file = "AI";
+        class AISelectObjective {};
+        class AIForceCreate {};
+        class AIForceRestore {};
+        class AIEnsureForces {};
+        class AICommanderThink {};
+        class AIOperationsTick {};
+        class ServerRequestForce {};
+    };
+
+    class UI
+    {
+        file = "UI";
+        class PlayerMenuRefresh {};
+        class GetFactoryResource {};
+        class VehicleBuyMenu {};
+        class VehicleBuy {};
+        class OpenResearchMenu {};
+        class ResearchMenuUpdate {};
+        class OpenEmplacementMenu {};
+        class DeployEmplacement {};
+        class ClientAttachEmplacementActions {};
+        class OpenVLSMenu {};
+        class VLSMenuRefresh {};
+        class VLSAddTargetMode {};
+        class VLSRemoveTargetAction {};
+        class VLSFocusTarget {};
+        class VLSLaunchControl {};
+        class VLSMenuCleanup {};
+        class ClientMapInit {};
+        class ClientMapDraw {};
+        class DrawDeploymentSectors {};
+        class DeploymentOverlayBuild {};
+        class DeploymentOverlayCleanup {};
+        class DeploymentMapDraw {};
+        class DeploymentMenuInit {};
+        class DeploymentMapClick {};
+        class DeploymentConfirm {};
+        class DeploymentMenuRefresh {};
+        class CommanderMenuRefresh {};
+        class DebugMenuRefresh {};
+        class DebugTeleport {};
+    };
+
+    class Debug
+    {
+        file = "Debug";
+        class ServerDebugAction {};
+        class ClientDebugState {};
+    };
+
+    class Tests
+    {
+        file = "Tests";
+        class ServerRunAutomatedTests {};
+        class ClientShowTestReport {};
+    };
+};

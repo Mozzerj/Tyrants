@@ -1,20 +1,66 @@
-class RscMapControl;
+onLoadName = "Tyrants v4.0.7 - Deployment Selection Fix";
+onLoadMission = "Three-faction strategic warfare // deployment selection build v4.0.7";
+author = "Mozzerj";
+
+import RscMapControl;
 #include "Dialogs.hpp"
 
 class Params
 {
-    class TYR_SoloTestMode
+    class TYR_WestController
     {
-        title = "Solo Test Mode";
-        texts[] = {"Disabled", "Enabled"};
-        values[] = {0, 1};
+        title = "WEST Strategic Controller";
+        texts[] = {"Human","AI","Disabled"};
+        values[] = {0,1,2};
+        default = 0;
+    };
+    class TYR_EastController
+    {
+        title = "EAST Strategic Controller";
+        texts[] = {"Human","AI","Disabled"};
+        values[] = {0,1,2};
+        default = 1;
+    };
+    class TYR_IndependentController
+    {
+        title = "INDEPENDENT Strategic Controller";
+        texts[] = {"Human","AI","Disabled"};
+        values[] = {0,1,2};
+        default = 1;
+    };
+    class TYR_AIDifficulty
+    {
+        title = "AI Commander Difficulty";
+        texts[] = {"Recruit","Regular","Veteran","Expert"};
+        values[] = {0,1,2,3};
+        default = 1;
+    };
+    class TYR_StartingResources
+    {
+        title = "Starting Steel / Ammo / Fuel";
+        texts[] = {"5,000","10,000","15,000","30,000","50,000","100,000"};
+        values[] = {5000,10000,15000,30000,50000,100000};
+        default = 15000;
+    };
+    class TYR_StartingManpower
+    {
+        title = "Starting Manpower";
+        texts[] = {"30","60","100","200"};
+        values[] = {30,60,100,200};
+        default = 60;
+    };
+    class TYR_ResetCampaign
+    {
+        title = "RESET SAVED CAMPAIGN ON START";
+        texts[] = {"Keep Current Save","RESET - Start Fresh"};
+        values[] = {0,1};
         default = 0;
     };
     class TYR_DebugMode
     {
         title = "Developer Debug Mode";
-        texts[] = {"Disabled", "Enabled"};
-        values[] = {0, 1};
+        texts[] = {"Disabled","Enabled"};
+        values[] = {0,1};
         default = 0;
     };
 };
@@ -22,7 +68,6 @@ class Params
 respawn = 3;
 respawnDelay = 30;
 respawnDialog = 1;
-
 reviveRequiredTrait = 0;
 reviveRequiredItems = 2;
 reviveRequiredItemsFakConsumed = 1;
@@ -33,11 +78,10 @@ reviveBleedOutDelay = 180;
 
 class CfgFunctions
 {
-    #include "functions\cfgFunctions.hpp"
+    #include "cfgFunctions.hpp"
 };
 
 import CfgRemoteExec as CfgRemoteExecDefault;
-
 class CfgRemoteExec : CfgRemoteExecDefault
 {
     class Functions
@@ -45,116 +89,50 @@ class CfgRemoteExec : CfgRemoteExecDefault
         mode = 1;
         jip = 0;
 
-        class BIS_fnc_effectKilledAirDestruction { allowedTargets = 0; jip = 0; };
-        class BIS_fnc_effectKilledSecondaries { allowedTargets = 0; jip = 0; };
-        class BIS_fnc_fire { allowedTargets = 0; jip = 0; };
-        class BIS_fnc_objectVar { allowedTargets = 0; jip = 0; };
-        class BIS_fnc_setCustomSoundController { allowedTargets = 0; jip = 0; };
+        class BIS_fnc_effectKilledAirDestruction {allowedTargets=0; jip=0;};
+        class BIS_fnc_effectKilledSecondaries {allowedTargets=0; jip=0;};
+        class BIS_fnc_fire {allowedTargets=0; jip=0;};
+        class BIS_fnc_objectVar {allowedTargets=0; jip=0;};
+        class BIS_fnc_setCustomSoundController {allowedTargets=0; jip=0;};
 
-        class TYR_fnc_StartSetupClient { allowedTargets = 1; };
-        class TYR_fnc_ApplyPlayerLoadout { allowedTargets = 1; };
-        class TYR_fnc_ClientHint { allowedTargets = 0; };
-        class TYR_fnc_ClientEndMission { allowedTargets = 0; };
-        class TYR_fnc_ServerApplySettings { allowedTargets = 2; };
-        class TYR_fnc_ServerApplyVehicleCatalog { allowedTargets = 2; };
-        class TYR_fnc_ServerSetBasePosition { allowedTargets = 2; };
-        class TYR_fnc_ServerMoveBase { allowedTargets = 2; };
-        class TYR_fnc_ServerAttachAccountant { allowedTargets = 2; };
-        class TYR_fnc_ServerRegisterPlayer { allowedTargets = 2; };
-        class TYR_fnc_ServerSavePlayer { allowedTargets = 2; };
-        class TYR_fnc_ServerBeginArsenal { allowedTargets = 2; };
-        class TYR_fnc_ServerPurchaseLoadout { allowedTargets = 2; };
-        class TYR_fnc_ServerResetGame { allowedTargets = 2; };
-        class TYR_fnc_ServerCaptureRegion { allowedTargets = 2; };
-        class TYR_fnc_ServerCollectFactory { allowedTargets = 2; };
-        class TYR_fnc_ServerBuyVehicle { allowedTargets = 2; };
-        class TYR_fnc_ServerPurchaseResearch { allowedTargets = 2; };
-        class TYR_fnc_ServerBuyEmplacement { allowedTargets = 2; };
-        class TYR_fnc_ServerAddVLSTarget { allowedTargets = 2; };
-        class TYR_fnc_ServerRemoveVLSTarget { allowedTargets = 2; };
-        class TYR_fnc_ServerLaunchVLS { allowedTargets = 2; };
-        class TYR_fnc_ClientAttachEmplacementActions { allowedTargets = 1; jip = 1; };
-        class TYR_fnc_ServerRunAutomatedTests { allowedTargets = 2; };
-        class TYR_fnc_ClientShowTestReport { allowedTargets = 1; };
-        class TYR_fnc_ServerDebugAction { allowedTargets = 2; };
+        class TYR_fnc_ServerRequestState {allowedTargets=2;};
+        class TYR_fnc_ServerConfirmBase {allowedTargets=2;};
+        class TYR_fnc_ServerRegisterPlayer {allowedTargets=2;};
+        class TYR_fnc_ServerSavePlayer {allowedTargets=2;};
+        class TYR_fnc_ServerBeginArsenal {allowedTargets=2;};
+        class TYR_fnc_ServerPurchaseLoadout {allowedTargets=2;};
+        class TYR_fnc_ServerCollectFactory {allowedTargets=2;};
+        class TYR_fnc_ServerPurchaseResearch {allowedTargets=2;};
+        class TYR_fnc_ServerPurchaseVehicle {allowedTargets=2;};
+        class TYR_fnc_ServerBeginCapture {allowedTargets=2;};
+        class TYR_fnc_ServerPurchaseEmplacement {allowedTargets=2;};
+        class TYR_fnc_ServerGetVLSState {allowedTargets=2;};
+        class TYR_fnc_ServerAddVLSTarget {allowedTargets=2;};
+        class TYR_fnc_ServerRemoveVLSTarget {allowedTargets=2;};
+        class TYR_fnc_ServerLaunchVLS {allowedTargets=2;};
+        class TYR_fnc_ServerRequestForce {allowedTargets=2;};
+        class TYR_fnc_ServerDebugAction {allowedTargets=2;};
+        class TYR_fnc_ServerRunAutomatedTests {allowedTargets=2;};
+
+        class TYR_fnc_ClientReceiveSnapshot {allowedTargets=1;};
+        class TYR_fnc_ClientReceiveDeployment {allowedTargets=1;};
+        class TYR_fnc_ClientReceiveFaction {allowedTargets=1;};
+        class TYR_fnc_ClientReceiveLocation {allowedTargets=1;};
+        class TYR_fnc_ClientHint {allowedTargets=1;};
+        class TYR_fnc_ClientCaptureStatus {allowedTargets=1;};
+        class TYR_fnc_ClientEndMission {allowedTargets=1;};
+        class TYR_fnc_ClientRestorePlayer {allowedTargets=1;};
+        class TYR_fnc_ClientApplyLoadout {allowedTargets=1;};
+        class TYR_fnc_ClientAttachBaseActions {allowedTargets=1; jip=1;};
+        class TYR_fnc_ClientOpenArsenal {allowedTargets=1;};
+        class TYR_fnc_ClientVLSState {allowedTargets=1;};
+        class TYR_fnc_ClientAttachEmplacementActions {allowedTargets=1; jip=1;};
+        class TYR_fnc_ClientDebugState {allowedTargets=1;};
+        class TYR_fnc_ClientShowTestReport {allowedTargets=1;};
     };
-
     class Commands
     {
         mode = 1;
         jip = 0;
-    };
-};
-
-class myMissionConfig
-{
-    class RscMapListbox
-    {
-        access = 0;
-        type = 5;
-        style = 0;
-        idc = 1500;
-        font = "PuristaMedium";
-        sizeEx = 0.035;
-        rowHeight = 0.01;
-        period = 1;
-        shadow = 0;
-        colorBackground[] = {0, 0, 0, 0.7};
-        colorText[] = {1, 1, 1, 1};
-        colorSelect[] = {1, 1, 1, 1};
-        colorSelect2[] = {1, 1, 1, 1};
-        colorScrollbar[] = {0, 0, 0, 0};
-        colorSelectBackground[] = {0, 0, 0, 0};
-        colorSelectBackground2[] = {0, 0, 0, 0};
-        colorDisabled[] = {0, 0, 0, 0};
-        maxHistoryDelay = 1.0;
-        soundSelect[] = {"", 0.1, 1};
-        class ListScrollBar
-        {
-            color[] = {1, 1, 1, 0.6};
-            thumb = "\A3\ui_f\data\gui\cfg\scrollbar\thumb_ca.paa";
-            arrowFull = "\A3\ui_f\data\gui\cfg\scrollbar\arrowFull_ca.paa";
-            arrowEmpty = "\A3\ui_f\data\gui\cfg\scrollbar\arrowEmpty_ca.paa";
-            border = "\A3\ui_f\data\gui\cfg\scrollbar\border_ca.paa";
-        };
-        x = 0.4;
-        y = 0.2;
-        w = 0.2;
-        h = 0.4;
-    };
-
-    class RscBaseMapListbox
-    {
-        access = 0;
-        type = 5;
-        style = 0;
-        idc = 1500;
-        font = "PuristaMedium";
-        sizeEx = 0.03;
-        rowHeight = 0.005;
-        period = 1;
-        shadow = 0;
-        colorBackground[] = {0, 0, 0, 0.7};
-        colorText[] = {1, 1, 1, 1};
-        colorSelect[] = {1, 1, 1, 1};
-        colorSelect2[] = {1, 1, 1, 1};
-        colorScrollbar[] = {0, 0, 0, 0};
-        colorSelectBackground[] = {0, 0, 0, 0};
-        colorSelectBackground2[] = {0, 0, 0, 0};
-        colorDisabled[] = {0, 0, 0, 0};
-        maxHistoryDelay = 1.0;
-        soundSelect[] = {"", 0.1, 1};
-        class ListScrollBar
-        {
-            color[] = {1, 1, 1, 0.6};
-            thumb = "\A3\ui_f\data\gui\cfg\scrollbar\thumb_ca.paa";
-            arrowFull = "\A3\ui_f\data\gui\cfg\scrollbar\arrowFull_ca.paa";
-            arrowEmpty = "\A3\ui_f\data\gui\cfg\scrollbar\arrowEmpty_ca.paa";
-            border = "\A3\ui_f\data\gui\cfg\scrollbar\border_ca.paa";
-        };
-        x = 0.4;
-        y = 0.2;
-        w = 0.2;
-        h = 0.4;
     };
 };
