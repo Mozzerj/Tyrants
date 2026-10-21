@@ -4,26 +4,31 @@ private _display = findDisplay 1102;
 if (isNull _display || {isNil "TYR_setupVehicleCatalog"}) exitWith {};
 
 private _selectedFactionList = _display displayCtrl 2;
+private _selectedVehicleList = _display displayCtrl 6;
 private _selectedDlcs = [];
 for "_i" from 0 to (lbSize _selectedFactionList - 1) do {
     private _label = _selectedFactionList lbText _i;
     _selectedDlcs pushBackUnique (if (_label isEqualTo "Vanilla") then {""} else {_label});
 };
 
-if (count _selectedDlcs isEqualTo 0) exitWith {
-    hint "Select at least one faction/DLC set.";
+private _selectedClasses = [];
+for "_i" from 0 to (lbSize _selectedVehicleList - 1) do {
+    private _class = _selectedVehicleList lbData _i;
+    if (_class isNotEqualTo "") then {_selectedClasses pushBackUnique _class};
+};
+
+if (_selectedClasses isEqualTo []) exitWith {
+    hint "Choose at least one vehicle for the campaign.";
 };
 
 private _configs = [];
 {
-    if ((_x # 2) in _selectedDlcs) then {
-        private _config = configFile >> "CfgVehicles" >> (_x # 1);
-        if (isClass _config) then {_configs pushBack _config};
-    };
-} forEach (TYR_setupVehicleCatalog # 1);
+    private _config = configFile >> "CfgVehicles" >> _x;
+    if (isClass _config) then {_configs pushBack _config};
+} forEach _selectedClasses;
 
 closeDialog 0;
-createDialog "TYR_SetupMenuVehicles";
+createDialog "SetupMenuVehicles";
 private _progressDisplay = findDisplay 1101;
 if (isNull _progressDisplay) exitWith {};
 private _progressBar = _progressDisplay displayCtrl 1;

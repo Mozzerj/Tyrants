@@ -2,6 +2,8 @@ disableSerialization;
 
 TYR_vehicleMarkers = [];
 TYR_vehicleMarkerCounter = 0;
+TYR_emplacementMarkers = [];
+TYR_emplacementMarkerCounter = 0;
 
 private _colourToRGBA = {
     params ["_colour"];
@@ -69,6 +71,40 @@ while {true} do {
             if (isNull (_pair # 0) || {!((_pair # 0) in _currentObjects)}) then {
                 deleteMarkerLocal (_pair # 1);
                 TYR_vehicleMarkers deleteAt _i;
+            };
+        };
+    };
+
+    private _currentEmplacements = [];
+    if (count GameData > 5) then {
+        {
+            private _asset = _x # 2;
+            if (!isNull _asset && {alive _asset}) then {
+                _currentEmplacements pushBack _asset;
+                private _markerIndex = TYR_emplacementMarkers findIf {(_x # 0) isEqualTo _asset};
+                private _marker = "";
+                if (_markerIndex < 0) then {
+                    _marker = createMarkerLocal [format ["TYR_emplacement_%1_%2", clientOwner, TYR_emplacementMarkerCounter], getPosATL _asset];
+                    TYR_emplacementMarkerCounter = TYR_emplacementMarkerCounter + 1;
+                    _marker setMarkerTypeLocal "mil_triangle";
+                    _marker setMarkerColorLocal PColor;
+                    _marker setMarkerTextLocal getText (configFile >> "CfgVehicles" >> typeOf _asset >> "displayName");
+                    TYR_emplacementMarkers pushBack [_asset, _marker];
+                } else {
+                    _marker = TYR_emplacementMarkers # _markerIndex # 1;
+                };
+                _marker setMarkerDirLocal getDir _asset;
+                _marker setMarkerPosLocal getPosATL _asset;
+            };
+        } forEach (GameData # 5 # Pside);
+    };
+
+    if (count TYR_emplacementMarkers > 0) then {
+        for "_i" from ((count TYR_emplacementMarkers) - 1) to 0 step -1 do {
+            private _pair = TYR_emplacementMarkers # _i;
+            if (isNull (_pair # 0) || {!((_pair # 0) in _currentEmplacements)}) then {
+                deleteMarkerLocal (_pair # 1);
+                TYR_emplacementMarkers deleteAt _i;
             };
         };
     };

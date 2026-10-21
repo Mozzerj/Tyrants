@@ -1,4 +1,16 @@
+class RscMapControl;
 #include "Dialogs.hpp"
+
+class Params
+{
+    class TYR_SoloTestMode
+    {
+        title = "Solo Test Mode";
+        texts[] = {"Disabled", "Enabled"};
+        values[] = {0, 1};
+        default = 0;
+    };
+};
 
 respawn = 3; // Sets respawn type to 'BASE', which uses markers as respawn points
 respawnDelay = 30; // Delay in seconds before respawn
@@ -50,6 +62,14 @@ class CfgRemoteExec : CfgRemoteExecDefault
         class TYR_fnc_ServerCaptureRegion { allowedTargets = 2; };
         class TYR_fnc_ServerCollectFactory { allowedTargets = 2; };
         class TYR_fnc_ServerBuyVehicle { allowedTargets = 2; };
+        class TYR_fnc_ServerPurchaseResearch { allowedTargets = 2; };
+        class TYR_fnc_ServerBuyEmplacement { allowedTargets = 2; };
+        class TYR_fnc_ServerAddVLSTarget { allowedTargets = 2; };
+        class TYR_fnc_ServerRemoveVLSTarget { allowedTargets = 2; };
+        class TYR_fnc_ServerLaunchVLS { allowedTargets = 2; };
+        class TYR_fnc_ClientAttachEmplacementActions { allowedTargets = 1; jip = 1; };
+        class TYR_fnc_ServerRunAutomatedTests { allowedTargets = 2; };
+        class TYR_fnc_ClientShowTestReport { allowedTargets = 1; };
     };
 
     class Commands

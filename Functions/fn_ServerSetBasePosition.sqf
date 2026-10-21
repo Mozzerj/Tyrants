@@ -28,3 +28,6 @@ GameData # 0 # (_sideIndex + 1) set [0, +_position];
 [] call TYR_fnc_ServerBroadcastState;
 [] call TYR_fnc_ServerSaveState;
 diag_log format ["[TYRANTS] Base position set for side %1 by %2", _sideIndex, name _caller];
+if (missionNamespace getVariable ["TYR_soloTestMode", false]) then {
+    [] call TYR_fnc_ServerEnsureSoloOpponent;
+};

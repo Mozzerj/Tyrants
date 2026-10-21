@@ -20,6 +20,11 @@ if (count _catalogEntry < 9) exitWith {
     ["That vehicle is not available in this campaign."] remoteExecCall ["TYR_fnc_ClientHint", remoteExecutedOwner];
 };
 
+private _categoryIndex = (GameData # 3 # 1) findIf {(_x findIf {(_x # 1) isEqualTo _className}) >= 0};
+if (_categoryIndex < 0 || {!([_sideIndex, _categoryIndex] call TYR_fnc_IsVehicleCategoryUnlocked)}) exitWith {
+    ["That vehicle category has not been researched yet."] remoteExecCall ["TYR_fnc_ClientHint", remoteExecutedOwner];
+};
+
 private _vehicleMultiplier = (GameData # 0 # 0 # 1) param [7, 1];
 private _cost = round ((_catalogEntry # 8) * _vehicleMultiplier);
 private _fuelIndex = 3;

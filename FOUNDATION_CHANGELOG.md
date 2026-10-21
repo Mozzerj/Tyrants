@@ -70,3 +70,17 @@
 - Added an in-game regression checklist to `README.md`.
 
 This cleanup has been statically validated, but it has not been executed inside the Arma 3 engine in this environment. Runtime regression testing is the required next step before feature work.
+
+## 18 October 2024 recovery merge
+
+- Ported research/progression, procurement gates, VLS/emplacements, later setup vehicle selection, later balance values, and the later mission snapshot into the server-authoritative foundation.
+- Added persistence schema v3 for research, VLS targets, and emplacements, with v2/legacy migration.
+- Added server validation for research purchases, emplacement purchases, VLS target changes, and VLS launches.
+- Archived unfinished/experimental 18/10 research and missile prototypes under `docs/prototypes/` rather than reactivating obsolete code paths.
+- Kept unfinished Counter-Battery Radar and Roadblocks explicitly marked as prototypes.
+
+## Solo test mode
+
+- Added a lobby `Solo Test Mode` parameter, disabled by default.
+- With exactly one human player, the player places their own faction base normally and the server auto-places the missing opposing base on valid land on the other side of the campaign divider.
+- Solo mode reuses normal server-authoritative campaign systems; it does not bypass research, purchases, persistence, capture validation, or strategic emplacement rules.

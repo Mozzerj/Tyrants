@@ -129,11 +129,23 @@ TYR_addAccountantMoveAction = {
 };
 call TYR_addAccountantMoveAction;
 
+
+if (count GameData > 5) then {
+    {
+        private _emplacementSideIndex = _forEachIndex;
+        {
+            if (count _x >= 3 && {!isNull (_x # 2)}) then {
+                [_x # 2, _x # 0, _emplacementSideIndex] call TYR_fnc_ClientAttachEmplacementActions;
+            };
+        } forEach _x;
+    } forEach (GameData # 5);
+};
+
 waitUntil {!isNull findDisplay 46};
 findDisplay 46 displayAddEventHandler ["KeyDown", {
     params ["_display", "_key"];
     if (_key isEqualTo 21 && {isNull findDisplay 1200}) then {
-        createDialog "TYR_PlayerMenu";
+        createDialog "TyrPlayerMenu";
         private _menu = findDisplay 1200;
         if (!isNull _menu) then {
             _menu displayCtrl 1 ctrlSetText (TYR_playerProfileUI # 0);
@@ -158,7 +170,47 @@ findDisplay 46 displayAddEventHandler ["KeyDown", {
                 [-1, -1]
             });
             _buyButton ctrlCommit 0;
+
         };
     };
     false
 }];
+
+// Solo developer test harness. These actions are only available in Solo Test Mode.
+if (missionNamespace getVariable ["TYR_soloTestMode", false]) then {
+    private _previousReport = profileNamespace getVariable ["TYR_LastTestReport", ""];
+    if (_previousReport isNotEqualTo "") then {TYR_lastTestReportText = _previousReport};
+    player addAction [
+        "Run Tyrants Automated Tests",
+        {
+            [] remoteExecCall ["TYR_fnc_ServerRunAutomatedTests", 2];
+            hint "Running Tyrants automated tests...";
+        },
+        nil,
+        1.6,
+        false,
+        true,
+        "",
+        "(GameData # 0 # 0 # 0) isEqualTo 4 && {!(missionNamespace getVariable ['TYR_testInProgress', false])}",
+        5
+    ];
+
+    player addAction [
+        "Copy Last Tyrants Test Report",
+        {
+            if (isNil "TYR_lastTestReportText") then {
+                hint "No automated test report exists yet.";
+            } else {
+                copyToClipboard TYR_lastTestReportText;
+                hint "Tyrants test report copied to clipboard.";
+            };
+        },
+        nil,
+        1.5,
+        false,
+        true,
+        "",
+        "!isNil 'TYR_lastTestReportText'",
+        5
+    ];
+};

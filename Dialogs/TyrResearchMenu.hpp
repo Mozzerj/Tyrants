@@ -1,0 +1,6 @@
+#include "fragments\TyrResearchMenu.1.inc"
+#include "fragments\TyrResearchMenu.2.inc"
+#include "fragments\TyrResearchMenu.3.inc"
+#include "fragments\TyrResearchMenu.4.inc"
+#include "fragments\TyrResearchMenu.5.inc"
+#include "fragments\TyrResearchMenu.6.inc"

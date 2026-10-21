@@ -23,7 +23,12 @@ private _factoryMultiplier = _settings param [6, 1];
         };
     } forEach _parts;
 
-    _resource = (_resource + (_production * _factoryMultiplier)) min 50000;
+    private _ownerSideIndex = ["ColorWEST", "ColorEAST"] find (_x # 3);
+    private _researchMultiplier = 1;
+    if (_ownerSideIndex >= 0 && {[_ownerSideIndex, "infra.factory"] call TYR_fnc_IsResearchUnlocked}) then {
+        _researchMultiplier = 1.25;
+    };
+    _resource = (_resource + (_production * _factoryMultiplier * _researchMultiplier)) min 50000;
     _x set [6, _resource];
 } forEach _factoryData;
 

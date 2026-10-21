@@ -12,9 +12,15 @@ class TYR
         class GetLoadoutValue {};
         class GetUnitProfile {};
         class GetDividerLine {};
+        class GetResearchDefinitions {};
+        class IsResearchUnlocked {};
+        class GetEmplacementDefinitions {};
+        class IsVehicleCategoryUnlocked {};
         class ApplyPlayerLoadout {};
         class ClientHint {};
         class ClientEndMission {};
+        class ClientShowTestReport {};
+        class ServerRunAutomatedTests {};
 
         class ServerBroadcastState {};
         class ServerLoadState {};
@@ -39,6 +45,16 @@ class TYR
         class ServerRestoreVehicles {};
         class ServerRestoreDestroyedObjects {};
         class ServerInitBase {};
+        class ServerEnsureSoloOpponent {};
+        class ServerPurchaseResearch {};
+        class ServerBuyEmplacement {};
+        class ServerAddVLSTarget {};
+        class ServerRemoveVLSTarget {};
+        class ServerLaunchVLS {};
+        class ServerRestoreEmplacements {};
+        class ServerEmplacementKilled {};
+        class ClientAttachEmplacementActions {};
+        class CruiseMissileLaunch {};
 
         class ExitArsenal {};
         class VehicleCreate {};

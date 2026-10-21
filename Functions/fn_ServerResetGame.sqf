@@ -11,6 +11,7 @@ if (!_allowed) then {
 };
 if (!_allowed) exitWith {};
 
+profileNamespace setVariable ["TYR_Save_v3", nil];
 profileNamespace setVariable ["TYR_Save_v2", nil];
 profileNamespace setVariable ["Tyrants", nil];
 saveProfileNamespace;

@@ -17,17 +17,13 @@ private _locationState = [];
 
 private _destroyed = [[], []];
 {
-    if (_x isEqualType [] && {count _x >= 2}) then {
-        (_destroyed # 0) pushBack +_x;
-    };
+    if (_x isEqualType [] && {count _x >= 2}) then {(_destroyed # 0) pushBack +_x};
 } forEach (GameData # 2 # 0);
 {
-    if (_x isEqualType [] && {count _x >= 3}) then {
-        (_destroyed # 1) pushBack +_x;
-    };
+    if (_x isEqualType [] && {count _x >= 3}) then {(_destroyed # 1) pushBack +_x};
 } forEach (GameData # 2 # 1);
-private _catalogue = +(GameData # 3);
 
+private _catalogue = +(GameData # 3);
 private _vehicleState = [[], []];
 {
     private _teamIndex = _forEachIndex;
@@ -40,7 +36,6 @@ private _vehicleState = [[], []];
         private _fuel = _x # 5;
         private _dir = _x # 6;
         private _pos = _x # 7;
-
         if (!isNull _veh) then {
             _damage = getAllHitPointsDamage _veh;
             _magazines = magazinesAllTurrets _veh;
@@ -48,26 +43,33 @@ private _vehicleState = [[], []];
             _dir = getDir _veh;
             _pos = getPosATL _veh;
         };
-
-        (_vehicleState # _teamIndex) pushBack [
-            _class,
-            _colour,
-            _damage,
-            _magazines,
-            _fuel,
-            _dir,
-            _pos
-        ];
+        (_vehicleState # _teamIndex) pushBack [_class, _colour, _damage, _magazines, _fuel, _dir, _pos];
     } forEach _x;
 } forEach (GameData # 4);
 
-[
-    2,
-    _setup,
-    [_west, _east],
-    _players,
-    _locationState,
-    _destroyed,
-    _catalogue,
-    _vehicleState
-]
+private _emplacementState = [[], []];
+if (count GameData > 5) then {
+    {
+        private _teamIndex = _forEachIndex;
+        {
+            private _key = _x # 0;
+            private _class = _x # 1;
+            private _asset = _x # 2;
+            private _colour = _x # 3;
+            private _damage = _x # 4;
+            private _ammo = _x # 5;
+            private _fuel = _x # 6;
+            private _dir = _x # 7;
+            private _pos = _x # 8;
+            if (!isNull _asset) then {
+                _damage = getAllHitPointsDamage _asset;
+                _fuel = fuel _asset;
+                _dir = getDir _asset;
+                _pos = getPosATL _asset;
+            };
+            (_emplacementState # _teamIndex) pushBack [_key, _class, _colour, _damage, _ammo, _fuel, _dir, _pos];
+        } forEach _x;
+    } forEach (GameData # 5);
+};
+
+[3, _setup, [_west, _east], _players, _locationState, _destroyed, _catalogue, _vehicleState, _emplacementState]

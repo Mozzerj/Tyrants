@@ -1,5 +1,14 @@
 diag_log "[TYRANTS] Server initialisation started.";
 
+TYR_testInProgress = false;
+publicVariable "TYR_testInProgress";
+
+TYR_soloTestMode = (["TYR_SoloTestMode", 0] call BIS_fnc_getParamValue) isEqualTo 1;
+publicVariable "TYR_soloTestMode";
+if (TYR_soloTestMode) then {
+    diag_log "[TYRANTS] Solo Test Mode enabled.";
+};
+
 addMissionEventHandler ["PlayerConnected", {
     params ["_id", "_uid", "_name", "_jip", "_owner", "_idStr"];
     if (_owner > 2 && {!isNil "GameData"}) then {
@@ -31,6 +40,9 @@ waitUntil {
 // Stage 3 is base placement. Commanders submit their positions to the server.
 waitUntil {
     sleep 1;
+    if (TYR_soloTestMode) then {
+        [] call TYR_fnc_ServerEnsureSoloOpponent;
+    };
     (GameData # 0 # 1 # 0) isNotEqualTo 0 &&
     {(GameData # 0 # 2 # 0) isNotEqualTo 0}
 };
@@ -44,6 +56,7 @@ GameData # 0 # 0 set [0, 4];
 
 [] call TYR_fnc_ServerRestoreDestroyedObjects;
 [] call TYR_fnc_ServerRestoreVehicles;
+[] call TYR_fnc_ServerRestoreEmplacements;
 
 [] execVM "GameUpdate\GameLoop.sqf";
 diag_log "[TYRANTS] Server initialisation complete.";

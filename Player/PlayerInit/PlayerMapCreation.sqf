@@ -58,10 +58,18 @@ TYR_createMapControls = {
     private _map = findDisplay 12;
     if (isNull _map) exitWith {};
 
+    // Display 12 is not guaranteed to be destroyed when the player closes the map.
+    // Creating the controls on every Map-open event therefore duplicates every card.
+    // Mark the actual display instance once it owns our controls and reuse them until
+    // Arma really destroys/replaces that display. A newly-created display has no flag.
+    if (_map getVariable ["TYR_mapControlsCreated", false]) exitWith {
+        call TYR_refreshMapCardPositions;
+    };
+    _map setVariable ["TYR_mapControlsCreated", true];
+
     private _mapLB = missionConfigFile >> "myMissionConfig" >> "RscMapListbox";
     private _baseMapLB = missionConfigFile >> "myMissionConfig" >> "RscBaseMapListbox";
 
-    // The map display is recreated each time it is opened, so these controls must be too.
     TYR_mapMarks = [];
     TYR_baseMarks = [];
 
@@ -104,8 +112,8 @@ if (isNil "TYR_mapEventHandler") then {
                 call TYR_createMapControls;
             };
         } else {
-            TYR_mapMarks = [];
-            TYR_baseMarks = [];
+            // Do not clear the control references here. Display 12 may persist while
+            // hidden; keeping the references lets the next open reuse the same cards.
         };
     }];
 };

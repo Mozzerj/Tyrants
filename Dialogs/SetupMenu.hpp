@@ -1,0 +1,5 @@
+#include "fragments\SetupMenu.1.inc"
+#include "fragments\SetupMenu.2.inc"
+#include "fragments\SetupMenu.3.inc"
+#include "fragments\SetupMenu.4.inc"
+#include "fragments\SetupMenu.5.inc"

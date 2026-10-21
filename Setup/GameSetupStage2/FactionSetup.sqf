@@ -3,7 +3,7 @@ if (isNil "TYR_setupVehicleCatalog") exitWith {
     [] execVM "Setup\GameSetupStage1\VehicleSetup.sqf";
 };
 
-createDialog "TYR_SetupMenuFactions";
+createDialog "SetupMenuFactions";
 private _setupMenu = findDisplay 1102;
 if (isNull _setupMenu) exitWith {};
 
