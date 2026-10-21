@@ -1,5 +1,5 @@
-onLoadName = "Tyrants v4.0.9 DEV";
-onLoadMission = "Three-faction strategic warfare // development baseline v4.0.9";
+onLoadName = "Tyrants v4.0.10 DEV";
+onLoadMission = "Three-faction strategic warfare // development baseline v4.0.10";
 author = "Mozzerj";
 
 import RscMapControl;
@@ -113,11 +113,13 @@ class CfgRemoteExec : CfgRemoteExecDefault
         class TYR_fnc_ServerRequestForce {allowedTargets=2;};
         class TYR_fnc_ServerDebugAction {allowedTargets=2;};
         class TYR_fnc_ServerRunAutomatedTests {allowedTargets=2;};
+        class TYR_fnc_ServerReportVisualContact {allowedTargets=2;};
 
         class TYR_fnc_ClientReceiveSnapshot {allowedTargets=1;};
         class TYR_fnc_ClientReceiveDeployment {allowedTargets=1;};
         class TYR_fnc_ClientReceiveFaction {allowedTargets=1;};
         class TYR_fnc_ClientReceiveLocation {allowedTargets=1;};
+        class TYR_fnc_ClientReceiveKnowledge {allowedTargets=1;};
         class TYR_fnc_ClientHint {allowedTargets=1;};
         class TYR_fnc_ClientCaptureStatus {allowedTargets=1;};
         class TYR_fnc_ClientEndMission {allowedTargets=1;};

@@ -98,17 +98,51 @@ if ((_locations findIf {
     !(_owner in (["neutral"] + _knownFactions)) || {!(_stock isEqualType 0)} || {_stock < 0}
 }) >= 0) exitWith {false};
 
-// Faction knowledge is primitive, faction-scoped and may only reference real world-index IDs.
+// Faction knowledge is primitive, faction-scoped and may only contain observations that were actually collected.
 if ((_factions findIf {
     private _knowledge = [_x,"knowledge",[]] call TYR_fnc_RecordGet;
     private _knownLocations = [_knowledge,"locations",[]] call TYR_fnc_RecordGet;
-    !(_knowledge isEqualType []) || {!(_knownLocations isEqualType [])} || {(_knownLocations findIf {
+    private _knownContacts = [_knowledge,"contacts",[]] call TYR_fnc_RecordGet;
+    private _intelLog = [_knowledge,"log",[]] call TYR_fnc_RecordGet;
+    !(_knowledge isEqualType []) || {!(_knownLocations isEqualType [])} || {!(_knownContacts isEqualType [])} || {!(_intelLog isEqualType [])} ||
+    {(_knownLocations findIf {
         private _id = [_x,"id",""] call TYR_fnc_RecordGet;
         private _owner = [_x,"owner","unknown"] call TYR_fnc_RecordGet;
         private _observedAt = [_x,"observedAt",[]] call TYR_fnc_RecordGet;
         private _source = [_x,"source",""] call TYR_fnc_RecordGet;
         !(_id in _locationIds) || {!(_owner in (["unknown","neutral"] + _knownFactions))} ||
         {!(_observedAt isEqualType [])} || {(_observedAt findIf {!(_x isEqualType 0)}) >= 0} || {!(_source isEqualType "")}
+    }) >= 0} ||
+    {(_knownContacts findIf {
+        private _id = [_x,"id",""] call TYR_fnc_RecordGet;
+        private _targetFaction = [_x,"targetFaction",""] call TYR_fnc_RecordGet;
+        private _kind = [_x,"kind","unknown"] call TYR_fnc_RecordGet;
+        private _label = [_x,"label",""] call TYR_fnc_RecordGet;
+        private _exact = [_x,"exact",false] call TYR_fnc_RecordGet;
+        private _class = [_x,"class",""] call TYR_fnc_RecordGet;
+        private _pos = [_x,"position",[]] call TYR_fnc_RecordGet;
+        private _dir = [_x,"direction",0] call TYR_fnc_RecordGet;
+        private _observedAt = [_x,"observedAt",[]] call TYR_fnc_RecordGet;
+        private _source = [_x,"source",""] call TYR_fnc_RecordGet;
+        (_id isEqualTo "") || {!(_targetFaction in _knownFactions)} || {!(_kind in ["infantry","vehicle","air","naval","emplacement","unknown"])} ||
+        {!(_label isEqualType "")} || {!(_exact isEqualType true)} || {!(_class isEqualType "")} ||
+        {!(_pos isEqualType [])} || {count _pos < 2} || {(_pos findIf {!(_x isEqualType 0)}) >= 0} ||
+        {!(_dir isEqualType 0)} || {!(_observedAt isEqualType [])} || {(_observedAt findIf {!(_x isEqualType 0)}) >= 0} || {!(_source isEqualType "")}
+    }) >= 0} ||
+    {count _intelLog > 80} ||
+    {(_intelLog findIf {
+        !(_x isEqualType [] && {count _x >= 7}) || {
+            private _stamp = _x param [0,[]];
+            private _id = _x param [1,""];
+            private _targetFaction = _x param [2,""];
+            private _label = _x param [3,""];
+            private _pos = _x param [4,[]];
+            private _source = _x param [5,""];
+            private _event = _x param [6,""];
+            !(_stamp isEqualType []) || {(_stamp findIf {!(_x isEqualType 0)}) >= 0} || {!(_id isEqualType "")} ||
+            {!(_targetFaction in _knownFactions)} || {!(_label isEqualType "")} || {!(_pos isEqualType [])} || {count _pos < 2} ||
+            {(_pos findIf {!(_x isEqualType 0)}) >= 0} || {!(_source isEqualType "")} || {!(_event isEqualType "")}
+        }
     }) >= 0}
 }) >= 0) exitWith {false};
 

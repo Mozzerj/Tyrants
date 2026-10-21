@@ -77,6 +77,7 @@ player setUnitTrait ["engineer",true];
 player allowDamage true;
 
 [] call TYR_fnc_ClientMapInit;
+[] call TYR_fnc_ClientObservationTick;
 waitUntil {!isNull findDisplay 46};
 (findDisplay 46) displayAddEventHandler ["KeyDown",{
     params ["_display","_key"];

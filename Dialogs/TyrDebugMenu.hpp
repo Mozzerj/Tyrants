@@ -49,6 +49,12 @@ class TyrDebugMenu
         class Teleport: TYR_UI_Button {idc=282; x=safeZoneX+safeZoneW*0.04; y=0; w=safeZoneW*0.25; h=safeZoneH*0.04; text="TP TO TARGET HQ"; onButtonClick="[TYR_debugFaction] call TYR_fnc_DebugTeleport;";};
         class SpectatorState: TYR_UI_TextMulti {idc=283; x=safeZoneX+safeZoneW*0.04; y=0; w=safeZoneW*0.25; h=safeZoneH*0.06; sizeEx=0.021; colorText[]={0.55,0.70,0.82,1}; text="SPECTATOR ENABLED // On death: friendly units only, no free camera. Debug map remains omniscient.";};
 
+        class SectionTesting: TYR_UI_Button {idc=290; x=safeZoneX+safeZoneW*0.04; y=0; w=safeZoneW*0.25; h=safeZoneH*0.042; text="TESTING"; onButtonClick="['testing'] call TYR_debugToggleSection;";};
+        class TestAuto: TYR_UI_ButtonAccent {idc=291; x=safeZoneX+safeZoneW*0.04; y=0; w=safeZoneW*0.25; h=safeZoneH*0.04; text="RUN FULL AUTOTEST"; onButtonClick="[] remoteExecCall ['TYR_fnc_ServerRunAutomatedTests',2];";};
+        class TestTasks: TYR_UI_Button {idc=292; x=safeZoneX+safeZoneW*0.04; y=0; w=safeZoneW*0.25; h=safeZoneH*0.04; text="MANUAL TEST TASKS"; onButtonClick="['tasks'] call TYR_debugSetView;";};
+        class TestIntelMap: TYR_UI_Button {idc=293; x=safeZoneX+safeZoneW*0.04; y=0; w=safeZoneW*0.25; h=safeZoneH*0.04; text="FACTION INTEL MAP"; onButtonClick="['intel'] call TYR_debugSetView;";};
+        class TestIntelLog: TYR_UI_Button {idc=294; x=safeZoneX+safeZoneW*0.04; y=0; w=safeZoneW*0.25; h=safeZoneH*0.04; text="INTELLIGENCE LOG"; onButtonClick="['log'] call TYR_debugSetView;";};
+
         class SectionSystem: TYR_UI_Button {idc=300; x=safeZoneX+safeZoneW*0.04; y=0; w=safeZoneW*0.25; h=safeZoneH*0.042; text="SYSTEM"; onButtonClick="['system'] call TYR_debugToggleSection;";};
         class SystemBoost: TYR_UI_Button {idc=301; x=safeZoneX+safeZoneW*0.04; y=0; w=safeZoneW*0.25; h=safeZoneH*0.04; text="BOOST TARGET"; onButtonClick="['boost',[TYR_debugFaction]] call TYR_debugSend;";};
         class SystemSave: TYR_UI_ButtonAccent {idc=302; x=safeZoneX+safeZoneW*0.04; y=0; w=safeZoneW*0.25; h=safeZoneH*0.04; text="SAVE NOW"; onButtonClick="['save',[]] call TYR_debugSend;";};
@@ -61,6 +67,20 @@ class TyrDebugMenu
         // Omniscient map view. It is embedded in this console like the emplacement placer.
         class DebugMap: RscMapControl {idc=1000; x=safeZoneX+safeZoneW*0.34; y=safeZoneY+safeZoneH*0.10; w=safeZoneW*0.63; h=safeZoneH*0.84;};
         class MapInstruction: TYR_UI_Text {idc=1001; x=safeZoneX+safeZoneW*0.355; y=safeZoneY+safeZoneH*0.112; w=safeZoneW*0.58; h=safeZoneH*0.034; colorBackground[]={0.02,0.025,0.03,0.86}; text="OMNISCIENT SERVER TRUTH // refresh 3s // intelligence restrictions intentionally bypassed"; sizeEx=0.023;};
+
+        // Manual runtime verification task list for engine behaviours that static/server tests cannot prove.
+        class TestBackdrop: TYR_UI_Text {idc=2199; x=safeZoneX+safeZoneW*0.34; y=safeZoneY+safeZoneH*0.10; w=safeZoneW*0.63; h=safeZoneH*0.84; colorBackground[]={0.018,0.023,0.029,1};};
+        class TestTitle: TYR_UI_Text {idc=2200; x=safeZoneX+safeZoneW*0.37; y=safeZoneY+safeZoneH*0.12; w=safeZoneW*0.57; h=safeZoneH*0.042; style=2; sizeEx=0.032; colorText[]={0.851,0.5647,0.0863,1}; text="MANUAL RUNTIME TEST TASKS";};
+        class TestList: TYR_UI_List {idc=2201; x=safeZoneX+safeZoneW*0.37; y=safeZoneY+safeZoneH*0.18; w=safeZoneW*0.57; h=safeZoneH*0.40; onLBSelChanged="[] call TYR_debugTaskSelectionChanged;";};
+        class TestDetail: TYR_UI_TextMulti {idc=2202; x=safeZoneX+safeZoneW*0.37; y=safeZoneY+safeZoneH*0.60; w=safeZoneW*0.57; h=safeZoneH*0.18; sizeEx=0.024; colorBackground[]={0.035,0.043,0.052,0.98}; text="Select a task.";};
+        class TestPass: TYR_UI_ButtonAccent {idc=2203; x=safeZoneX+safeZoneW*0.37; y=safeZoneY+safeZoneH*0.80; w=safeZoneW*0.17; h=safeZoneH*0.05; text="MARK PASS"; onButtonClick="['PASS'] call TYR_debugTaskMark;";};
+        class TestFail: TYR_UI_ButtonDanger {idc=2204; x=safeZoneX+safeZoneW*0.57; y=safeZoneY+safeZoneH*0.80; w=safeZoneW*0.17; h=safeZoneH*0.05; text="MARK FAIL"; onButtonClick="['FAIL'] call TYR_debugTaskMark;";};
+        class TestReset: TYR_UI_Button {idc=2205; x=safeZoneX+safeZoneW*0.77; y=safeZoneY+safeZoneH*0.80; w=safeZoneW*0.17; h=safeZoneH*0.05; text="RESET TASKS"; onButtonClick="[] call TYR_debugTaskReset;";};
+
+        // Raw faction intelligence event log. This is faction knowledge, not omniscient server truth.
+        class IntelLogBackdrop: TYR_UI_Text {idc=2299; x=safeZoneX+safeZoneW*0.34; y=safeZoneY+safeZoneH*0.10; w=safeZoneW*0.63; h=safeZoneH*0.84; colorBackground[]={0.018,0.023,0.029,1};};
+        class IntelLogTitle: TYR_UI_Text {idc=2300; x=safeZoneX+safeZoneW*0.37; y=safeZoneY+safeZoneH*0.12; w=safeZoneW*0.57; h=safeZoneH*0.042; style=2; sizeEx=0.032; colorText[]={0.851,0.5647,0.0863,1}; text="FACTION INTELLIGENCE LOG";};
+        class IntelLogList: TYR_UI_List {idc=2301; x=safeZoneX+safeZoneW*0.37; y=safeZoneY+safeZoneH*0.18; w=safeZoneW*0.57; h=safeZoneH*0.64;};
 
         // AI decision-flow view. This exposes explicit game-AI decisions/scores, not hidden model reasoning.
         class FlowBackdrop: TYR_UI_Text {idc=2099; x=safeZoneX+safeZoneW*0.34; y=safeZoneY+safeZoneH*0.10; w=safeZoneW*0.63; h=safeZoneH*0.84; colorBackground[]={0.018,0.023,0.029,1};};

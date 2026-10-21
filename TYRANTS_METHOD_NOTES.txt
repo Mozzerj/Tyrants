@@ -116,3 +116,35 @@ MAINTENANCE RULE
 Whenever a workaround succeeds or fails in real Arma testing, append/update this file
 with the situation, attempted method, outcome, and the known-good replacement. Do not
 mark an approach PROVEN until it has actually been observed working in runtime.
+
+v4.0.10 REAL INTELLIGENCE TRACKING
+---------------------------------
+CURRENT - Human visual contact collection uses cursorObject/cursorTarget on the client
+only as a request to observe. The server remains authoritative: it verifies the requesting
+player, observer object, enemy faction, range and unobstructed VIEW line of sight before
+writing faction knowledge. Do not directly trust client-supplied enemy positions.
+
+CURRENT - Connected physical UAVs are accepted as the observer only when they are the
+player's actual getConnectedUAV object. AI force leaders and physical UAV entities also
+collect contacts from server-side line-of-sight checks.
+
+DESIGN RULE - Contact replication sends only the faction's stored last-known record.
+The live enemy object is never used to keep hostile client map markers moving. If no new
+observation is accepted, the marker must remain frozen at its previous position.
+
+CURRENT - Contact identification is observation-dependent. Distant sightings use broad
+labels; close, optical or UAV observations can upgrade a contact to an exact display name.
+This is deliberately not a probability/confidence percentage.
+
+CURRENT - Persistent vehicles/emplacements reuse their TYR_persistentId when creating an
+intel contact ID so saved last-known contacts can be re-associated more consistently.
+Non-persistent infantry/temporary units may receive a new contact identity after restart.
+
+CURRENT - Developer testing has two layers:
+  1. Server automated tests verify state creation, faction redaction, frozen last-known
+     positions, reobservation, identification upgrades and intelligence-log creation.
+  2. The Debug Operations Console manual task list covers behaviours that require the
+     Arma engine/UI: cursor observation, actual optics, UAV view, live map rendering,
+     AI physical sight and save/reload presentation.
+Do not mark those engine behaviours PROVEN until the manual tasks pass in runtime.
+

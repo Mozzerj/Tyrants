@@ -42,6 +42,46 @@ private _westKnowledge = ["west","locations",""] call TYR_fnc_StateKnowledgeGet;
     };
 } forEach keys (TYR_State get "locations");
 ["Unobserved enemy/neutral location truth is hidden",_unknownLocationOk] call _check;
+
+// Intelligence-contact state test. This uses a temporary server-only target and restores
+// the faction knowledge map afterwards so automated testing does not become gameplay intel.
+private _westFaction = ["west"] call TYR_fnc_StateGetFaction;
+private _westKnowledgeRecord = _westFaction getOrDefault ["knowledge",createHashMap];
+private _savedContacts = _westKnowledgeRecord getOrDefault ["contacts",createHashMap];
+private _savedIntelLog = +(_westKnowledgeRecord getOrDefault ["log",[]]);
+_westKnowledgeRecord set ["contacts",createHashMap];
+_westKnowledgeRecord set ["log",[]];
+private _testTarget = createVehicle ["O_Quadbike_01_F",[worldSize * 0.5,worldSize * 0.5,0],[],0,"CAN_COLLIDE"];
+_testTarget allowDamage false;
+_testTarget setVariable ["TYR_factionId","east",false];
+_testTarget setVariable ["TYR_intelContactId","AUTOTEST_CONTACT",false];
+
+private _broadWritten = ["west",_testTarget,"autotest",objNull] call TYR_fnc_StateObserveContact;
+private _testContactBroad = ["west","contacts","AUTOTEST_CONTACT"] call TYR_fnc_StateKnowledgeGet;
+["Visual contact record can be created",_broadWritten && {count _testContactBroad > 0}] call _check;
+["Far/unresolved contact stays broad",count _testContactBroad > 0 && {!(_testContactBroad getOrDefault ["exact",true])} && {(_testContactBroad getOrDefault ["label",""]) isEqualTo "WHEELED VEHICLE"},str _testContactBroad] call _check;
+
+private _publicIntelOwn = ["west","west"] call TYR_fnc_StatePublicKnowledge;
+private _publicIntelEnemy = ["west","east"] call TYR_fnc_StatePublicKnowledge;
+["Faction knowledge publishes only to its own faction",count _publicIntelOwn >= 4 && {count (_publicIntelOwn # 2) isEqualTo 1} && {count _publicIntelEnemy isEqualTo 0}] call _check;
+
+private _oldIntelPos = +(_testContactBroad getOrDefault ["position",[]]);
+_testTarget setPosATL [(_oldIntelPos # 0) + 100,(_oldIntelPos # 1) + 50,_oldIntelPos param [2,0]];
+private _frozenContact = ["west","contacts","AUTOTEST_CONTACT"] call TYR_fnc_StateKnowledgeGet;
+["Last-known contact freezes without a new observation",(_frozenContact getOrDefault ["position",[]]) isEqualTo _oldIntelPos] call _check;
+
+private _identifiedWritten = ["west",_testTarget,"autotest",_testTarget] call TYR_fnc_StateObserveContact;
+private _testContactExact = ["west","contacts","AUTOTEST_CONTACT"] call TYR_fnc_StateKnowledgeGet;
+["Optical/close reacquisition upgrades identification",_identifiedWritten && {_testContactExact getOrDefault ["exact",false]} && {(_testContactExact getOrDefault ["label",""]) isNotEqualTo "WHEELED VEHICLE"},str _testContactExact] call _check;
+["Reobservation updates last-known position",((_testContactExact getOrDefault ["position",[]]) distance2D (getPosATL _testTarget)) < 1] call _check;
+private _testIntelLog = _westKnowledgeRecord getOrDefault ["log",[]];
+["Intelligence events create a faction log",count _testIntelLog >= 2,str _testIntelLog] call _check;
+
+deleteVehicle _testTarget;
+_westKnowledgeRecord set ["contacts",_savedContacts];
+_westKnowledgeRecord set ["log",_savedIntelLog];
+["west"] call TYR_fnc_ServerPublishKnowledge;
+
 ["Ocean/world-origin is rejected as player land position",!([[0,0,0]] call TYR_fnc_IsValidLandPosition)] call _check;
 private _confirmedFaction = "";
 {

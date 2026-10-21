@@ -12,4 +12,5 @@ private _locations = TYR_State getOrDefault ["locations",createHashMap];
 private _ks = keys _locations;
 _ks sort true;
 {_locationsOut pushBack ([_x,_viewer] call TYR_fnc_StatePublicLocation)} forEach _ks;
-[_player,"TYR_fnc_ClientReceiveSnapshot",[[["campaign",call TYR_fnc_StatePublicCampaign],["factions",_factionsOut],["locations",_locationsOut]]]] call TYR_fnc_ServerSendToPlayer;
+private _knowledgeOut = [_viewer,_viewer] call TYR_fnc_StatePublicKnowledge;
+[_player,"TYR_fnc_ClientReceiveSnapshot",[[["campaign",call TYR_fnc_StatePublicCampaign],["factions",_factionsOut],["locations",_locationsOut],["knowledge",_knowledgeOut]]]] call TYR_fnc_ServerSendToPlayer;

@@ -1,29 +1,27 @@
-Tyrants v4.0.9 DEV
-Intelligence + Debug Operations baseline
+Tyrants v4.0.10 DEV
+Real Intelligence Tracking + Runtime Test Harness
 
 Current development changes:
-- Real faction-knowledge foundation: hostile truth is not automatically replicated.
-- Deployment regions use shared in-game map rendering and equal faction-border buffers.
-- Omniscient debug map is embedded directly in the full-screen Developer Operations Console.
-- Debug controls are grouped into accordion/collapsible sections on the left side.
-- AI commanders publish a structured decision-flow trace with objective scores for debugging.
-- Friendly-only spectator mode runs during the respawn delay without free-camera intelligence leaks.
-- Retains the tested v4.0.7 deployment-selection behavior as the runtime foundation.
+- Server truth and faction knowledge remain strictly separate.
+- Enemy infantry, vehicles, aircraft, naval units and emplacements can become faction contacts only after observation.
+- Human player cursor/optics observations are sent to a narrow server endpoint and validated for faction, range and line of sight.
+- Connected physical UAVs can create visual contacts; AI force leaders and physical UAVs also gather intelligence from server-validated line of sight.
+- Contacts store last-known position, direction, source, UTC observation time and identification state.
+- Contact positions stop updating when sight is lost. Reacquisition updates the stored last-known state.
+- Long-range sightings stay broad (for example INFANTRY or ARMOURED VEHICLE); close/optical/UAV observations can upgrade to exact type.
+- Seeing enemy presence at a strategic location can update that faction's last-observed location ownership.
+- Normal map now renders only faction-known enemy contacts, with age/staleness and identification labels.
+- Faction contact knowledge and the intelligence event log persist in v4 saves.
+- Developer Operations Console now includes FACTION INTEL MAP, INTELLIGENCE LOG and a manual runtime TEST TASK LIST.
+- Full server autotest now verifies contact creation, redaction, frozen last-known position, identification upgrades, reobservation and intelligence logging.
+- Manual debug tasks cover actual cursor/optics/UAV/map/save behaviours that require Arma runtime confirmation.
 
-Deployment placement fine-tune update:
-- Restored the reliable v4.0.7 local-marker region colour overlay.
-- Grey no-HQ cells now use the same symmetric border-distance calculation for every faction boundary.
-- HQ selection never auto-adjusts or searches for nearby ground.
-- Every click places an exact 40 x 30 m hollow HQ footprint preview.
-- Intersecting hard obstructions such as buildings, walls, fences and rocks are shown as red hollow boxes.
-- Confirmation is enabled only when the exact clicked footprint is clear and otherwise valid.
+Deployment placement baseline:
+- Reliable local-marker deployment sector colours retained.
+- Exact-click HQ placement retained; no automatic relocation.
+- HQ footprint remains 40 x 30 m.
+- Roads, rail lines, power-line network objects and vegetation do not block HQ placement.
+- Substantial buildings, walls, fences, rocks and similar physical obstructions remain blockers.
 
-Latest placement adjustment:
-- Reduced the HQ placement footprint from 80 x 60 m to 40 x 30 m.
-- Collision validation now uses the same smaller footprint; the click remains the exact centre.
-- Added TYRANTS_METHOD_NOTES.txt to record proven/failed implementation approaches for future development.
-
-Collision filtering adjustment:
-- Roads no longer invalidate HQ placement or produce collision boxes.
-- Rail-line and power-line network terrain categories are also ignored to reduce false/annoying placement blocks.
-- Buildings, walls, fences, rocks and other substantial structures still block placement.
+Method notes:
+- TYRANTS_METHOD_NOTES.txt records proven, failed and current engine-specific approaches.

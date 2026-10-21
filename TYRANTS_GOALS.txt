@@ -98,9 +98,9 @@ INTELLIGENCE AND RECONNAISSANCE
 -------------------------------
 HARD RULE: server truth is not faction knowledge. A faction only knows enemy information that one of its real intelligence sources actually collected.
 
-[IN PROGRESS] Enemy commanders, officers, units, emplacements, factories and location ownership begin unknown unless actually observed. v4.0.9 now hides unobserved location ownership/stock; unit/emplacement contact records come next.
-[IN PROGRESS] Human players create intelligence through real line-of-sight observation using normal view, optics, binoculars, vehicle sensors and reconnaissance positions. v4.0.9 adds server-validated visual location observations from player/force viewpoints.
-[PLANNED] UAVs/drones only report what their cameras/sensors can actually observe. When contact is lost, live tracking stops and the map keeps only the last observed position/time.
+[IN PROGRESS] Enemy commanders, officers, units, emplacements, factories and location ownership begin unknown unless actually observed. v4.0.10 adds persistent last-known contacts for enemy units, vehicles, aircraft, naval units and emplacements; physical command personnel are still to come.
+[DONE-v4.0.10] Human players create intelligence through real visual observation. Cursor/normal-view and optical observations are sent to the server and validated for enemy faction, range and unobstructed line of sight before becoming faction knowledge.
+[IN PROGRESS-v4.0.10] UAVs/drones only report what they can physically observe. Connected player UAVs and physical UAV entities now create line-of-sight contacts; more exact camera/sensor modelling can be refined later. When contact is lost, live tracking stops and the map keeps only the last observed position/time.
 [PLANNED] Spies are assigned by the player to real map areas/routes/sites and only report what they can observe there; they do not reveal a whole region for free.
 [PLANNED] Spy reports are timestamped observations such as vehicles arriving, troops present, officers seen, command vehicles, air-defence sites or convoys.
 [PLANNED] Spies can be discovered, captured or killed.
@@ -108,14 +108,14 @@ HARD RULE: server truth is not faction knowledge. A faction only knows enemy inf
 [PLANNED] Satellites are tasked to a chosen map area and produce a snapshot during a real pass; they do not continuously reveal the enemy.
 [PLANNED] Satellite research improves revisit time, scan area, resolution and identification quality, but information still becomes stale after the pass.
 [PLANNED] Sensor detections and visual confirmation are distinct. Radar/counter-battery sensors can create a suspected contact or firing origin, but visual reconnaissance is required to confirm exact enemy presence/ownership where appropriate.
-[PLANNED] Identification detail depends on what was actually observed: unknown contact -> broad class -> exact type -> named/high-value asset when positively identified.
+[IN PROGRESS-v4.0.10] Identification detail depends on what was actually observed: broad class -> exact type is implemented for physical contacts based on observation source/range. Named/high-value personnel identification comes with the command-network system.
 [DONE-v4.0.9] Location/factory ownership is only updated for a faction when it is observed. A map can therefore show an old 'last observed owner' that may now be wrong.
-[IN PROGRESS] Intelligence records use source + UTC observation time + last-known state rather than a magic percentage. v4.0.9 implements this for strategic locations; contacts follow next.
+[DONE-v4.0.10] Intelligence records use source + UTC observation time + last-known state rather than a magic percentage. Strategic locations and physical contacts both use this model, and contacts freeze when observation stops.
 [PLANNED] Enemy radio/order activity may create a real SIGINT clue only when an appropriate friendly sensor/system can detect it.
 [PLANNED] Captured personnel, command posts or physical intelligence can reveal specific information.
 [IN PROGRESS] AI commanders use only their faction intelligence database and must not read hidden world state. v4.0.9 removes hidden enemy ownership from objective scoring; force/contact intelligence is the next expansion.
 [PLANNED] VLS, artillery, air strikes and other strategic attacks may only use targets/coordinates legitimately known to that faction.
-[PLANNED] Strategic map clearly distinguishes current contact, last-known contact and unconfirmed/sensor-only contact.
+[IN PROGRESS-v4.0.10] Strategic map renders faction last-known contacts with age/staleness and identification state. Sensor-only/suspected contacts will be added with radar, counter-battery and SIGINT systems.
 
 
 TERRITORY, LOCATIONS AND FRONTLINES

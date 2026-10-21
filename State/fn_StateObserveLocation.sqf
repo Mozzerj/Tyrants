@@ -4,9 +4,10 @@ private _f = [_factionId] call TYR_fnc_StateGetFaction;
 private _l = [_locationId] call TYR_fnc_StateGetLocation;
 if (count _f isEqualTo 0 || {count _l isEqualTo 0}) exitWith {false};
 
-private _knowledge = _f getOrDefault ["knowledge",createHashMapFromArray [["locations",createHashMap],["contacts",createHashMap]]];
+private _knowledge = _f getOrDefault ["knowledge",createHashMapFromArray [["locations",createHashMap],["contacts",createHashMap],["log",[]]]];
 if !("locations" in keys _knowledge) then {_knowledge set ["locations",createHashMap]};
 if !("contacts" in keys _knowledge) then {_knowledge set ["contacts",createHashMap]};
+if !("log" in keys _knowledge) then {_knowledge set ["log",[]]};
 _f set ["knowledge",_knowledge];
 private _knownLocations = _knowledge get "locations";
 private _old = _knownLocations getOrDefault [_locationId,createHashMap];

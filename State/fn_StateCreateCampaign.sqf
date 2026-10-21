@@ -62,7 +62,7 @@ private _factions = createHashMap;
         ["vehiclePool", _pool],
         ["commander", _commander],
         ["commanderPublic", []],
-        ["knowledge", createHashMapFromArray [["locations",createHashMap],["contacts",createHashMap]]]
+        ["knowledge", createHashMapFromArray [["locations",createHashMap],["contacts",createHashMap],["log",[]]]]
     ];
     _factions set [_id, _f];
 } forEach ["west","east","independent"];

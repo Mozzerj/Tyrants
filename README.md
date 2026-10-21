@@ -1,4 +1,4 @@
-# Tyrants v4.0.9 DEV
+# Tyrants v4.0.10 DEV
 
 Current development baseline for the three-faction Tyrants rewrite. It includes deployment sectors, human/AI commanders, the v4 save architecture, targeted replication, and the tactical UI.
 
@@ -53,3 +53,8 @@ New campaigns now pause in a protected strategic-deployment phase. Two active fa
 The lobby parameter **RESET SAVED CAMPAIGN ON START** clears both Tyrants v4 journal checkpoints before the server loads state. Leave it on **Keep Current Save** normally. Select **RESET - Start Fresh** for one launch when you deliberately want a completely new campaign, then return it to **Keep Current Save** on later starts.
 
 Player restore positions are now land-validated. Out-of-bounds/water positions (including `[0,0,0]`) are never used as a normal restore point; the server repairs them to a safe position around the player's confirmed faction HQ.
+
+## v4.0.10 intelligence tracking
+
+Faction intelligence now stores real last-known enemy contacts rather than receiving live enemy truth. Human visual observations are server-validated, UAVs can create observations, AI force leaders can generate contacts from real line of sight, and lost contacts stop moving until they are seen again. The normal map shows contact age and identification level. The developer console contains an omniscient truth map, faction-intelligence map, intelligence log, automated checks, and a manual runtime test task list for engine behaviours that cannot be proven outside Arma.
+

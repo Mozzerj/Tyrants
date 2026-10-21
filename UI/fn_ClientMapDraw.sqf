@@ -35,6 +35,37 @@ private _locations = TYR_ClientState get "locations";
     _map drawIcon [_icon,_color,_pos,20,20,0,_label,1,0.035,"PuristaMedium","right"];
 } forEach values _locations;
 
+// Enemy information on the normal map comes only from the faction intelligence database.
+// Contact positions freeze when observation stops; the server never streams the live object here.
+private _knowledge = TYR_ClientState getOrDefault ["knowledge",[]];
+if (_knowledge isEqualType [] && {count _knowledge >= 4}) then {
+    private _knowledgeServerTime = _knowledge # 1;
+    private _receivedAt = missionNamespace getVariable ["TYR_ClientKnowledgeReceivedAt",diag_tickTime];
+    private _estimatedServerTime = _knowledgeServerTime + (diag_tickTime - _receivedAt);
+    {
+        if (_x isEqualType [] && {count _x >= 10}) then {
+            _x params ["_contactId","_targetFaction","_kind","_contactLabel","_exact","_pos","_dir","_observedAt","_source","_seenServerTime"];
+            if (count _pos >= 2) then {
+                private _age = (_estimatedServerTime - _seenServerTime) max 0;
+                private _alpha = if (_age <= 10) then {0.95} else {if (_age <= 60) then {0.78} else {if (_age <= 300) then {0.58} else {0.38}}};
+                private _color = if (_targetFaction in ["west","east","independent"]) then {[_targetFaction,true] call TYR_fnc_FactionColor} else {[0.7,0.7,0.7,1]};
+                _color set [3,_alpha];
+                private _icon = switch (_kind) do {
+                    case "infantry": {"\A3\ui_f\data\map\markers\nato\b_inf.paa"};
+                    case "air": {"\A3\ui_f\data\map\markers\nato\b_air.paa"};
+                    case "emplacement": {"\A3\ui_f\data\map\markers\nato\b_art.paa"};
+                    case "naval": {"\A3\ui_f\data\map\markers\nato\b_naval.paa"};
+                    default {"\A3\ui_f\data\map\markers\nato\b_motor_inf.paa"};
+                };
+                private _ageText = if (_age < 10) then {"NOW"} else {if (_age < 60) then {format ["%1s AGO",floor _age]} else {if (_age < 3600) then {format ["%1m AGO",floor (_age / 60)]} else {"STALE"}}};
+                private _idText = if (_exact) then {"IDENTIFIED"} else {"UNIDENTIFIED"};
+                private _label = format ["%1 // %2 // LAST SEEN %3",toUpper _contactLabel,_idText,_ageText];
+                _map drawIcon [_icon,_color,_pos,18,18,_dir,_label,1,0.025,"PuristaMedium","right"];
+            };
+        };
+    } forEach (_knowledge # 2);
+};
+
 private _f = (TYR_ClientState get "factions") getOrDefault [TYR_PlayerFaction,[]];
 if (count _f > 4 && {_f # 2} && {count (_f # 4) >= 2}) then {
     _map drawIcon ["\A3\ui_f\data\map\markers\nato\b_hq.paa",[TYR_PlayerFaction,true] call TYR_fnc_FactionColor,_f # 4,30,30,0,format ["%1 HQ",_f # 1],1,0.04,"PuristaMedium","right"];

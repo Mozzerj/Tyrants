@@ -25,8 +25,58 @@ TYR_debugToggleSection = {
 
 TYR_debugSetView = {
     params ["_view"];
-    if !(_view in ["map","flow"]) then {_view = "map"};
+    if !(_view in ["map","intel","flow","tasks","log"]) then {_view = "map"};
     missionNamespace setVariable ["TYR_debugView",_view];
+    [] call TYR_fnc_DebugMenuRefresh;
+};
+
+if (isNil "TYR_DebugTaskDefinitions") then {
+    missionNamespace setVariable ["TYR_DebugTaskDefinitions",[
+        ["Visual contact appears","Look directly at an enemy infantryman or vehicle. Confirm a LAST SEEN contact appears on the faction map. This proves the client visual report reaches the server and becomes faction knowledge."],
+        ["Contact freezes when lost","Create a contact, then look away while the enemy moves. Confirm your faction marker stays at the last observed position instead of following the live enemy."],
+        ["Reacquisition updates contact","After a contact has gone stale, visually find it again. Confirm the last-known position and age reset to the new observation."],
+        ["Far contact stays broad","Observe an enemy from long range. Confirm the map shows a broad class such as ARMOURED VEHICLE, AIRCRAFT or INFANTRY rather than the exact class."],
+        ["Close/optical ID upgrades","Move close or use binocular/rangefinder optics and reacquire the same target. Confirm the contact upgrades to an exact vehicle/unit display name."],
+        ["UAV visual intelligence","Connect to a physical UAV and put an enemy in the UAV view. Confirm the faction contact updates from the UAV rather than from your player body's position."],
+        ["Location ownership requires sight","Find an enemy-held strategic location that is UNKNOWN. Confirm it only changes to LAST OBS enemy control after you visually observe enemy presence at that site."],
+        ["Truth versus knowledge","Compare OMNISCIENT MAP with FACTION INTEL MAP. Confirm unobserved enemy units exist only on omniscient truth and do not leak onto the faction map."],
+        ["AI force reconnaissance","Let a friendly AI force leader encounter an enemy. Confirm the faction receives a contact only after physical line of sight, not simply because the server knows the enemy exists."],
+        ["Save/reload keeps last-known intel","Save with one or more contacts, restart/reload, and confirm the contacts remain as stale last-known information until physically observed again."]
+    ]];
+};
+if (isNil "TYR_DebugTaskStatus") then {
+    missionNamespace setVariable ["TYR_DebugTaskStatus",createHashMap];
+};
+
+TYR_debugTaskSelectionChanged = {
+    disableSerialization;
+    private _display = findDisplay 1700;
+    if (isNull _display) exitWith {};
+    private _index = lbCurSel (_display displayCtrl 2201);
+    private _defs = missionNamespace getVariable ["TYR_DebugTaskDefinitions",[]];
+    if (_index < 0 || {_index >= count _defs}) exitWith {};
+    private _statusMap = missionNamespace getVariable ["TYR_DebugTaskStatus",createHashMap];
+    private _def = _defs # _index;
+    private _status = _statusMap getOrDefault [str _index,"NOT TESTED"];
+    (_display displayCtrl 2202) ctrlSetText format ["%1\n\nSTATUS // %2",_def # 1,_status];
+};
+
+TYR_debugTaskMark = {
+    params ["_status"];
+    disableSerialization;
+    private _display = findDisplay 1700;
+    if (isNull _display) exitWith {};
+    private _index = lbCurSel (_display displayCtrl 2201);
+    private _defs = missionNamespace getVariable ["TYR_DebugTaskDefinitions",[]];
+    if (_index < 0 || {_index >= count _defs}) exitWith {};
+    private _map = missionNamespace getVariable ["TYR_DebugTaskStatus",createHashMap];
+    _map set [str _index,_status];
+    missionNamespace setVariable ["TYR_DebugTaskStatus",_map];
+    [] call TYR_fnc_DebugMenuRefresh;
+};
+
+TYR_debugTaskReset = {
+    missionNamespace setVariable ["TYR_DebugTaskStatus",createHashMap];
     [] call TYR_fnc_DebugMenuRefresh;
 };
 
@@ -37,6 +87,7 @@ private _sections = [
     ["research",240,[241,242]],
     ["ai",260,[261,262,263]],
     ["views",280,[281,282,283]],
+    ["testing",290,[291,292,293,294]],
     ["system",300,[301,302,303,304,131]]
 ];
 
@@ -52,6 +103,7 @@ private _y = safeZoneY + safeZoneH * 0.135;
         case "research": {"RESEARCH"};
         case "ai": {"AI COMMAND"};
         case "views": {"VIEWS / MOVEMENT"};
+        case "testing": {"TESTING"};
         default {"SYSTEM"};
     })];
     _header ctrlSetPosition [safeZoneX+safeZoneW*0.04,_y,safeZoneW*0.25,safeZoneH*0.042];
@@ -86,8 +138,73 @@ if (count _f >= 6) then {
 private _view = missionNamespace getVariable ["TYR_debugView","map"];
 private _mapIds = [1000,1001];
 private _flowIds = [2099,2100,2101,2102,2103,2104,2105,2106,2111,2112,2113,2114,2115,2120];
-{(_d displayCtrl _x) ctrlShow (_view isEqualTo "map")} forEach _mapIds;
+private _taskIds = [2199,2200,2201,2202,2203,2204,2205];
+private _logIds = [2299,2300,2301];
+private _mapVisible = _view in ["map","intel"];
+{(_d displayCtrl _x) ctrlShow _mapVisible} forEach _mapIds;
 {(_d displayCtrl _x) ctrlShow (_view isEqualTo "flow")} forEach _flowIds;
+{(_d displayCtrl _x) ctrlShow (_view isEqualTo "tasks")} forEach _taskIds;
+{(_d displayCtrl _x) ctrlShow (_view isEqualTo "log")} forEach _logIds;
+
+if (_mapVisible) then {
+    (_d displayCtrl 1001) ctrlSetText (if (_view isEqualTo "intel") then {
+        "YOUR FACTION INTELLIGENCE // last-known contacts only // compare against omniscient truth"
+    } else {
+        "OMNISCIENT SERVER TRUTH // refresh 3s // intelligence restrictions intentionally bypassed"
+    });
+};
+
+if (_view isEqualTo "tasks") then {
+    private _defs = missionNamespace getVariable ["TYR_DebugTaskDefinitions",[]];
+    private _statusMap = missionNamespace getVariable ["TYR_DebugTaskStatus",createHashMap];
+    private _list = _d displayCtrl 2201;
+    private _selected = lbCurSel _list;
+    if (_selected < 0) then {_selected = 0};
+    lbClear _list;
+    private _passed = 0;
+    private _failed = 0;
+    {
+        private _status = _statusMap getOrDefault [str _forEachIndex,""];
+        if (_status isEqualTo "PASS") then {_passed=_passed+1};
+        if (_status isEqualTo "FAIL") then {_failed=_failed+1};
+        private _prefix = switch (_status) do {case "PASS": {"[PASS]"}; case "FAIL": {"[FAIL]"}; default {"[ ]"}};
+        private _row = _list lbAdd format ["%1 %2",_prefix,_x # 0];
+        if (_status isEqualTo "PASS") then {_list lbSetColor [_row,[0.45,0.85,0.50,1]]};
+        if (_status isEqualTo "FAIL") then {_list lbSetColor [_row,[0.95,0.40,0.35,1]]};
+    } forEach _defs;
+    if (count _defs > 0) then {
+        _selected = _selected min ((count _defs)-1);
+        _list lbSetCurSel _selected;
+        private _def = _defs # _selected;
+        private _status = _statusMap getOrDefault [str _selected,"NOT TESTED"];
+        (_d displayCtrl 2202) ctrlSetText format ["%1\n\nSTATUS // %2",_def # 1,_status];
+    } else {
+        (_d displayCtrl 2202) ctrlSetText "No manual tasks configured.";
+    };
+    (_d displayCtrl 2200) ctrlSetText format ["MANUAL RUNTIME TEST TASKS // %1 PASS // %2 FAIL // %3 TOTAL",_passed,_failed,count _defs];
+};
+
+if (_view isEqualTo "log") then {
+    private _list = _d displayCtrl 2301;
+    lbClear _list;
+    private _knowledge = TYR_ClientState getOrDefault ["knowledge",[]];
+    private _log = if (_knowledge isEqualType [] && {count _knowledge >= 4}) then {+(_knowledge # 3)} else {[]};
+    if (count _log > 0) then {
+        for "_i" from ((count _log) - 1) to 0 step -1 do {
+            private _entry = _log # _i;
+            if (_entry isEqualType [] && {count _entry >= 7}) then {
+                _entry params ["_stamp","_id","_targetFaction","_label","_pos","_source","_event"];
+                private _timeText = "--:--:--";
+                if (_stamp isEqualType [] && {count _stamp >= 6}) then {
+                    _timeText = format ["%1:%2:%3",[_stamp # 3,2] call BIS_fnc_padNumber,[_stamp # 4,2] call BIS_fnc_padNumber,[floor (_stamp # 5),2] call BIS_fnc_padNumber];
+                };
+                _list lbAdd format ["%1 // %2 // %3 // %4 // %5",_timeText,_event,toUpper _targetFaction,toUpper _label,toUpper _source];
+            };
+        };
+    };
+    if (count _log isEqualTo 0) then {_list lbAdd "No collected intelligence yet. Observe an enemy to create the first entry."};
+    (_d displayCtrl 2300) ctrlSetText format ["FACTION INTELLIGENCE LOG // %1 ENTRIES",count _log];
+};
 
 if (_view isEqualTo "flow") then {
     private _traces = missionNamespace getVariable ["TYR_DebugAITraces",[]];

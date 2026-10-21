@@ -1,4 +1,7 @@
 params ["_map"];
+if ((missionNamespace getVariable ["TYR_debugView","map"]) isEqualTo "intel") exitWith {
+    [_map] call TYR_fnc_ClientMapDraw;
+};
 private _data = missionNamespace getVariable ["TYR_DebugMapData",[]];
 if !(_data isEqualType [] && {count _data >= 5}) exitWith {};
 

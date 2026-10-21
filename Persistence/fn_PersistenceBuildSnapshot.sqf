@@ -72,6 +72,27 @@ _factionKeys sort true;
             ["source",_k getOrDefault ["source",""]]
         ];
     } forEach _knowledgeLocationIds;
+
+    private _knownContacts = _knowledge getOrDefault ["contacts",createHashMap];
+    private _knowledgeContactIds = keys _knownContacts;
+    _knowledgeContactIds sort true;
+    private _knowledgeContactsOut = [];
+    {
+        private _c = _knownContacts get _x;
+        _knowledgeContactsOut pushBack [
+            ["id",_x],
+            ["targetFaction",_c getOrDefault ["targetFaction",""]],
+            ["kind",_c getOrDefault ["kind","unknown"]],
+            ["label",_c getOrDefault ["label","CONTACT"]],
+            ["exact",_c getOrDefault ["exact",false]],
+            ["class",_c getOrDefault ["class",""]],
+            ["position",+(_c getOrDefault ["position",[]])],
+            ["direction",_c getOrDefault ["direction",0]],
+            ["observedAt",+(_c getOrDefault ["observedAt",[]])],
+            ["source",_c getOrDefault ["source",""]]
+        ];
+    } forEach _knowledgeContactIds;
+    private _knowledgeLogOut = +(_knowledge getOrDefault ["log",[]]);
     _factionsOut pushBack [
         ["id",_x],
         ["name",_f getOrDefault ["name",toUpper _x]],
@@ -90,7 +111,7 @@ _factionKeys sort true;
         ["vlsTargets",+(_f getOrDefault ["vlsTargets",[]])],
         ["vehiclePool",+(_f getOrDefault ["vehiclePool",[]])],
         ["commander",[_commander] call _pairs],
-        ["knowledge",[["locations",_knowledgeLocationsOut]]]
+        ["knowledge",[["locations",_knowledgeLocationsOut],["contacts",_knowledgeContactsOut],["log",_knowledgeLogOut]]]
     ];
 } forEach _factionKeys;
 

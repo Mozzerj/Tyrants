@@ -42,7 +42,7 @@ private _factions = _state get "factions";
         private _cmd = _f get "commander";
         {if (_x isEqualType [] && {count _x >= 2}) then {_cmd set [_x # 0,_x # 1]}} forEach ([_x,"commander",[]] call TYR_fnc_RecordGet);
         private _knowledgeSaved = [_x,"knowledge",[]] call TYR_fnc_RecordGet;
-        private _knowledge = createHashMapFromArray [["locations",createHashMap],["contacts",createHashMap]];
+        private _knowledge = createHashMapFromArray [["locations",createHashMap],["contacts",createHashMap],["log",[]]];
         private _knownLocations = _knowledge get "locations";
         {
             private _locationId = [_x,"id",""] call TYR_fnc_RecordGet;
@@ -54,6 +54,29 @@ private _factions = _state get "factions";
                 ]];
             };
         } forEach ([_knowledgeSaved,"locations",[]] call TYR_fnc_RecordGet);
+
+        private _knownContacts = _knowledge get "contacts";
+        {
+            private _contactId = [_x,"id",""] call TYR_fnc_RecordGet;
+            if (_contactId isNotEqualTo "") then {
+                _knownContacts set [_contactId,createHashMapFromArray [
+                    ["id",_contactId],
+                    ["targetFaction",[_x,"targetFaction",""] call TYR_fnc_RecordGet],
+                    ["kind",[_x,"kind","unknown"] call TYR_fnc_RecordGet],
+                    ["label",[_x,"label","CONTACT"] call TYR_fnc_RecordGet],
+                    ["exact",[_x,"exact",false] call TYR_fnc_RecordGet],
+                    ["class",[_x,"class",""] call TYR_fnc_RecordGet],
+                    ["position",+([_x,"position",[]] call TYR_fnc_RecordGet)],
+                    ["direction",[_x,"direction",0] call TYR_fnc_RecordGet],
+                    ["observedAt",+([_x,"observedAt",[]] call TYR_fnc_RecordGet)],
+                    ["seenServerTime",-9999],
+                    ["source",[_x,"source",""] call TYR_fnc_RecordGet],
+                    ["publishedAt",-9999]
+                ]];
+            };
+        } forEach ([_knowledgeSaved,"contacts",[]] call TYR_fnc_RecordGet);
+        private _savedLog = [_knowledgeSaved,"log",[]] call TYR_fnc_RecordGet;
+        if (_savedLog isEqualType []) then {_knowledge set ["log",+_savedLog]};
         _f set ["knowledge",_knowledge];
     };
 } forEach ([_snapshot,"factions",[]] call TYR_fnc_RecordGet);

@@ -28,6 +28,8 @@ class TYR
         class StateResearchUnlocked {};
         class StateKnowledgeGet {};
         class StateObserveLocation {};
+        class StateObserveContact {};
+        class StatePublicKnowledge {};
         class StatePublicFaction {};
         class StatePublicCampaign {};
         class StatePublicLocation {};
@@ -53,10 +55,12 @@ class TYR
         class ServerPublishFaction {};
         class ServerPublishDeployment {};
         class ServerPublishLocation {};
+        class ServerPublishKnowledge {};
         class ClientReceiveSnapshot {};
         class ClientReceiveDeployment {};
         class ClientReceiveFaction {};
         class ClientReceiveLocation {};
+        class ClientReceiveKnowledge {};
         class ClientHint {};
         class ClientCaptureStatus {};
         class ClientEndMission {};
@@ -71,6 +75,8 @@ class TYR
         class DeploymentFindCollisions {};
         class IsValidLandPosition {};
         class FindSafeSpawnPosition {};
+        class ObservationCanSee {};
+        class ServerReportVisualContact {};
         class ServerSetCombatState {};
         class ServerGenerateDeployment {};
         class ServerAutoSelectBase {};
@@ -189,6 +195,7 @@ class TYR
         class CommanderMenuRefresh {};
         class DebugMenuRefresh {};
         class DebugTeleport {};
+        class ClientObservationTick {};
     };
 
     class Debug
