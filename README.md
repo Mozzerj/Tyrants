@@ -1,8 +1,8 @@
-# Tyrants v4.0.7 - Deployment Selection Fix
+# Tyrants v4.0.8 DEV
 
-This local test build includes three-faction deployment sectors, direct embedded-map HQ selection, nearby valid-ground snapping, and versioned mission metadata.
+Current development baseline for the three-faction Tyrants rewrite. It includes deployment sectors, human/AI commanders, the v4 save architecture, targeted replication, and the tactical UI.
 
-# Tyrants v4 Rewrite
+## Architecture
 
 Tyrants v4 is a clean architectural rewrite of the Altis strategic-war mission. It does not load historical Tyrants v1/v2/v3 saves and does not use the old positional `GameData` structure.
 
@@ -21,7 +21,7 @@ Tyrants v4 is a clean architectural rewrite of the Altis strategic-war mission. 
 
 ## Current strategic loop
 
-The server discovers towns, cities and factory clusters, assigns separated HQs, starts the economy, restores persistent assets, and runs the territory/AI scheduler. AI commanders create forces, buy eligible research, select strategic objectives, form operations, move forces and start server-owned capture sessions.
+The server discovers towns, cities and factory clusters, generates separated deployment sectors, accepts human HQ choices, auto-selects HQs for AI factions, then starts the economy and territory/AI scheduler once deployment is complete. AI commanders create forces, buy eligible research, select strategic objectives, form operations, move forces and start server-owned capture sessions.
 
 Players spawn into their faction's HQ after receiving server state. Press **Y** for the Tyrants command interface. Player capture progress, purchases, arsenal costs, factory collection, VLS, emplacements and force deployment are server validated.
 

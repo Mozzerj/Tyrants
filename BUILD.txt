@@ -1,10 +1,8 @@
-Tyrants v4.0.7 - Deployment Selection Fix
-Local test build
+Tyrants v4.0.8 DEV
+Development baseline
 
-Changes in this build:
-- Direct map-control HQ selection handler.
-- Explicitly enabled/focused deployment map.
-- Visible accepted/rejected click marker.
-- Nearby clear-ground snap for locally obstructed clicks.
-- Muted deployment border buffer overlay.
-- Versioned mission name and folder.
+Baseline cleanup:
+- Removed pre-v4 legacy/migration files from the distributable tree.
+- Removed Python cache artefacts and added .gitignore rules.
+- Renamed the mission from the temporary deployment-fix label to the stable DEV name.
+- Retains the tested v4.0.7 deployment selection behaviour as the functional baseline.

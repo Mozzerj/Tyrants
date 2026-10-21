@@ -1,0 +1,11 @@
+# Python validator cache
+__pycache__/
+*.py[cod]
+
+# Local packaging / editor noise
+*.zip
+*.pbo
+*.bak
+*.tmp
+.DS_Store
+Thumbs.db

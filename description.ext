@@ -1,5 +1,5 @@
-onLoadName = "Tyrants v4.0.7 - Deployment Selection Fix";
-onLoadMission = "Three-faction strategic warfare // deployment selection build v4.0.7";
+onLoadName = "Tyrants v4.0.8 DEV";
+onLoadMission = "Three-faction strategic warfare // development baseline v4.0.8";
 author = "Mozzerj";
 
 import RscMapControl;
