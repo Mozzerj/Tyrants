@@ -1,0 +1,338 @@
+TYRANTS - GAME GOALS AND FEATURE ROADMAP
+========================================
+Development branch: v4 DEV
+
+PURPOSE
+-------
+Tyrants is a persistent, large-scale Arma 3 strategic warfare campaign for two or three competing factions.
+
+The campaign is not won simply by owning the most towns. The real objective is to find, disrupt and ultimately destroy the enemy command structure while protecting your own.
+
+Territory, factories, resources, research, vehicles, intelligence and strategic weapons all exist to help a faction locate and destroy the opposing command networks.
+
+
+CORE VICTORY GOAL - DESTROY THE ENEMY COMMAND NETWORK
+-----------------------------------------------------
+Each active faction has a physical command hierarchy in the world:
+
+    MAIN COMMANDER
+          |
+    SENIOR / REGIONAL OFFICERS
+          |
+      FORCE COMMANDERS
+          |
+    SQUADS / VEHICLES / ASSETS
+
+The Main Commander and command officers are real NPCs, not abstract menu values.
+
+Human players are NOT automatically the strategic commander. Normal player deaths must not destroy the faction command structure.
+
+Command personnel can be moved, protected, hidden, escorted, discovered and killed.
+
+The enemy should not automatically know where command personnel are. Their location is learned through reconnaissance, sightings, intercepted communications, captured intelligence and research.
+
+Command damage has progressive effects:
+
+- Healthy command network: orders move quickly and the faction can coordinate several operations at once.
+- Officer lost: orders for the affected forces take longer to arrive and may reroute through another officer.
+- Several officers lost: reinforcement, retreat, assault, artillery, procurement and force reassignment orders become noticeably slower.
+- Main Commander lost: the faction suffers a major temporary command disruption while a surviving senior officer attempts to assume command.
+- Forces with no command route continue their last orders and local tactical behaviour, but receive new strategic orders slowly or not at all.
+- Command personnel are slowly replaced if the faction still has a functioning command base and enough time/resources.
+- Repeated kills faster than the replacement rate create a real opportunity to collapse the enemy network.
+
+A faction enters COMMAND COLLAPSE when it has no functioning Main Commander, no valid command officers and no immediate replacement route.
+
+Existing soldiers do not vanish during collapse. They continue local combat and defend themselves, but coordinated strategic control is effectively lost.
+
+If command authority cannot be restored during the collapse period, the faction is eliminated from the campaign.
+
+The campaign ends when only one hostile faction with a functioning command structure remains.
+
+
+COMMAND NETWORK FEATURES
+------------------------
+[PLANNED] One named Main Commander per faction.
+[PLANNED] Multiple named command officers per faction, ideally 3-5 depending on campaign settings.
+[PLANNED] Officers assigned to regions, forces or specialist commands.
+[PLANNED] Order propagation time based on the available command route.
+[PLANNED] Rerouting when a relay officer is lost.
+[PLANNED] Last-known-orders behaviour for disconnected forces.
+[PLANNED] Acting commander succession after the Main Commander is killed.
+[PLANNED] Officer and commander replacement timers.
+[PLANNED] Replacement requires an operational command location and can require manpower/resources.
+[PLANNED] Multiple simultaneous officer losses increase disruption and replacement pressure.
+[PLANNED] Physical command posts that improve communication and enable replacements.
+[PLANNED] Destroying or capturing command posts can prevent or slow command recovery.
+[PLANNED] Command Integrity status shown to the owning faction without revealing enemy personnel locations for free.
+[PLANNED] AI commanders use exactly the same command-delay and replacement system as human-controlled factions.
+
+
+FACTIONS AND CAMPAIGN
+---------------------
+[DONE] Up to three strategic factions: WEST, EAST and INDEPENDENT.
+[DONE] Each faction can be Human, AI or Disabled from mission parameters.
+[DONE] Human vs AI, Human vs AI vs AI and other controller combinations supported by the architecture.
+[PLANNED] All-AI campaigns for testing and balancing.
+[PLANNED] Faction identity/content choices during campaign setup where practical.
+[PLANNED] Generic faction logic so gameplay systems never assume only two sides.
+[PLANNED] Hostility/diplomacy data kept generic enough for future campaign variants.
+
+
+DEPLOYMENT AND CAMPAIGN START
+-----------------------------
+[DONE] Two active factions receive two broad deployment sectors.
+[DONE] Three active factions receive three broad deployment sectors.
+[DONE] Deployment regions reveal the general direction of rival factions without revealing exact HQ positions.
+[DONE] Human factions manually choose a valid HQ position inside their deployment sector.
+[DONE] AI factions select an HQ using the same placement rules.
+[DONE] Water, invalid terrain and deployment-border areas are rejected.
+[DONE] Enemy HQ coordinates are kept out of hostile client state.
+[DONE] Combat/economy/AI progression waits for deployment to finish.
+[PLANNED] Restore a polished multi-stage setup flow for campaign settings and content selection.
+[PLANNED] Restore useful setup presentation/camera/deployment effects without bringing back old GameData logic.
+[PLANNED] Vehicle/content selection should send definitions/class names only; the server builds authoritative catalogues and prices.
+
+
+INTELLIGENCE AND RECONNAISSANCE
+-------------------------------
+HARD RULE: server truth is not faction knowledge. A faction only knows enemy information that one of its real intelligence sources actually collected.
+
+[PLANNED] Enemy commanders, officers, units, emplacements, factories and location ownership begin unknown unless actually observed.
+[PLANNED] Human players create intelligence through real line-of-sight observation using normal view, optics, binoculars, vehicle sensors and reconnaissance positions.
+[PLANNED] UAVs/drones only report what their cameras/sensors can actually observe. When contact is lost, live tracking stops and the map keeps only the last observed position/time.
+[PLANNED] Spies are assigned by the player to real map areas/routes/sites and only report what they can observe there; they do not reveal a whole region for free.
+[PLANNED] Spy reports are timestamped observations such as vehicles arriving, troops present, officers seen, command vehicles, air-defence sites or convoys.
+[PLANNED] Spies can be discovered, captured or killed.
+[PLANNED] A later Intelligence Officer can automate spy tasking according to priorities chosen by the player (for example command personnel, air defence, factories or a geographic area).
+[PLANNED] Satellites are tasked to a chosen map area and produce a snapshot during a real pass; they do not continuously reveal the enemy.
+[PLANNED] Satellite research improves revisit time, scan area, resolution and identification quality, but information still becomes stale after the pass.
+[PLANNED] Sensor detections and visual confirmation are distinct. Radar/counter-battery sensors can create a suspected contact or firing origin, but visual reconnaissance is required to confirm exact enemy presence/ownership where appropriate.
+[PLANNED] Identification detail depends on what was actually observed: unknown contact -> broad class -> exact type -> named/high-value asset when positively identified.
+[PLANNED] Location/factory ownership is only updated for a faction when it is observed. A map can therefore show an old 'last observed owner' that may now be wrong.
+[PLANNED] Intelligence records always include source, observation time and last-known position/state rather than a magic percentage.
+[PLANNED] Enemy radio/order activity may create a real SIGINT clue only when an appropriate friendly sensor/system can detect it.
+[PLANNED] Captured personnel, command posts or physical intelligence can reveal specific information.
+[PLANNED] AI commanders use only their faction intelligence database and must not read hidden world state.
+[PLANNED] VLS, artillery, air strikes and other strategic attacks may only use targets/coordinates legitimately known to that faction.
+[PLANNED] Strategic map clearly distinguishes current contact, last-known contact and unconfirmed/sensor-only contact.
+
+
+TERRITORY, LOCATIONS AND FRONTLINES
+-----------------------------------
+[DONE] Server-authoritative location/capture architecture.
+[DONE] Captures are timed and processed on the server.
+[PLANNED] Towns, cities, factories and strategic sites form the territorial campaign layer.
+[PLANNED] Location ownership affects economy, logistics, intelligence and operational access.
+[PLANNED] Capture progress presented clearly on the strategic map and to nearby players.
+[PLANNED] Frontline/adjoining-territory logic guides AI operations.
+[PLANNED] Territory is important but is NOT itself the primary victory condition.
+[PLANNED] Population/civilian value can influence economy, manpower and intelligence where appropriate.
+
+
+INDUSTRY, FACTORIES AND PRODUCTION
+----------------------------------
+[DONE] Server-authoritative economy/factory service foundation exists, but the old abstract resource-output model is NOT the target design.
+
+[PLANNED] Factories produce physical war materiel, not abstract resource income.
+[PLANNED] The primary manufacturing cost is production TIME and limited factory capacity, not an instant steel/ammo/fuel purchase price.
+[PLANNED] Players choose exactly what each controlled factory is producing from its allowed production list.
+[PLANNED] AI commanders use the same production queues and must choose what their factories manufacture.
+[PLANNED] Vehicle factories queue selected vehicles; when production finishes, the completed vehicle becomes available at/near that factory.
+[PLANNED] Munitions factories queue selected ammunition types/loads rather than generating generic 'ammo points'.
+[PLANNED] Artillery shells, rockets, SAM missiles, C-RAM ammunition, VLS missiles and other specialist ammunition can require appropriate factory production.
+[PLANNED] Factory specialisation can limit what a site can build (for example ground vehicles, heavy vehicles, aviation, general munitions or missiles).
+[PLANNED] Production queues have visible item, progress, completion time and local stock for the owning faction.
+[PLANNED] Capturing a factory changes real production capacity instead of simply increasing a resource-per-minute value.
+[PLANNED] Destroying or disabling a factory interrupts its queue and reduces the faction's ability to replace losses.
+[PLANNED] Infrastructure research can reduce build times, increase queue capacity, improve repair/retool speed or unlock advanced production.
+[PLANNED] Retooling a factory to a different product may itself take time so production choices have strategic consequences.
+[PLANNED] Vehicles and ammunition are finite. Replacing a lost tank, missile battery load or artillery stock should take production time.
+[PLANNED] Logistics later moves completed ammunition/stock from production sites to the units and emplacements that need it rather than teleporting infinite ammunition everywhere.
+[PLANNED] Manpower, fuel and other support constraints may exist where they add gameplay, but factories themselves are manufacturing sites rather than abstract resource generators.
+
+
+RESEARCH
+--------
+[DONE] New v4 research service and server-authoritative purchase path.
+[PLANNED] Research branches cover Intelligence, Infrastructure and Procurement at minimum.
+[PLANNED] Research unlocks better reconnaissance, command resilience, production, vehicles and strategic systems.
+[PLANNED] Research progression should create different faction strategies rather than one mandatory path.
+[PLANNED] Intelligence research directly supports hunting the enemy command network.
+[PLANNED] Command/communications research may improve order speed, relay redundancy and replacement capability.
+
+
+VEHICLES AND PROCUREMENT
+------------------------
+[DONE] Server-authoritative vehicle purchase/restore architecture.
+[DONE] Persistent vehicle IDs separated from runtime Arma object references.
+[PLANNED] Procurement research gates higher vehicle categories.
+[PLANNED] Vehicle production definitions, eligibility and build times are authoritative on the server.
+[PLANNED] Players request/queue appropriate faction vehicles at valid production facilities; completed vehicles appear only after their build time finishes.
+[PLANNED] AI uses the same vehicle-production queues and factory capacity as humans.
+[PLANNED] Friendly named/important vehicles appear on the strategic map where appropriate.
+[PLANNED] Vehicle losses matter economically and strategically but do not corrupt persistence.
+
+
+ARTILLERY, AIR DEFENCE, EMPLACEMENTS AND VLS
+--------------------------------------------
+[DONE] Persistent emplacement architecture.
+[DONE] VLS target database and server-authoritative launch flow.
+[DONE] VLS targeting integrated with the tactical/strategic map approach.
+
+[PLANNED] Artillery is a real physical combat arm with guns/launchers, finite manufactured ammunition and command-linked fire missions.
+[PLANNED] Players or AI select the ammunition and fire mission; the artillery unit must actually have the required rounds available.
+[PLANNED] Artillery can fire only on coordinates legitimately known to the faction or deliberately supplied by a player/observer.
+[PLANNED] Forward observers, UAVs and recon units can correct artillery using real observation rather than invisible target knowledge.
+[PLANNED] Counter-battery radar detects incoming/outgoing trajectories and creates a suspected enemy firing-origin contact. It does not magically identify everything at that location.
+[PLANNED] Counter-battery information has a timestamp/accuracy appropriate to the sensor; visual recon is needed for positive confirmation of the battery.
+[PLANNED] Artillery crews/AI can use shoot-and-scoot tactics because firing may expose their position to counter-battery sensors.
+
+[PLANNED] SAM sites are physical emplacements with real detection/engagement range, finite missiles and reload requirements.
+[PLANNED] SAM systems can engage aircraft, helicopters and suitable UAVs when their own sensors or linked sensors provide a valid track.
+[PLANNED] C-RAM/point-defence sites protect a smaller area and can attempt to intercept VLS/cruise missiles, rockets/artillery where supported by the Arma implementation, and hostile aircraft/UAVs where appropriate.
+[PLANNED] Air-defence ammunition is manufactured by factories and must be replenished; SAM/C-RAM/VLS are never infinite-ammo systems.
+[PLANNED] Radar detections create sensor contacts, not perfect visual intelligence. Exact unit/site confirmation still requires suitable observation.
+[PLANNED] Radar emitters can become detectable intelligence targets later through SIGINT/electronic-warfare systems.
+
+[PLANNED] Strategic emplacement placement uses the map and server validation.
+[PLANNED] VLS is especially valuable for attacking discovered command posts, artillery, air defence and other high-value targets.
+[PLANNED] VLS missiles are physical/finite stock produced by appropriate factories.
+[PLANNED] AI uses artillery/VLS/air defence only from information it legitimately knows and follows the same ammunition rules as humans.
+[PLANNED] Strategic weapons need clear reload times, ammunition limits, sensor requirements and counterplay rather than arbitrary cooldown-only balance.
+
+
+AI COMMANDERS AND FORCES
+------------------------
+[DONE] Three-faction AI commander foundation.
+[DONE] Persistent force and operation concepts.
+[DONE] Strategic AI scheduler designed to avoid constant per-frame thinking.
+[PLANNED] Strategic Commander -> Command Officer -> Force Commander -> Arma tactical AI hierarchy.
+[PLANNED] AI personalities: aggressive, defensive, economic, technological, balanced and guerrilla-style variants.
+[PLANNED] Objective scoring considers economic value, strategic value, proximity, vulnerability, supply, research, enemy strength and travel cost.
+[PLANNED] Force roles include garrison, patrol, assault, armour, recon, artillery, air, reserve and logistics.
+[PLANNED] Operations include Assemble, Move, Assault, Secure and Garrison.
+[PLANNED] AI should maintain reserves and avoid sending every unit into one attack.
+[PLANNED] AI reacts to command-network damage and delayed orders like a human faction does.
+[PLANNED] AI difficulty changes decision quality and response speed, not hidden resource cheats or omniscience.
+[PLANNED] Commander think cycles remain staggered and relatively slow to protect server performance.
+
+
+PLAYER AND SQUAD GAMEPLAY
+-------------------------
+[DONE] Native Arma player loadout persistence foundation.
+[DONE] Server-authoritative paid loadout/arsenal path.
+[PLANNED] Players can form/use squads and contribute directly to strategic operations.
+[PLANNED] Squad-level objectives can be generated from strategic operations.
+[PLANNED] Human players can protect, escort, relocate or hunt command personnel.
+[PLANNED] Recon/scout gameplay should feed useful intelligence into the faction network.
+[PLANNED] Player death/respawn must never equal automatic death of the strategic commander.
+[PLANNED] Reconnect/JIP returns players safely to the campaign without exposing enemy secrets.
+
+
+STRATEGIC MAP AND USER INTERFACE
+--------------------------------
+[DONE] Deployment-sector map overlay.
+[DONE] Lightweight Draw-based strategic-map architecture.
+[DONE] VLS-themed common UI direction.
+[PLANNED] Strategic map displays friendly/known towns and cities, last-observed ownership, factories, production queues/stock, capture state and frontlines without revealing unobserved enemy truth.
+[PLANNED] Friendly HQ, command personnel, vehicles and emplacements are shown according to faction permissions.
+[PLANNED] Enemy information is shown only when intelligence supports it.
+[PLANNED] Map location cards provide useful strategic details without creating hundreds of permanent controls.
+[PLANNED] Base resource/status panel.
+[PLANNED] Command-network status panel for the owning faction.
+[PLANNED] Clear feedback when orders are delayed because command relays are damaged.
+[PLANNED] Consistent UI theme across setup, research, procurement, emplacements, commander tools and debug screens.
+[PLANNED] Mission/build version always visible enough to identify the correct test build.
+
+
+PERSISTENCE, JIP AND SERVER AUTHORITY
+-------------------------------------
+[DONE] v4 persistent state separated from runtime object state.
+[DONE] HashMap/named-field architecture instead of giant magic-index GameData arrays.
+[DONE] Persistent data uses primitives/IDs rather than raw Arma object references.
+[DONE] A/B journal-style campaign save checkpoints.
+[DONE] Campaign-reset lobby parameter.
+[DONE] Safe player-position validation/repair path.
+[DONE] Selective client replication rather than broadcasting one giant state object.
+[PLANNED] Command personnel, command-post state, replacements and command damage must persist cleanly.
+[PLANNED] Save/load must preserve intelligence without leaking secret data to hostile clients.
+[PLANNED] Dirty-domain/debounced saves and sensible campaign checkpoints remain the standard.
+[PLANNED] JIP clients receive only the state they are allowed to know.
+
+
+PERFORMANCE AND NETWORKING
+--------------------------
+[DONE] No giant GameData broadcast architecture.
+[DONE] Targeted state publication/services foundation.
+[DONE] Expensive map work designed to run only when needed.
+[PLANNED] No per-frame strategic AI loops.
+[PLANNED] Cache expensive world/population/location calculations.
+[PLANNED] Order propagation and command-network simulation should be event/timer driven rather than constant scanning.
+[PLANNED] Server remains authoritative for resources, purchases, captures, command state, AI decisions and persistence.
+[PLANNED] Clients should never be trusted to award resources, unlock research, select hidden enemy targets or create authoritative assets.
+
+
+DEBUGGING, TESTING AND DEVELOPMENT
+----------------------------------
+[DONE] Developer Debug Mode separate from normal gameplay.
+[DONE] Static architecture validator and GitHub validation workflow.
+[DONE] Automated server-side test framework foundation.
+[PLANNED] Add automated tests for command succession, relay loss, order delays, replacements, collapse and victory.
+[PLANNED] Add tests proving enemy clients never receive hidden commander/officer coordinates.
+[PLANNED] Add two-faction Human vs AI runtime test checklist.
+[PLANNED] Add three-faction Human + two AI runtime test checklist.
+[PLANNED] Add save/restart/JIP regression tests for command state.
+[PLANNED] Keep DEV builds clearly versioned in the Arma mission list.
+
+
+FUTURE / OPTIONAL SYSTEMS
+-------------------------
+These should only be built after the core campaign and command-war loop is solid.
+
+[OPTIONAL] Roadblocks/checkpoints with a real strategic/logistics purpose.
+[OPTIONAL] CBR/chemical-style systems if they can be given clear gameplay and counterplay.
+[OPTIONAL] Deeper supply routes and logistics convoys.
+[PLANNED-CORE] Artillery and counter-battery warfare are part of the core combined-arms campaign, tied to real observation, command links and manufactured ammunition.
+[OPTIONAL] More advanced air operations and air-tasking AI.
+[OPTIONAL] Prisoners/captured officers as an intelligence source instead of every encounter ending in death.
+[OPTIONAL] Electronic warfare / communications disruption as a non-lethal way to damage command links.
+[OPTIONAL] Decoy command posts and false intelligence.
+[OPTIONAL] Expanded diplomacy/temporary strategic cooperation for custom three-faction scenarios, without making it necessary for the standard mode.
+
+
+DESIGN RULES
+------------
+1. The command-network war is the central game goal. New features should support it directly or indirectly.
+2. Territory and economy create the means to win; they are not the win condition by themselves.
+3. Information should matter. Players and AI should have to discover important enemy assets.
+4. AI follows the same important rules as humans. Difficulty should not rely on cheating.
+5. Important persistent records use IDs and data, not live Arma object references.
+6. The server owns authoritative campaign state.
+7. Clients receive only information they are entitled to know.
+8. Losing one officer hurts; losing several quickly creates an opportunity; complete command destruction wins the war.
+9. Existing troops should behave believably after command damage instead of instantly disappearing or becoming useless.
+10. Performance matters: strategic systems should think in seconds, not every frame.
+11. A feature is not considered complete until it works in multiplayer, survives save/reload and has sensible JIP behaviour.
+12. Keep the development branch clean: no legacy GameData architecture, obsolete wrappers or dead prototype code in the active mission tree.
+13. No omniscient enemy state: if a faction did not observe/detect it through a real source, that faction does not know it.
+14. Losing visual/sensor contact freezes intelligence at its last-known state; the server must not keep updating enemy markers secretly.
+15. Factories manufacture selected vehicles/ammunition over time; they are not passive abstract-resource generators.
+16. Strategic weapons, artillery and air defence use finite manufactured ammunition and real sensor/target information.
+
+
+NEAR-TERM DEVELOPMENT ORDER
+---------------------------
+1. Runtime-hardening pass on the current v4.0.8 DEV campaign loop.
+2. Implement the faction Knowledge/Intelligence database so enemy truth is never automatically replicated.
+3. Implement real observation inputs: players, UAVs, spies and last-known contact records.
+4. Implement Command Network data model and physical commander/officer spawning.
+5. Implement order-routing delays, officer loss, succession and replacement.
+6. Implement Command Collapse and faction-elimination victory logic.
+7. Replace passive factory-resource output with timed vehicle/ammunition production queues.
+8. Implement artillery + counter-battery radar using real observations and finite produced ammunition.
+9. Implement SAM/C-RAM/VLS ammunition, sensors and interception/counterplay.
+10. Connect AI force orders, intelligence collection and production decisions to the same systems as humans.
+11. Restore/polish remaining setup and strategic-map features.
+12. Expand logistics, AI behaviour and campaign balance after the core command/intelligence/industry loop is reliable.
+
