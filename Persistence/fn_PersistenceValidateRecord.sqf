@@ -124,10 +124,12 @@ if ((_factions findIf {
         private _dir = [_x,"direction",0] call TYR_fnc_RecordGet;
         private _observedAt = [_x,"observedAt",[]] call TYR_fnc_RecordGet;
         private _source = [_x,"source",""] call TYR_fnc_RecordGet;
-        (_id isEqualTo "") || {!(_targetFaction in _knownFactions)} || {!(_kind in ["infantry","vehicle","air","naval","emplacement","unknown"])} ||
+        private _roleTag = [_x,"roleTag",""] call TYR_fnc_RecordGet;
+        (_id isEqualTo "") || {!(_targetFaction in _knownFactions)} || {!(_kind in ["infantry","vehicle","air","naval","emplacement","command","unknown"])} ||
         {!(_label isEqualType "")} || {!(_exact isEqualType true)} || {!(_class isEqualType "")} ||
         {!(_pos isEqualType [])} || {count _pos < 2} || {(_pos findIf {!(_x isEqualType 0)}) >= 0} ||
-        {!(_dir isEqualType 0)} || {!(_observedAt isEqualType [])} || {(_observedAt findIf {!(_x isEqualType 0)}) >= 0} || {!(_source isEqualType "")}
+        {!(_dir isEqualType 0)} || {!(_observedAt isEqualType [])} || {(_observedAt findIf {!(_x isEqualType 0)}) >= 0} || {!(_source isEqualType "")} ||
+        {!(_roleTag in ["","commander","officer","force_commander"])}
     }) >= 0} ||
     {count _intelLog > 80} ||
     {(_intelLog findIf {
@@ -208,8 +210,13 @@ if !([_operationIds] call _unique) exitWith {false};
 if ((_operations findIf {
     private _fid = [_x,"faction",""] call TYR_fnc_RecordGet;
     private _target = [_x,"target",""] call TYR_fnc_RecordGet;
+    private _targetType = [_x,"targetType","location"] call TYR_fnc_RecordGet;
+    private _targetPos = [_x,"targetPosition",[]] call TYR_fnc_RecordGet;
     private _assigned = [_x,"forces",[]] call TYR_fnc_RecordGet;
-    !(_fid in _knownFactions) || {!(_target in _locationIds)} || {!(_assigned isEqualType [])} ||
+    !(_fid in _knownFactions) || {!(_targetType in ["location","contact","position"])} ||
+    {_targetType isEqualTo "location" && {!(_target in _locationIds)}} ||
+    {_targetType in ["contact","position"] && {_target isEqualTo ""}} ||
+    {count _targetPos > 0 && {!([_targetPos] call _validPos)}} || {!(_assigned isEqualType [])} ||
     {(_assigned findIf {!(_x in _forceIds)}) >= 0}
 }) >= 0) exitWith {false};
 

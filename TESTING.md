@@ -76,3 +76,20 @@ Enable **Developer Debug Mode**, open **COMMAND NETWORK**, and select the factio
 - Save/reload while an officer is dead or an order is pending and verify the command state returns without resurrecting killed personnel.
 
 **FAST-FORWARD COMMAND TIMER** advances whichever command timer is currently relevant for the selected faction. During succession it promotes the surviving successor immediately; while missing officers it advances the replacement attempt; during full collapse it advances emergency recovery when a valid HQ/manpower route exists, otherwise it moves the collapse close to the elimination deadline. This exists only to avoid waiting minutes during developer tests.
+
+## v4.0.13 strategic AI overhaul test
+
+Enable **Developer Debug Mode** and use an AI-controlled faction as the target in the Developer Operations Console.
+
+1. Open **AI COMMAND -> SHOW AI DECISION FLOW**.
+2. Press **RUN THINK + TRACE**. The real commander think should traverse 12 nodes slowly. The live node should be amber, completed connectors/nodes should turn green, and blocked/branch/skipped stages should have different colours.
+3. Confirm the candidate panel shows ranked actions with PASS/X validation states and the outcome panel shows posture + final decision.
+4. Press **SHOW AI ORDER MAP**. For a force operation, confirm a line is drawn from the assigned force to the target. While `COMMAND_PENDING`, a bright command route should run through the physical command nodes and show order ETA/reroutes.
+5. Kill one command officer and issue another traced think. Pending orders should take longer/reroute and the order map should update.
+6. Use the faction-intelligence map to leave a strategic location unknown, then run a think. The AI should prefer RECON/PROBE for that unknown site rather than attacking it based on hidden ownership.
+7. Observe an enemy Main Commander legitimately with the intelligence system, then run a think for the observing AI faction. A recent identified COMMAND contact should be eligible as a high-value RAID candidate if force/reserve/command validation permits it.
+8. Kill all command personnel. A traced think should stop strategic planning at COMMAND COLLAPSE; already delivered force movement should continue, but no new strategic force order should be created.
+9. Create a known hostile contact near the AI HQ/owned strategic site. The next think should select `emergency_defence` posture and prefer defence/reinforcement actions.
+10. Let a contact-based raid become stale for more than four minutes. Operation review should abort it rather than tracking the live target magically.
+
+The full autotest also checks that the strategic AI can build a picture, posture and ranked candidates. Runtime testing remains required for Arma waypoint/combat behaviour and the visual debug-flow/map rendering.

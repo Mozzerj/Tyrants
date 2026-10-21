@@ -106,7 +106,8 @@ _factionKeys sort true;
             ["position",+(_c getOrDefault ["position",[]])],
             ["direction",_c getOrDefault ["direction",0]],
             ["observedAt",+(_c getOrDefault ["observedAt",[]])],
-            ["source",_c getOrDefault ["source",""]]
+            ["source",_c getOrDefault ["source",""]],
+            ["roleTag",_c getOrDefault ["roleTag",""]]
         ];
     } forEach _knowledgeContactIds;
     private _knowledgeLogOut = +(_knowledge getOrDefault ["log",[]]);
@@ -270,9 +271,16 @@ _operationKeys sort true;
         ["faction",_o get "faction"],
         ["type",_o getOrDefault ["type","attack"]],
         ["target",_o getOrDefault ["target",""]],
+        ["targetType",_o getOrDefault ["targetType","location"]],
+        ["targetName",_o getOrDefault ["targetName",_o getOrDefault ["target",""]]],
+        ["targetPosition",+(_o getOrDefault ["targetPosition",[]])],
         ["phase",_o getOrDefault ["phase","assemble"]],
         ["forces",+(_o getOrDefault ["forces",[]])],
         ["created",_o getOrDefault ["created",0]],
+        ["score",_o getOrDefault ["score",0]],
+        ["reason",_o getOrDefault ["reason",""]],
+        ["posture",_o getOrDefault ["posture","hold"]],
+        ["outcomeReason",_o getOrDefault ["outcomeReason",""]],
         ["orderId",_o getOrDefault ["orderId",""]],
         ["commandDelay",_o getOrDefault ["commandDelay",0]],
         ["commandDeliveredAt",_o getOrDefault ["commandDeliveredAt",-1]]

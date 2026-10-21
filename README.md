@@ -1,4 +1,4 @@
-# Tyrants v4.0.12 DEV
+# Tyrants v4.0.13 DEV
 
 Current development baseline for the three-faction Tyrants rewrite. It includes deployment sectors, human/AI commanders, the v4 save architecture, targeted replication, and the tactical UI.
 
@@ -21,7 +21,7 @@ Tyrants v4 is a clean architectural rewrite of the Altis strategic-war mission. 
 
 ## Current strategic loop
 
-The server discovers towns, cities and factory clusters, generates separated deployment sectors, accepts human HQ choices, auto-selects HQs for AI factions, then starts the economy and territory/AI scheduler once deployment is complete. AI commanders create forces, buy eligible research, select strategic objectives, form operations, move forces and start server-owned capture sessions.
+The server discovers towns, cities and factory clusters, generates separated deployment sectors, accepts human HQ choices, auto-selects HQs for AI factions, then starts the economy and territory/AI scheduler once deployment is complete. AI commanders now run a staged strategic decision path: command state -> known emergency threats -> faction intelligence picture -> operation reassessment -> posture -> candidate generation/scoring/validation -> physical command routing -> force execution -> later reassessment. Unknown hostile state is not read as AI knowledge.
 
 Players spawn into their faction's HQ after receiving server state. Press **Y** for the Tyrants command interface. Player capture progress, purchases, arsenal costs, factory collection, VLS, emplacements and force deployment are server validated.
 
@@ -75,3 +75,10 @@ Faction intelligence now stores real last-known enemy contacts rather than recei
 Each active faction now fields a physical Main Commander, three physical command officers, and physical force commanders represented by AI force leaders. Strategic AI orders are no longer applied instantly: they are queued through the command network, delayed by network health, and rerouted when command personnel are lost. Existing delivered orders continue when the network collapses.
 
 Commander death starts a succession period; surviving senior officers can assume command. Lost officers are replaced slowly when manpower and a functioning HQ route remain. If all strategic command personnel are lost, the faction enters Command Collapse. Recovery is possible through an emergency commander while the HQ/replacement route and manpower remain; sustained collapse ultimately eliminates the faction. Enemy command personnel are not revealed for free.
+
+
+## v4.0.13 strategic AI overhaul
+
+The AI commander now runs a 12-stage decision pipeline instead of choosing a single location and attacking it. It builds its enemy picture from the same faction knowledge database used by players, maintains reserves, reacts to command disruption and known emergencies, creates recon/probe actions for unknown territory, can raid legitimately observed command personnel/emplacements/vehicles, and validates resources/intel/command routes before issuing an operation.
+
+Developer Debug Mode includes an actual live 12-node decision flowchart. **RUN THINK + TRACE** slows the real AI think just enough to watch the current stage and branch result. The omniscient debug map draws the operation target, assigned force, reason/score/phase, and the physical commander -> officer -> force commander delivery route with ETA/reroutes. See `AI_STRATEGIC_OVERHAUL.md`.

@@ -51,6 +51,7 @@ if (_knowledge isEqualType [] && {count _knowledge >= 4}) then {
                 private _color = if (_targetFaction in ["west","east","independent"]) then {[_targetFaction,true] call TYR_fnc_FactionColor} else {[0.7,0.7,0.7,1]};
                 _color set [3,_alpha];
                 private _icon = switch (_kind) do {
+                    case "command": {"\A3\ui_f\data\map\markers\nato\b_hq.paa"};
                     case "infantry": {"\A3\ui_f\data\map\markers\nato\b_inf.paa"};
                     case "air": {"\A3\ui_f\data\map\markers\nato\b_air.paa"};
                     case "emplacement": {"\A3\ui_f\data\map\markers\nato\b_art.paa"};

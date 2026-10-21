@@ -183,3 +183,48 @@ repeated kills can outpace replacement and cause elimination.
 DESIGN RULE - Own command personnel may be replicated to their own faction. Enemy command
 personnel are not replicated as command identities/positions; they must be discovered through
 the intelligence system. The omniscient debug map is the exception for developer testing only.
+
+v4.0.13 STRATEGIC AI OVERHAUL
+-----------------------------
+CURRENT - The strategic commander now uses a fixed 12-stage pipeline: command state,
+emergency override, faction-known strategic picture, operation review, posture, candidate
+generation, scoring, validation, order creation, command routing, force execution and
+outcome/review. Keep these stages explicit rather than returning to a single opaque
+"pick objective" function.
+
+DESIGN RULE - Friendly current ownership/resources/forces are legitimate own-state truth.
+For non-friendly locations and physical enemy targets, classification/targeting must come
+from the faction knowledge record. An unknown site generates recon/probe candidates; it
+must not become an attack candidate because the authoritative server secretly knows its owner.
+Stale beliefs are allowed to be wrong.
+
+CURRENT - Candidate scoring is comparative strategic utility, NOT an intelligence confidence
+percentage. Validation is separate and enforces hard prerequisites: real resources, free
+forces, reserve ratio, target coordinate, contact age and functioning command route.
+
+CURRENT - Force operations are created as COMMAND_PENDING and pass through the existing
+physical command network. The AI decision layer does not bypass commander/officer delays.
+Research and force-generation choices use the normal authoritative services because they are
+strategic transactions rather than orders to an already-existing force.
+
+CURRENT - Abort/reassessment must set `finishedAt`, free the force, delete pending command
+orders for that operation and clear obsolete Arma waypoints. Merely changing an operation
+record to FAILED leaves the group physically following the abandoned plan.
+
+CURRENT - Use a per-faction runtime think lock (`TYR_Runtime.aiThinkLocks`) so a scheduled
+commander tick and developer RUN THINK + TRACE cannot issue simultaneous plans for the same
+faction.
+
+CURRENT - The debug flowchart displays explicit game-AI state only: current stage, branch
+result, ranked candidate scores, rejection reasons, posture and final issued action. This is
+intentional debugging telemetry, not fabricated human-style chain-of-thought.
+
+CURRENT - RUN THINK + TRACE invokes the exact same commander function with short sleeps
+between trace commits. The flow view polls a narrow `debugTrace` response roughly every
+0.35 s; do not poll the full omniscient unit/entity map at that rate because it creates
+unnecessary developer-mode network/server work.
+
+CURRENT - Omniscient AI order-map telemetry should show both layers of intent: assigned
+force -> operation target and, while pending, Main Commander/officer -> force commander
+command delivery path with ETA/reroute count. This remains developer-only and must never
+become a normal faction intelligence source.

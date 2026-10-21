@@ -32,9 +32,17 @@ missionNamespace setVariable ["TYR_DebugAITraces",_data param [5,[]]];
     if (isNil "TYR_debugMapRefreshHandle" || {scriptDone TYR_debugMapRefreshHandle}) then {
         TYR_debugMapRefreshHandle = [] spawn {
             while {missionNamespace getVariable ["TYR_debugMode",false] && {!isNull findDisplay 1700}} do {
-                sleep 3;
-                if (!isNull findDisplay 1700) then {
-                    ["debugMap",[]] remoteExecCall ["TYR_fnc_ServerDebugAction",2];
+                private _view = missionNamespace getVariable ["TYR_debugView","map"];
+                if (_view isEqualTo "flow") then {
+                    sleep 0.35;
+                    if (!isNull findDisplay 1700) then {
+                        ["debugTrace",[missionNamespace getVariable ["TYR_debugFaction",""]]] remoteExecCall ["TYR_fnc_ServerDebugAction",2];
+                    };
+                } else {
+                    sleep 3;
+                    if (!isNull findDisplay 1700) then {
+                        ["debugMap",[]] remoteExecCall ["TYR_fnc_ServerDebugAction",2];
+                    };
                 };
             };
         };

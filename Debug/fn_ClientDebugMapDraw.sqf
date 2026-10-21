@@ -113,3 +113,77 @@ private _commandNetworks = _data param [6,[]];
         _map drawIcon ["\A3\ui_f\data\map\markers\military\circle_CA.paa",[0.95,0.75,0.2,0.95],_hq,12,12,0,format ["COMMAND %1 // %2 // PENDING %3%4",toUpper _fid,toUpper _status,_pendingOrders,_collapseText],1,0.027,"PuristaBold","left"];
     };
 } forEach _commandNetworks;
+
+// Strategic AI intent and delivered/pending commands. This is developer-only
+// omniscient telemetry: it shows exactly what the AI ordered, where it is going,
+// and whether the physical command network has delivered the order yet.
+private _forcePosMap = createHashMap;
+{
+    if (_x isEqualType [] && {count _x >= 5}) then {_forcePosMap set [_x # 0,+(_x # 4)]};
+} forEach _forces;
+
+private _aiOperations = _data param [7,[]];
+private _orderFocus = missionNamespace getVariable ["TYR_DebugOrderFocus",false];
+private _focusFaction = missionNamespace getVariable ["TYR_debugFaction",""];
+{
+    _x params ["_opId","_fid","_type","_phase","_targetType","_targetId","_targetName","_targetPos","_forceIds","_score","_reason","_created","_orderId"];
+    if ((!_orderFocus || {_fid isEqualTo _focusFaction}) && {count _targetPos >= 2}) then {
+        private _baseColor = [_fid,true] call TYR_fnc_FactionColor;
+        private _lineColor = switch (_phase) do {
+            case "command_pending": {[0.95,0.68,0.12,0.95]};
+            case "capture": {[0.95,0.25,0.18,0.95]};
+            case "search": {[0.68,0.46,0.95,0.95]};
+            case "hold": {[0.25,0.78,0.95,0.95]};
+            default {[_baseColor # 0,_baseColor # 1,_baseColor # 2,0.95]};
+        };
+        private _icon = switch (_type) do {
+            case "defend": {"\A3\ui_f\data\map\markers\nato\b_hq.paa"};
+            case "recon": {"\A3\ui_f\data\map\markers\nato\b_inf.paa"};
+            case "probe": {"\A3\ui_f\data\map\markers\nato\b_inf.paa"};
+            case "raid": {"\A3\ui_f\data\map\markers\nato\b_inf.paa"};
+            default {"\A3\ui_f\data\map\markers\military\circle_CA.paa"};
+        };
+        private _intentLabel = format ["AI %1 // %2 // %3 // SCORE %4",toUpper _type,toUpper _targetName,toUpper _phase,round _score];
+        if (_scale < 0.12 && {_reason isNotEqualTo ""}) then {_intentLabel = _intentLabel + format [" // WHY: %1",toUpper _reason]};
+        _map drawIcon [_icon,_lineColor,_targetPos,24,24,0,_intentLabel,1,0.03,"PuristaBold","right"];
+        {
+            private _fp = _forcePosMap getOrDefault [_x,[]];
+            if (count _fp >= 2) then {
+                _map drawLine [_fp,_targetPos,_lineColor];
+                private _mid = [((_fp # 0)+(_targetPos # 0))*0.5,((_fp # 1)+(_targetPos # 1))*0.5,0];
+                _map drawIcon ["\A3\ui_f\data\map\markers\military\dot_CA.paa",_lineColor,_mid,2,2,0,format ["%1 -> %2",toUpper _x,toUpper _type],1,0.022,"PuristaMedium","right"];
+            };
+        } forEach _forceIds;
+    };
+} forEach _aiOperations;
+
+private _allCommandNodePos = createHashMap;
+{
+    private _nodes = _x param [4,[]];
+    {
+        if (_x isEqualType [] && {count _x >= 4} && {count (_x # 3) >= 2}) then {_allCommandNodePos set [_x # 0,+(_x # 3)]};
+    } forEach _nodes;
+} forEach _commandNetworks;
+
+private _debugOrders = _data param [8,[]];
+{
+    _x params ["_orderId","_fid","_forceId","_opId","_targetId","_issuedAt","_deliverAt","_status","_route","_reroutes"];
+    if (!_orderFocus || {_fid isEqualTo _focusFaction}) then {
+    private _routePoints = [];
+    {
+        private _p = _allCommandNodePos getOrDefault [_x,[]];
+        if (count _p >= 2) then {_routePoints pushBack _p};
+    } forEach _route;
+    private _forcePos = _forcePosMap getOrDefault [_forceId,[]];
+    if (count _forcePos >= 2) then {_routePoints pushBack _forcePos};
+    if (count _routePoints >= 2) then {
+        for "_i" from 0 to ((count _routePoints) - 2) do {
+            _map drawLine [_routePoints # _i,_routePoints # (_i + 1),[1,0.78,0.12,1]];
+        };
+    };
+    if (count _forcePos >= 2) then {
+        private _eta = (_deliverAt - _serverTime) max 0;
+        _map drawIcon ["\A3\ui_f\data\map\markers\military\warning_CA.paa",[1,0.78,0.12,1],_forcePos,16,16,0,format ["ORDER %1 // %2 // ETA %3s // REROUTES %4",toUpper _orderId,toUpper _opId,ceil _eta,_reroutes],1,0.024,"PuristaMedium","right"];
+    };
+    };
+} forEach _debugOrders;

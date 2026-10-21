@@ -48,7 +48,13 @@ if (isNil "TYR_DebugTaskDefinitions") then {
         ["Location ownership requires sight","Find an enemy-held strategic location that is UNKNOWN. Confirm it only changes to LAST OBS enemy control after you visually observe enemy presence at that site."],
         ["Truth versus knowledge","Compare OMNISCIENT MAP with FACTION INTEL MAP. Confirm unobserved enemy units exist only on omniscient truth and do not leak onto the faction map."],
         ["AI force reconnaissance","Let a friendly AI force leader encounter an enemy. Confirm the faction receives a contact only after physical line of sight, not simply because the server knows the enemy exists."],
-        ["Save/reload keeps last-known intel","Save with one or more contacts, restart/reload, and confirm the contacts remain as stale last-known information until physically observed again."]
+        ["Save/reload keeps last-known intel","Save with one or more contacts, restart/reload, and confirm the contacts remain as stale last-known information until physically observed again."],
+        ["AI live decision trace","Select an AI faction, open SHOW AI DECISION FLOW and press RUN THINK + TRACE. Confirm the real twelve-stage path advances node by node and the final outcome/candidate validation appears."],
+        ["AI unknown means reconnaissance","Leave a strategic site unknown to the selected AI faction. Run a trace and confirm that site can produce RECON/PROBE rather than a hidden-truth attack."],
+        ["AI order appears on map","Run a traced think that creates a force operation, then press SHOW AI ORDER MAP. Confirm the assigned-force-to-target line, operation type/phase/score and pending command route are visible."],
+        ["AI officer loss reroutes order","Create a COMMAND_PENDING operation, kill one command officer before delivery, then run a command tick. Confirm the order route/ETA updates and reroute count increases."],
+        ["AI command collapse stops planning","Kill all selected-faction command personnel, then RUN THINK + TRACE. Confirm planning branches to COMMAND COLLAPSE and creates no new force operation."],
+        ["AI observed commander can be targeted","Legitimately observe an enemy Main Commander with faction intelligence, then run the observing AI faction. Confirm COMMAND PERSONNEL can become a high-value RAID candidate without revealing unobserved commanders."]
     ]];
 };
 if (isNil "TYR_DebugTaskStatus") then {
@@ -92,7 +98,7 @@ private _sections = [
     ["faction",201,[202,203,204,205]],
     ["economy",220,[221,222,223,224,225,226,227]],
     ["research",240,[241,242]],
-    ["ai",260,[261,262,263]],
+    ["ai",260,[261,262,263,264]],
     ["commandnet",270,[271,272,273,274,276,277,275]],
     ["views",280,[281,282,284,285,286,283]],
     ["testing",290,[291,292,293,294,295]],
@@ -158,7 +164,7 @@ private _networks = if (_debugMapData isEqualType [] && {count _debugMapData >= 
 // Swap the right-hand workspace between the live omniscient map and the AI decision-flow diagram.
 private _view = missionNamespace getVariable ["TYR_debugView","map"];
 private _mapIds = [1000,1001];
-private _flowIds = [2099,2100,2101,2102,2103,2104,2105,2106,2111,2112,2113,2114,2115,2120];
+private _flowIds = [2099,2100,2101,2102,2103,2104,2105,2106,2107,2108,2109,2110,2111,2112,2131,2132,2133,2134,2135,2136,2137,2138,2139,2140,2141,2150,2151];
 private _taskIds = [2199,2200,2201,2202,2203,2204,2205];
 private _logIds = [2299,2300,2301];
 private _commandIds = [2399,2400,2401,2402,2403,2404,2405,2406];
@@ -177,7 +183,11 @@ if (_mapVisible) then {
     private _instruction = if (_view isEqualTo "intel") then {
         "YOUR FACTION INTELLIGENCE // last-known contacts only // compare against omniscient truth"
     } else {
-        "OMNISCIENT SERVER TRUTH // refresh 3s // intelligence restrictions intentionally bypassed"
+        if (missionNamespace getVariable ["TYR_DebugOrderFocus",false]) then {
+            format ["AI ORDER MAP // %1 // force intent + operation phase + physical command delivery route",toUpper TYR_debugFaction]
+        } else {
+            "OMNISCIENT SERVER TRUTH // refresh 3s // intelligence restrictions intentionally bypassed"
+        }
     };
     if (_mapTeleportEnabled) then {_instruction = _instruction + " // LEFT CLICK = TELEPORT"};
     (_d displayCtrl 1001) ctrlSetText _instruction;
@@ -249,31 +259,76 @@ if (_view isEqualTo "flow") then {
         if ((_x param [0,""]) isEqualTo TYR_debugFaction) exitWith {_record = _x};
     } forEach _traces;
 
+    private _started = -1;
+    private _finished = -1;
+    private _currentStep = 0;
     private _nodes = [];
-    private _scores = [];
-    private _stamp = -1;
-    if (count _record >= 4) then {
-        _stamp = _record # 1;
-        _nodes = _record # 2;
-        _scores = _record # 3;
+    private _candidates = [];
+    private _decision = "NO DECISION TRACE";
+    private _posture = "--";
+    if (count _record >= 8) then {
+        _started = _record # 1;
+        _finished = _record # 2;
+        _currentStep = _record # 3;
+        _nodes = _record # 4;
+        _candidates = _record # 5;
+        _decision = _record # 6;
+        _posture = _record # 7;
     };
 
-    for "_i" from 0 to 5 do {
-        private _text = if (_i < count _nodes) then {_nodes # _i} else {if (_i isEqualTo 0) then {"NO AI DECISION TRACE\nRun COMMANDER THINK for this faction."} else {"WAITING"}};
-        (_d displayCtrl (2101 + _i)) ctrlSetText _text;
+    private _defaultBg = [0.045,0.052,0.060,1];
+    private _doneBg = [0.055,0.12,0.075,1];
+    private _branchBg = [0.08,0.10,0.16,1];
+    private _blockedBg = [0.20,0.055,0.045,1];
+    private _currentBg = [0.25,0.16,0.035,1];
+    private _skippedBg = [0.035,0.038,0.042,1];
+    for "_i" from 0 to 11 do {
+        private _ctrl = _d displayCtrl (2101 + _i);
+        private _node = if (_i < count _nodes) then {_nodes # _i} else {[_i + 1,"WAITING","","pending",""]};
+        _node params ["_stepNo","_title","_outcome","_state",["_detail",""]];
+        _ctrl ctrlSetText format ["%1 // %2\n%3",_stepNo,toUpper _title,_outcome];
+        private _bg = switch (_state) do {
+            case "done": {_doneBg};
+            case "branch": {_branchBg};
+            case "blocked": {_blockedBg};
+            case "current": {_currentBg};
+            case "skipped": {_skippedBg};
+            default {_defaultBg};
+        };
+        if (_stepNo isEqualTo _currentStep) then {_bg = _currentBg};
+        _ctrl ctrlSetBackgroundColor _bg;
+        _ctrl ctrlSetTextColor (if (_state isEqualTo "skipped") then {[0.42,0.45,0.48,1]} else {[0.90,0.92,0.94,1]});
     };
 
-    private _scoreText = "OBJECTIVE SCORES // no scored candidates";
-    if (count _scores > 0) then {
-        private _parts = [];
-        {
-            _x params ["_name","_knownOwner","_score"];
-            _parts pushBack format ["%1 %2 (%3)",toUpper _name,round _score,toUpper _knownOwner];
-        } forEach _scores;
-        _scoreText = format ["TOP OBJECTIVES // %1",_parts joinString "  |  "];
+    // The 11 connectors correspond to transitions 1->2 ... 11->12. Completed
+    // transitions go green, the transition into the live step goes amber, and
+    // future transitions remain grey so the actual traversed path reads visually.
+    for "_i" from 0 to 10 do {
+        private _arrow = _d displayCtrl (2131 + _i);
+        private _targetStep = _i + 2;
+        private _arrowColor = [0.35,0.38,0.42,1];
+        if (_targetStep < _currentStep) then {_arrowColor = [0.28,0.72,0.40,1]};
+        if (_targetStep isEqualTo _currentStep) then {_arrowColor = [0.95,0.68,0.12,1]};
+        if (_finished >= 0 && {_targetStep <= _currentStep}) then {_arrowColor = [0.28,0.72,0.40,1]};
+        _arrow ctrlSetTextColor _arrowColor;
     };
-    (_d displayCtrl 2120) ctrlSetText _scoreText;
-    (_d displayCtrl 2100) ctrlSetText format ["AI DECISION FLOW // %1 // LAST THINK %2s AGO",toUpper TYR_debugFaction,if (_stamp < 0) then {"--"} else {round ((missionNamespace getVariable ["TYR_DebugServerTime",_stamp]) - _stamp)}];
+
+    private _candidateLines = ["TOP CANDIDATES / VALIDATION"];
+    {
+        if (_forEachIndex < 6) then {
+            _x params ["_type","_name","_score","_validState","_reason",["_breakdown",""]];
+            private _tag = switch (_validState) do {case "valid": {"PASS"}; case "rejected": {"X"}; default {"?"}};
+            _candidateLines pushBack format ["%1  %2 -> %3  %4 pts",_tag,toUpper _type,toUpper _name,round _score];
+        };
+    } forEach _candidates;
+    if (count _candidates isEqualTo 0) then {_candidateLines pushBack "No candidate data. Run COMMANDER THINK."};
+    (_d displayCtrl 2150) ctrlSetText (_candidateLines joinString "\n");
+    (_d displayCtrl 2151) ctrlSetText format ["POSTURE\n%1\n\nDECISION\n%2",toUpper _posture,_decision];
+
+    private _serverNow = missionNamespace getVariable ["TYR_DebugServerTime",_started];
+    private _age = if (_started < 0) then {-1} else {round (_serverNow - _started)};
+    private _statusText = if (_finished < 0 && {_started >= 0}) then {format ["THINKING // STEP %1",_currentStep]} else {format ["LAST THINK %1s AGO",if (_age < 0) then {"--"} else {_age}]};
+    (_d displayCtrl 2100) ctrlSetText format ["AI STRATEGIC DECISION PATH // %1 // %2",toUpper TYR_debugFaction,_statusText];
 };
 
 if !(_d getVariable ["TYR_debugInitialRequested",false]) then {

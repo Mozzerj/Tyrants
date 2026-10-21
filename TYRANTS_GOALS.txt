@@ -113,7 +113,7 @@ HARD RULE: server truth is not faction knowledge. A faction only knows enemy inf
 [DONE-v4.0.10] Intelligence records use source + UTC observation time + last-known state rather than a magic percentage. Strategic locations and physical contacts both use this model, and contacts freeze when observation stops.
 [PLANNED] Enemy radio/order activity may create a real SIGINT clue only when an appropriate friendly sensor/system can detect it.
 [PLANNED] Captured personnel, command posts or physical intelligence can reveal specific information.
-[IN PROGRESS] AI commanders use only their faction intelligence database and must not read hidden world state. v4.0.9 removes hidden enemy ownership from objective scoring; force/contact intelligence is the next expansion.
+[DONE-v4.0.13] Strategic AI builds non-friendly location/contact decisions from the faction knowledge database, including stale/unknown information; it does not use hidden hostile truth to choose attacks or raids.
 [PLANNED] VLS, artillery, air strikes and other strategic attacks may only use targets/coordinates legitimately known to that faction.
 [IN PROGRESS-v4.0.10] Strategic map renders faction last-known contacts with age/staleness and identification state. Sensor-only/suspected contacts will be added with radar, counter-battery and SIGINT systems.
 
@@ -207,15 +207,15 @@ AI COMMANDERS AND FORCES
 [DONE] Three-faction AI commander foundation.
 [DONE] Persistent force and operation concepts.
 [DONE] Strategic AI scheduler designed to avoid constant per-frame thinking.
-[PLANNED] Strategic Commander -> Command Officer -> Force Commander -> Arma tactical AI hierarchy.
-[PLANNED] AI personalities: aggressive, defensive, economic, technological, balanced and guerrilla-style variants.
-[PLANNED] Objective scoring considers economic value, strategic value, proximity, vulnerability, supply, research, enemy strength and travel cost.
-[PLANNED] Force roles include garrison, patrol, assault, armour, recon, artillery, air, reserve and logistics.
-[PLANNED] Operations include Assemble, Move, Assault, Secure and Garrison.
-[PLANNED] AI should maintain reserves and avoid sending every unit into one attack.
-[PLANNED] AI reacts to command-network damage and delayed orders like a human faction does.
-[PLANNED] AI difficulty changes decision quality and response speed, not hidden resource cheats or omniscience.
-[PLANNED] Commander think cycles remain staggered and relatively slow to protect server performance.
+[DONE-v4.0.13] Strategic Commander -> Command Officer -> Force Commander -> Arma tactical AI hierarchy is used for AI strategic orders; delivered intent is then executed by the Arma group AI.
+[IN PROGRESS-v4.0.13] Balanced/aggressive/defensive personality biases affect strategic scoring; economic, technological and guerrilla variants remain planned.
+[IN PROGRESS-v4.0.13] Candidate scoring now considers strategic value, distance, intel age, posture, personality, command condition and reserve pressure; deeper enemy-strength/supply/terrain estimates remain planned.
+[IN PROGRESS-v4.0.13] Strategic actions distinguish defend/reinforce/attack/exploit/recon/probe/raid/withdraw, but specialised physical force roles beyond infantry remain planned.
+[IN PROGRESS-v4.0.13] Persistent operations now cover command-pending, move, capture, hold/search, complete/failed states across attack/exploit/defend/reinforce/recon/probe/raid/withdraw actions.
+[DONE-v4.0.13] Offensive candidate validation enforces the commander reserve ratio so the AI does not commit every free force.
+[DONE-v4.0.13] AI posture/validation reacts to command degradation and force operations are physically delayed/rerouted by the command network.
+[IN PROGRESS-v4.0.13] AI difficulty changes desired force count, concurrent strategic-operation slots and scheduler response speed without hidden enemy knowledge/resource cheats; deeper decision-quality scaling remains planned.
+[DONE-v4.0.13] Commander think cycles remain staggered/low frequency; the debug live-flow view uses a separate compact trace payload instead of repeatedly sending the full omniscient entity map.
 
 
 PLAYER AND SQUAD GAMEPLAY

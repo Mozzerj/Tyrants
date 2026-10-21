@@ -69,6 +69,7 @@ private _factions = _state get "factions";
                 _knownLocations set [_locationId,createHashMapFromArray [
                     ["owner",[_x,"owner","unknown"] call TYR_fnc_RecordGet],
                     ["observedAt",+([_x,"observedAt",[]] call TYR_fnc_RecordGet)],
+                    ["seenServerTime",-9999],
                     ["source",[_x,"source",""] call TYR_fnc_RecordGet]
                 ]];
             };
@@ -90,6 +91,7 @@ private _factions = _state get "factions";
                     ["observedAt",+([_x,"observedAt",[]] call TYR_fnc_RecordGet)],
                     ["seenServerTime",-9999],
                     ["source",[_x,"source",""] call TYR_fnc_RecordGet],
+                    ["roleTag",[_x,"roleTag",""] call TYR_fnc_RecordGet],
                     ["publishedAt",-9999]
                 ]];
             };
@@ -177,8 +179,12 @@ private _operations = createHashMap;
     if (_id isNotEqualTo "") then {
         _operations set [_id,createHashMapFromArray [
             ["id",_id],["faction",[_x,"faction",""] call TYR_fnc_RecordGet],["type",[_x,"type","attack"] call TYR_fnc_RecordGet],
-            ["target",[_x,"target",""] call TYR_fnc_RecordGet],["phase",[_x,"phase","assemble"] call TYR_fnc_RecordGet],
+            ["target",[_x,"target",""] call TYR_fnc_RecordGet],["targetType",[_x,"targetType","location"] call TYR_fnc_RecordGet],
+            ["targetName",[_x,"targetName",[_x,"target",""] call TYR_fnc_RecordGet] call TYR_fnc_RecordGet],
+            ["targetPosition",+([_x,"targetPosition",[]] call TYR_fnc_RecordGet)],["phase",[_x,"phase","assemble"] call TYR_fnc_RecordGet],
             ["forces",+([_x,"forces",[]] call TYR_fnc_RecordGet)],["created",[_x,"created",0] call TYR_fnc_RecordGet],
+            ["score",[_x,"score",0] call TYR_fnc_RecordGet],["reason",[_x,"reason",""] call TYR_fnc_RecordGet],
+            ["posture",[_x,"posture","hold"] call TYR_fnc_RecordGet],["outcomeReason",[_x,"outcomeReason",""] call TYR_fnc_RecordGet],
             ["orderId",[_x,"orderId",""] call TYR_fnc_RecordGet],["commandDelay",[_x,"commandDelay",0] call TYR_fnc_RecordGet],
             ["commandDeliveredAt",[_x,"commandDeliveredAt",-1] call TYR_fnc_RecordGet]
         ]];

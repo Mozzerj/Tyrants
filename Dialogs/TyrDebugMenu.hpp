@@ -41,8 +41,9 @@ class TyrDebugMenu
 
         class SectionAI: TYR_UI_Button {idc=260; x=safeZoneX+safeZoneW*0.04; y=0; w=safeZoneW*0.25; h=safeZoneH*0.042; text="AI COMMAND"; onButtonClick="['ai'] call TYR_debugToggleSection;";};
         class AISpawn: TYR_UI_ButtonAccent {idc=261; x=safeZoneX+safeZoneW*0.04; y=0; w=safeZoneW*0.25; h=safeZoneH*0.04; text="SPAWN AI FORCE"; onButtonClick="['spawnForce',[TYR_debugFaction]] call TYR_debugSend;";};
-        class AIThink: TYR_UI_Button {idc=262; x=safeZoneX+safeZoneW*0.04; y=0; w=safeZoneW*0.25; h=safeZoneH*0.04; text="RUN COMMANDER THINK"; onButtonClick="['think',[TYR_debugFaction]] call TYR_debugSend;";};
+        class AIThink: TYR_UI_Button {idc=262; x=safeZoneX+safeZoneW*0.04; y=0; w=safeZoneW*0.25; h=safeZoneH*0.04; text="RUN THINK + TRACE"; onButtonClick="['flow'] call TYR_debugSetView; ['thinkTrace',[TYR_debugFaction]] call TYR_debugSend;";};
         class AIFlow: TYR_UI_Button {idc=263; x=safeZoneX+safeZoneW*0.04; y=0; w=safeZoneW*0.25; h=safeZoneH*0.04; text="SHOW AI DECISION FLOW"; onButtonClick="['flow'] call TYR_debugSetView; ['debugMap',[]] call TYR_debugSend;";};
+        class AIOrderMap: TYR_UI_Button {idc=264; x=safeZoneX+safeZoneW*0.04; y=0; w=safeZoneW*0.25; h=safeZoneH*0.04; text="SHOW AI ORDER MAP"; onButtonClick="missionNamespace setVariable ['TYR_DebugOrderFocus',true]; ['map'] call TYR_debugSetView; ['debugMap',[]] call TYR_debugSend;";};
 
         class SectionCommand: TYR_UI_Button {idc=270; x=safeZoneX+safeZoneW*0.04; y=0; w=safeZoneW*0.25; h=safeZoneH*0.042; text="COMMAND NETWORK"; onButtonClick="['commandnet'] call TYR_debugToggleSection;";};
         class CommandStatus: TYR_UI_TextMulti {idc=271; x=safeZoneX+safeZoneW*0.04; y=0; w=safeZoneW*0.25; h=safeZoneH*0.065; sizeEx=0.021; text="STATUS -- // COMMANDER -- // OFFICERS --";};
@@ -54,7 +55,7 @@ class TyrDebugMenu
         class CommandTick: TYR_UI_Button {idc=275; x=safeZoneX+safeZoneW*0.04; y=0; w=safeZoneW*0.25; h=safeZoneH*0.04; text="RUN COMMAND TICK"; onButtonClick="['commandTick',[]] call TYR_debugSend; ['debugMap',[]] call TYR_debugSend;";};
 
         class SectionViews: TYR_UI_Button {idc=280; x=safeZoneX+safeZoneW*0.04; y=0; w=safeZoneW*0.25; h=safeZoneH*0.042; text="VIEWS / MOVEMENT"; onButtonClick="['views'] call TYR_debugToggleSection;";};
-        class ViewMap: TYR_UI_ButtonAccent {idc=281; x=safeZoneX+safeZoneW*0.04; y=0; w=safeZoneW*0.25; h=safeZoneH*0.04; text="OMNISCIENT MAP"; onButtonClick="['map'] call TYR_debugSetView; ['debugMap',[]] call TYR_debugSend;";};
+        class ViewMap: TYR_UI_ButtonAccent {idc=281; x=safeZoneX+safeZoneW*0.04; y=0; w=safeZoneW*0.25; h=safeZoneH*0.04; text="OMNISCIENT MAP"; onButtonClick="missionNamespace setVariable ['TYR_DebugOrderFocus',false]; ['map'] call TYR_debugSetView; ['debugMap',[]] call TYR_debugSend;";};
         class Teleport: TYR_UI_Button {idc=282; x=safeZoneX+safeZoneW*0.04; y=0; w=safeZoneW*0.25; h=safeZoneH*0.04; text="TP TO TARGET HQ"; onButtonClick="[TYR_debugFaction] call TYR_fnc_DebugTeleport;";};
         class DebugCamera: TYR_UI_ButtonAccent {idc=284; x=safeZoneX+safeZoneW*0.04; y=0; w=safeZoneW*0.25; h=safeZoneH*0.04; text="OPEN SPLENDID CAMERA"; onButtonClick="[] call TYR_fnc_DebugCamera;";};
         class MapTeleport: TYR_UI_Button {idc=285; x=safeZoneX+safeZoneW*0.04; y=0; w=safeZoneW*0.25; h=safeZoneH*0.04; text="MAP CLICK TELEPORT"; onButtonClick="[] call TYR_debugToggleMapTeleport;";};
@@ -106,20 +107,38 @@ class TyrDebugMenu
         class CommandClear: TYR_UI_Button {idc=2405; x=safeZoneX+safeZoneW*0.76; y=safeZoneY+safeZoneH*0.61; w=safeZoneW*0.18; h=safeZoneH*0.045; text="CLEAR"; onButtonClick="((findDisplay 1700) displayCtrl 2401) ctrlSetText ''; ((findDisplay 1700) displayCtrl 2404) ctrlSetText '';";};
         class CommandResult: TYR_UI_TextMulti {idc=2404; x=safeZoneX+safeZoneW*0.37; y=safeZoneY+safeZoneH*0.68; w=safeZoneW*0.57; h=safeZoneH*0.19; sizeEx=0.023; colorBackground[]={0.025,0.03,0.036,1}; text="Result appears here. Script errors still appear in the Arma RPT.";};
 
-        // AI decision-flow view. This exposes explicit game-AI decisions/scores, not hidden model reasoning.
+        // AI strategic decision-flow view. Twelve real stages are shown in a snake
+        // layout so the latest path, branch outcome and current thought point are visible.
         class FlowBackdrop: TYR_UI_Text {idc=2099; x=safeZoneX+safeZoneW*0.34; y=safeZoneY+safeZoneH*0.10; w=safeZoneW*0.63; h=safeZoneH*0.84; colorBackground[]={0.018,0.023,0.029,1};};
-        class FlowTitle: TYR_UI_Text {idc=2100; x=safeZoneX+safeZoneW*0.37; y=safeZoneY+safeZoneH*0.12; w=safeZoneW*0.57; h=safeZoneH*0.042; style=2; sizeEx=0.032; colorText[]={0.851,0.5647,0.0863,1}; text="AI COMMANDER DECISION FLOW";};
-        class FlowNode1: TYR_UI_TextMulti {idc=2101; x=safeZoneX+safeZoneW*0.45; y=safeZoneY+safeZoneH*0.18; w=safeZoneW*0.41; h=safeZoneH*0.085; style=18; colorBackground[]={0.055,0.065,0.075,1}; text="1 // INPUT";};
-        class FlowArrow1: TYR_UI_Text {idc=2111; x=safeZoneX+safeZoneW*0.62; y=safeZoneY+safeZoneH*0.266; w=safeZoneW*0.07; h=safeZoneH*0.03; style=2; text="v"; sizeEx=0.035; colorText[]={0.851,0.5647,0.0863,1};};
-        class FlowNode2: TYR_UI_TextMulti {idc=2102; x=safeZoneX+safeZoneW*0.45; y=safeZoneY+safeZoneH*0.295; w=safeZoneW*0.41; h=safeZoneH*0.085; style=18; colorBackground[]={0.055,0.065,0.075,1}; text="2 // FORCE STATE";};
-        class FlowArrow2: TYR_UI_Text {idc=2112; x=safeZoneX+safeZoneW*0.62; y=safeZoneY+safeZoneH*0.381; w=safeZoneW*0.07; h=safeZoneH*0.03; style=2; text="v"; sizeEx=0.035; colorText[]={0.851,0.5647,0.0863,1};};
-        class FlowNode3: TYR_UI_TextMulti {idc=2103; x=safeZoneX+safeZoneW*0.45; y=safeZoneY+safeZoneH*0.41; w=safeZoneW*0.41; h=safeZoneH*0.085; style=18; colorBackground[]={0.055,0.065,0.075,1}; text="3 // RESEARCH";};
-        class FlowArrow3: TYR_UI_Text {idc=2113; x=safeZoneX+safeZoneW*0.62; y=safeZoneY+safeZoneH*0.496; w=safeZoneW*0.07; h=safeZoneH*0.03; style=2; text="v"; sizeEx=0.035; colorText[]={0.851,0.5647,0.0863,1};};
-        class FlowNode4: TYR_UI_TextMulti {idc=2104; x=safeZoneX+safeZoneW*0.45; y=safeZoneY+safeZoneH*0.525; w=safeZoneW*0.41; h=safeZoneH*0.085; style=18; colorBackground[]={0.055,0.065,0.075,1}; text="4 // OPERATION CHECK";};
-        class FlowArrow4: TYR_UI_Text {idc=2114; x=safeZoneX+safeZoneW*0.62; y=safeZoneY+safeZoneH*0.611; w=safeZoneW*0.07; h=safeZoneH*0.03; style=2; text="v"; sizeEx=0.035; colorText[]={0.851,0.5647,0.0863,1};};
-        class FlowNode5: TYR_UI_TextMulti {idc=2105; x=safeZoneX+safeZoneW*0.45; y=safeZoneY+safeZoneH*0.64; w=safeZoneW*0.41; h=safeZoneH*0.085; style=18; colorBackground[]={0.055,0.065,0.075,1}; text="5 // OBJECTIVE";};
-        class FlowArrow5: TYR_UI_Text {idc=2115; x=safeZoneX+safeZoneW*0.62; y=safeZoneY+safeZoneH*0.726; w=safeZoneW*0.07; h=safeZoneH*0.03; style=2; text="v"; sizeEx=0.035; colorText[]={0.851,0.5647,0.0863,1};};
-        class FlowNode6: TYR_UI_TextMulti {idc=2106; x=safeZoneX+safeZoneW*0.45; y=safeZoneY+safeZoneH*0.755; w=safeZoneW*0.41; h=safeZoneH*0.085; style=18; colorBackground[]={0.08,0.075,0.045,1}; text="6 // DECISION";};
-        class FlowCandidates: TYR_UI_TextMulti {idc=2120; x=safeZoneX+safeZoneW*0.365; y=safeZoneY+safeZoneH*0.855; w=safeZoneW*0.58; h=safeZoneH*0.055; style=2; sizeEx=0.020; colorText[]={0.58,0.65,0.72,1}; text="OBJECTIVE SCORES // waiting for AI think";};
+        class FlowTitle: TYR_UI_Text {idc=2100; x=safeZoneX+safeZoneW*0.36; y=safeZoneY+safeZoneH*0.112; w=safeZoneW*0.59; h=safeZoneH*0.040; style=2; sizeEx=0.029; colorText[]={0.851,0.5647,0.0863,1}; text="AI STRATEGIC DECISION PATH";};
+
+        class FlowNode1: TYR_UI_TextMulti {idc=2101; x=safeZoneX+safeZoneW*0.36; y=safeZoneY+safeZoneH*0.165; w=safeZoneW*0.275; h=safeZoneH*0.080; style=18; sizeEx=0.020; colorBackground[]={0.045,0.052,0.060,1}; text="1 // COMMAND STATE";};
+        class FlowNode2: TYR_UI_TextMulti {idc=2102; x=safeZoneX+safeZoneW*0.36; y=safeZoneY+safeZoneH*0.270; w=safeZoneW*0.275; h=safeZoneH*0.080; style=18; sizeEx=0.020; colorBackground[]={0.045,0.052,0.060,1}; text="2 // EMERGENCY";};
+        class FlowNode3: TYR_UI_TextMulti {idc=2103; x=safeZoneX+safeZoneW*0.36; y=safeZoneY+safeZoneH*0.375; w=safeZoneW*0.275; h=safeZoneH*0.080; style=18; sizeEx=0.020; colorBackground[]={0.045,0.052,0.060,1}; text="3 // STRATEGIC PICTURE";};
+        class FlowNode4: TYR_UI_TextMulti {idc=2104; x=safeZoneX+safeZoneW*0.36; y=safeZoneY+safeZoneH*0.480; w=safeZoneW*0.275; h=safeZoneH*0.080; style=18; sizeEx=0.020; colorBackground[]={0.045,0.052,0.060,1}; text="4 // OP REVIEW";};
+        class FlowNode5: TYR_UI_TextMulti {idc=2105; x=safeZoneX+safeZoneW*0.36; y=safeZoneY+safeZoneH*0.585; w=safeZoneW*0.275; h=safeZoneH*0.080; style=18; sizeEx=0.020; colorBackground[]={0.045,0.052,0.060,1}; text="5 // POSTURE";};
+        class FlowNode6: TYR_UI_TextMulti {idc=2106; x=safeZoneX+safeZoneW*0.36; y=safeZoneY+safeZoneH*0.690; w=safeZoneW*0.275; h=safeZoneH*0.080; style=18; sizeEx=0.020; colorBackground[]={0.045,0.052,0.060,1}; text="6 // GENERATE";};
+
+        class FlowNode7: TYR_UI_TextMulti {idc=2107; x=safeZoneX+safeZoneW*0.675; y=safeZoneY+safeZoneH*0.690; w=safeZoneW*0.275; h=safeZoneH*0.080; style=18; sizeEx=0.020; colorBackground[]={0.045,0.052,0.060,1}; text="7 // SCORE";};
+        class FlowNode8: TYR_UI_TextMulti {idc=2108; x=safeZoneX+safeZoneW*0.675; y=safeZoneY+safeZoneH*0.585; w=safeZoneW*0.275; h=safeZoneH*0.080; style=18; sizeEx=0.020; colorBackground[]={0.045,0.052,0.060,1}; text="8 // VALIDATE";};
+        class FlowNode9: TYR_UI_TextMulti {idc=2109; x=safeZoneX+safeZoneW*0.675; y=safeZoneY+safeZoneH*0.480; w=safeZoneW*0.275; h=safeZoneH*0.080; style=18; sizeEx=0.020; colorBackground[]={0.045,0.052,0.060,1}; text="9 // CREATE ORDER";};
+        class FlowNode10: TYR_UI_TextMulti {idc=2110; x=safeZoneX+safeZoneW*0.675; y=safeZoneY+safeZoneH*0.375; w=safeZoneW*0.275; h=safeZoneH*0.080; style=18; sizeEx=0.020; colorBackground[]={0.045,0.052,0.060,1}; text="10 // COMMAND ROUTE";};
+        class FlowNode11: TYR_UI_TextMulti {idc=2111; x=safeZoneX+safeZoneW*0.675; y=safeZoneY+safeZoneH*0.270; w=safeZoneW*0.275; h=safeZoneH*0.080; style=18; sizeEx=0.020; colorBackground[]={0.045,0.052,0.060,1}; text="11 // FORCE EXECUTION";};
+        class FlowNode12: TYR_UI_TextMulti {idc=2112; x=safeZoneX+safeZoneW*0.675; y=safeZoneY+safeZoneH*0.165; w=safeZoneW*0.275; h=safeZoneH*0.080; style=18; sizeEx=0.020; colorBackground[]={0.045,0.052,0.060,1}; text="12 // OUTCOME";};
+
+        class FlowArrow1: TYR_UI_Text {idc=2131; x=safeZoneX+safeZoneW*0.475; y=safeZoneY+safeZoneH*0.245; w=safeZoneW*0.045; h=safeZoneH*0.025; style=2; text="v"; colorText[]={0.55,0.60,0.65,1};};
+        class FlowArrow2: TYR_UI_Text {idc=2132; x=safeZoneX+safeZoneW*0.475; y=safeZoneY+safeZoneH*0.350; w=safeZoneW*0.045; h=safeZoneH*0.025; style=2; text="v"; colorText[]={0.55,0.60,0.65,1};};
+        class FlowArrow3: TYR_UI_Text {idc=2133; x=safeZoneX+safeZoneW*0.475; y=safeZoneY+safeZoneH*0.455; w=safeZoneW*0.045; h=safeZoneH*0.025; style=2; text="v"; colorText[]={0.55,0.60,0.65,1};};
+        class FlowArrow4: TYR_UI_Text {idc=2134; x=safeZoneX+safeZoneW*0.475; y=safeZoneY+safeZoneH*0.560; w=safeZoneW*0.045; h=safeZoneH*0.025; style=2; text="v"; colorText[]={0.55,0.60,0.65,1};};
+        class FlowArrow5: TYR_UI_Text {idc=2135; x=safeZoneX+safeZoneW*0.475; y=safeZoneY+safeZoneH*0.665; w=safeZoneW*0.045; h=safeZoneH*0.025; style=2; text="v"; colorText[]={0.55,0.60,0.65,1};};
+        class FlowArrow6: TYR_UI_Text {idc=2136; x=safeZoneX+safeZoneW*0.635; y=safeZoneY+safeZoneH*0.712; w=safeZoneW*0.040; h=safeZoneH*0.030; style=2; text=">"; colorText[]={0.851,0.5647,0.0863,1};};
+        class FlowArrow7: TYR_UI_Text {idc=2137; x=safeZoneX+safeZoneW*0.790; y=safeZoneY+safeZoneH*0.665; w=safeZoneW*0.045; h=safeZoneH*0.025; style=2; text="^"; colorText[]={0.55,0.60,0.65,1};};
+        class FlowArrow8: TYR_UI_Text {idc=2138; x=safeZoneX+safeZoneW*0.790; y=safeZoneY+safeZoneH*0.560; w=safeZoneW*0.045; h=safeZoneH*0.025; style=2; text="^"; colorText[]={0.55,0.60,0.65,1};};
+        class FlowArrow9: TYR_UI_Text {idc=2139; x=safeZoneX+safeZoneW*0.790; y=safeZoneY+safeZoneH*0.455; w=safeZoneW*0.045; h=safeZoneH*0.025; style=2; text="^"; colorText[]={0.55,0.60,0.65,1};};
+        class FlowArrow10: TYR_UI_Text {idc=2140; x=safeZoneX+safeZoneW*0.790; y=safeZoneY+safeZoneH*0.350; w=safeZoneW*0.045; h=safeZoneH*0.025; style=2; text="^"; colorText[]={0.55,0.60,0.65,1};};
+        class FlowArrow11: TYR_UI_Text {idc=2141; x=safeZoneX+safeZoneW*0.790; y=safeZoneY+safeZoneH*0.245; w=safeZoneW*0.045; h=safeZoneH*0.025; style=2; text="^"; colorText[]={0.55,0.60,0.65,1};};
+
+        class FlowCandidates: TYR_UI_TextMulti {idc=2150; x=safeZoneX+safeZoneW*0.36; y=safeZoneY+safeZoneH*0.790; w=safeZoneW*0.39; h=safeZoneH*0.125; sizeEx=0.018; colorBackground[]={0.025,0.03,0.036,1}; colorText[]={0.62,0.68,0.74,1}; text="CANDIDATES // waiting for AI think";};
+        class FlowOutcome: TYR_UI_TextMulti {idc=2151; x=safeZoneX+safeZoneW*0.765; y=safeZoneY+safeZoneH*0.790; w=safeZoneW*0.185; h=safeZoneH*0.125; style=18; sizeEx=0.020; colorBackground[]={0.055,0.050,0.030,1}; colorText[]={0.92,0.80,0.45,1}; text="DECISION // waiting";};
     };
 };

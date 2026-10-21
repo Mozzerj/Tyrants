@@ -52,6 +52,12 @@ switch (_action) do {
         private _fid = _args param [0,""];
         [_fid] call TYR_fnc_AICommanderThink;
     };
+    case "thinkTrace": {
+        private _fid = _args param [0,""];
+        if (_fid in ["west","east","independent"]) then {
+            [_fid] spawn {params ["_fid"]; [_fid,true] call TYR_fnc_AICommanderThink};
+        };
+    };
     case "commandTick": {call TYR_fnc_ServerCommandTick};
     case "commandTp": {
         private _fid = _args param [0,""];
@@ -130,6 +136,26 @@ switch (_action) do {
                 };
             };
         };
+    };
+    case "debugTrace": {
+        private _fid = _args param [0,""];
+        private _ids = if (_fid in ["west","east","independent"]) then {[_fid]} else {["west","east","independent"]};
+        private _traceMap = TYR_Runtime getOrDefault ["aiDecisionTraces",createHashMap];
+        private _aiTraces = [];
+        {
+            private _traceRecord = _traceMap getOrDefault [_x,createHashMap];
+            _aiTraces pushBack [
+                _x,
+                _traceRecord getOrDefault ["started",-1],
+                _traceRecord getOrDefault ["finished",-1],
+                _traceRecord getOrDefault ["currentStep",0],
+                +(_traceRecord getOrDefault ["nodes",[]]),
+                +(_traceRecord getOrDefault ["candidates",[]]),
+                _traceRecord getOrDefault ["decision",""],
+                _traceRecord getOrDefault ["posture","hold"]
+            ];
+        } forEach _ids;
+        [_player,"TYR_fnc_ClientDebugAITraceData",[serverTime,_aiTraces]] call TYR_fnc_ServerSendToPlayer;
     };
     case "debugMap": {
         private _locations = [];
@@ -211,14 +237,17 @@ switch (_action) do {
 
         private _aiTraces = [];
         private _traceMap = TYR_Runtime getOrDefault ["aiDecisionTraces",createHashMap];
-        private _scoreMap = TYR_Runtime getOrDefault ["aiObjectiveScores",createHashMap];
         {
-            private _traceRecord = _traceMap getOrDefault [_x,[-1,[]]];
+            private _traceRecord = _traceMap getOrDefault [_x,createHashMap];
             _aiTraces pushBack [
                 _x,
-                _traceRecord param [0,-1],
-                _traceRecord param [1,[]],
-                +(_scoreMap getOrDefault [_x,[]])
+                _traceRecord getOrDefault ["started",-1],
+                _traceRecord getOrDefault ["finished",-1],
+                _traceRecord getOrDefault ["currentStep",0],
+                +(_traceRecord getOrDefault ["nodes",[]]),
+                +(_traceRecord getOrDefault ["candidates",[]]),
+                _traceRecord getOrDefault ["decision",""],
+                _traceRecord getOrDefault ["posture","hold"]
             ];
         } forEach ["west","east","independent"];
 
@@ -282,7 +311,40 @@ switch (_action) do {
             ];
         } forEach ["west","east","independent"];
 
-        [_player,"TYR_fnc_ClientDebugMapData",[[serverTime,_locations,_factions,_entities,_forces,_aiTraces,_commandNetworks]]] call TYR_fnc_ServerSendToPlayer;
+        private _aiOperations = [];
+        private _operations = TYR_State getOrDefault ["operations",createHashMap];
+        {
+            private _op = _operations get _x;
+            if !((_op getOrDefault ["phase",""]) in ["complete","failed"]) then {
+                private _targetPos = +(_op getOrDefault ["targetPosition",[]]);
+                private _targetName = _op getOrDefault ["targetName",_op getOrDefault ["target",""]];
+                if ((_op getOrDefault ["targetType","location"]) isEqualTo "location") then {
+                    private _loc = [_op getOrDefault ["target",""]] call TYR_fnc_StateGetLocation;
+                    if (count _loc > 0) then {
+                        _targetPos = +(_loc getOrDefault ["position",_targetPos]);
+                        _targetName = _loc getOrDefault ["name",_targetName];
+                    };
+                };
+                _aiOperations pushBack [
+                    _x,_op getOrDefault ["faction",""],_op getOrDefault ["type","attack"],_op getOrDefault ["phase",""],
+                    _op getOrDefault ["targetType","location"],_op getOrDefault ["target",""],_targetName,_targetPos,
+                    +(_op getOrDefault ["forces",[]]),_op getOrDefault ["score",0],_op getOrDefault ["reason",""],
+                    _op getOrDefault ["created",0],_op getOrDefault ["orderId",""]
+                ];
+            };
+        } forEach keys _operations;
+
+        private _debugOrders = [];
+        {
+            private _order = _orders get _x;
+            _debugOrders pushBack [
+                _x,_order getOrDefault ["faction",""],_order getOrDefault ["force",""],_order getOrDefault ["operation",""],
+                _order getOrDefault ["target",""],_order getOrDefault ["issuedAt",0],_order getOrDefault ["deliverAt",0],
+                _order getOrDefault ["status","pending"],+(_order getOrDefault ["route",[]]),_order getOrDefault ["reroutes",0]
+            ];
+        } forEach keys _orders;
+
+        [_player,"TYR_fnc_ClientDebugMapData",[[serverTime,_locations,_factions,_entities,_forces,_aiTraces,_commandNetworks,_aiOperations,_debugOrders]]] call TYR_fnc_ServerSendToPlayer;
     };
     case "command": {
         private _code = _args param [0,""];

@@ -17,6 +17,7 @@ private _changed = (count _old isEqualTo 0) || {(_old getOrDefault ["owner","unk
 _knownLocations set [_locationId,createHashMapFromArray [
     ["owner",_owner],
     ["observedAt",+systemTimeUTC],
+    ["seenServerTime",serverTime],
     ["source",_source]
 ]];
 

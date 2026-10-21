@@ -154,7 +154,13 @@ class TYR
     class AI
     {
         file = "AI";
-        class AISelectObjective {};
+        class AIBuildPicture {};
+        class AIAssessPosture {};
+        class AIReassessOperations {};
+        class AIGenerateCandidates {};
+        class AIScoreCandidates {};
+        class AIValidateCandidate {};
+        class AIExecuteCandidate {};
         class AIForceCreate {};
         class AIForceRestore {};
         class AIEnsureForces {};
@@ -223,6 +229,7 @@ class TYR
         class ClientDebugState {};
         class ClientDebugTeleport {};
         class ClientDebugMapData {};
+        class ClientDebugAITraceData {};
         class ClientDebugMapDraw {};
         class ClientDebugCommandResult {};
     };

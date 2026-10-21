@@ -1,5 +1,5 @@
-Tyrants v4.0.12 DEV
-Physical Command Network + Runtime Testing Tools + Real Intelligence Tracking
+Tyrants v4.0.13 DEV
+Strategic AI Overhaul + Physical Command Network + Real Intelligence Tracking
 
 Current development changes:
 - Server truth and faction knowledge remain strictly separate.
@@ -51,3 +51,19 @@ v4.0.12 physical command network:
 - Debug console adds COMMAND NETWORK controls for teleporting to and killing command personnel during testing.
 - Command personnel, network state and pending command orders persist in the v4 save journal.
 - Debug COMMAND NETWORK panel includes a fast-forward timer action so succession/replacement/collapse timing can be tested without waiting several minutes.
+
+
+v4.0.13 strategic AI overhaul:
+- Replaced the one-objective commander loop with a 12-stage strategic decision pipeline.
+- AI builds hostile decisions from faction-known locations/contacts rather than hidden server truth.
+- Added emergency-defence, defensive, consolidate, probe, offensive, exploit and hold postures.
+- Added candidate generation/scoring/validation for defend, reinforce, attack, exploit, recon, probe, raid, force generation, research and hold.
+- Offensive validation preserves the configured strategic reserve instead of committing every free force.
+- Contact raids use the last-known coordinate and are rejected/aborted when intelligence becomes too stale.
+- Physical command degradation affects posture and all new force operations remain COMMAND_PENDING until routed/delivered.
+- Added operation reassessment/abort logic and clearing of abandoned force waypoints.
+- Added per-faction think locks to prevent overlapping scheduler/debug decisions.
+- Added 12-node live debug flowchart with current-step/outcome/candidate validation highlighting.
+- Added compact live trace polling so the flowchart does not spam the full omniscient-map payload.
+- Omniscient debug map now shows strategic operation targets, reasons/scores/phases, force-to-target intent lines and pending commander/officer delivery routes with ETA/reroutes.
+- Added AI_STRATEGIC_OVERHAUL.md and expanded runtime test guidance.

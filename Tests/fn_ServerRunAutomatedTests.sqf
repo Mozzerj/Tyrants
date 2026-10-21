@@ -122,12 +122,20 @@ private _walk = {
 private _locCount = count keys (TYR_State get "locations");
 ["Strategic world index exists",_locCount > 10,str _locCount] call _check;
 
-private _objective = "";
+private _aiPipelineOk = false;
+private _aiPipelineDetail = "";
 {
     private _f = [_x] call TYR_fnc_StateGetFaction;
-    if ((_f getOrDefault ["active",false])) exitWith {_objective=[_x] call TYR_fnc_AISelectObjective};
+    if ((_f getOrDefault ["active",false])) exitWith {
+        private _picture = [_x] call TYR_fnc_AIBuildPicture;
+        private _postureResult = [_x,_picture] call TYR_fnc_AIAssessPosture;
+        private _candidates = [_x,_picture,_postureResult # 0] call TYR_fnc_AIGenerateCandidates;
+        private _ranked = [_x,_picture,_postureResult # 0,_candidates] call TYR_fnc_AIScoreCandidates;
+        _aiPipelineOk = count _picture > 0 && {count _candidates > 0} && {count _ranked > 0};
+        _aiPipelineDetail = format ["%1 // %2 candidates // posture %3",_x,count _ranked,_postureResult # 0];
+    };
 } forEach _ids;
-["Commander can score an objective",_objective isNotEqualTo "",_objective] call _check;
+["Strategic AI can build picture, posture and ranked candidates",_aiPipelineOk,_aiPipelineDetail] call _check;
 
 private _fail = {_x # 0 isEqualTo "FAIL"} count _checks;
 private _lines = [format ["TYRANTS V4 AUTOTEST // %1 checks // %2 failed",count _checks,_fail]];

@@ -296,9 +296,12 @@ if '[_x,_viewer] call TYR_fnc_StatePublicLocation' not in request_state:
 public_faction_text = read(ROOT / "State/fn_StatePublicFaction.sqf")
 if '[-1,-1,-1,-1]' not in public_faction_text:
     errors.append("enemy faction resources are not redacted")
-ai_objective = read(ROOT / "AI/fn_AISelectObjective.sqf")
-if "TYR_fnc_StateKnowledgeGet" not in ai_objective:
-    errors.append("AI objective selection is not connected to faction knowledge")
+ai_picture = read(ROOT / "AI/fn_AIBuildPicture.sqf")
+ai_candidates = read(ROOT / "AI/fn_AIGenerateCandidates.sqf")
+if 'getOrDefault ["knowledge"' not in ai_picture or 'contacts' not in ai_picture or 'knownLocations' not in ai_picture:
+    errors.append("AI strategic picture is not connected to faction knowledge")
+if 'unknownLocations' not in ai_candidates or 'knownHostileLocations' not in ai_candidates:
+    errors.append("AI candidate generation is not distinguishing unknown from known hostile locations")
 
 # Map Draw event handlers pass an event array. The called functions use `params ["_map"]`,
 # so the control must be wrapped back into an array rather than called as raw `_this`.
@@ -375,7 +378,8 @@ save_build = read(ROOT / "Persistence/fn_PersistenceBuildSnapshot.sqf")
 debug_map = read(ROOT / "Debug/fn_ServerDebugAction.sqf")
 if 'command-collapse' not in command_tick or 'successionAt' not in command_tick or 'replacementAt' not in command_tick:
     errors.append("physical command tick is missing collapse, succession or replacement handling")
-if 'TYR_fnc_ServerCommandQueueOrder' not in ai_think or 'command_pending' not in ai_ops:
+ai_execute = read(ROOT / "AI/fn_AIExecuteCandidate.sqf")
+if 'TYR_fnc_ServerCommandQueueOrder' not in ai_execute or 'command_pending' not in ai_ops:
     errors.append("AI strategic orders are bypassing command-network propagation")
 if 'deliverAt' not in command_queue or 'reroutes' not in command_deliver:
     errors.append("command orders are missing propagation delay/rerouting state")
@@ -387,6 +391,38 @@ if 'commandPersonnel' not in save_build or 'commandOrders' not in save_build:
     errors.append("command personnel/orders are missing from persistence snapshot")
 if '_commandNetworks' not in debug_map:
     errors.append("omniscient debug map is missing command-network telemetry")
+
+# v4.0.13 strategic AI overhaul invariants.
+ai_posture = read(ROOT / "AI/fn_AIAssessPosture.sqf")
+ai_reassess = read(ROOT / "AI/fn_AIReassessOperations.sqf")
+ai_score = read(ROOT / "AI/fn_AIScoreCandidates.sqf")
+ai_validate = read(ROOT / "AI/fn_AIValidateCandidate.sqf")
+debug_draw = read(ROOT / "Debug/fn_ClientDebugMapDraw.sqf")
+debug_ui = read(ROOT / "UI/fn_DebugMenuRefresh.sqf")
+if 'EMERGENCY OVERRIDE' not in ai_think or 'GENERATE ACTIONS' not in ai_think or 'VALIDATE' not in ai_think or 'REVIEW / OUTCOME' not in ai_think:
+    errors.append("AI commander think is missing the staged strategic decision pipeline")
+if 'emergencyThreats' not in ai_posture or 'knownHostileLocations' not in ai_picture:
+    errors.append("AI posture selection is not based on known threats and faction intelligence")
+if 'stale' not in ai_reassess.lower() or 'reserve' not in ai_validate.lower():
+    errors.append("AI operation review/validation is missing stale-intel or reserve safeguards")
+if 'staleIntelPenalty' in ai_score:
+    warnings.append("AI score function contains legacy staleIntelPenalty token; verify it is intentional")
+if '_aiOperations' not in debug_map or '_debugOrders' not in debug_map:
+    errors.append("debug server payload is missing AI operation/order telemetry")
+if 'AI STRATEGIC DECISION PATH' not in read(ROOT / "Dialogs/TyrDebugMenu.hpp") or 'currentStep' not in debug_ui:
+    errors.append("debug menu is missing the 12-stage highlighted AI flowchart")
+if 'ORDER %1' not in debug_draw or 'AI %1 // %2 // %3' not in debug_draw:
+    errors.append("omniscient debug map is missing AI command/operation visualization")
+if 'seenServerTime' not in read(ROOT / "State/fn_StateObserveLocation.sqf") or 'seenServerTime' not in ai_picture:
+    errors.append("AI strategic location-intel age tracking is not wired to live observation time")
+if 'aiThinkLocks' not in ai_think or 'aiThinkLocks' not in read(ROOT / "Core/fn_ServerBootstrap.sqf"):
+    errors.append("AI commander can overlap scheduler/debug think passes for the same faction")
+if 'finishedAt' not in ai_reassess or 'deleteWaypoint' not in ai_reassess:
+    errors.append("AI operation reassessment does not fully terminate abandoned operations")
+if 'debugTrace' not in debug_map or 'ClientDebugAITraceData' not in read(ROOT / "cfgFunctions.hpp"):
+    errors.append("live AI flowchart is missing its compact trace-only debug transport")
+if '2131 + _i' not in debug_ui or 'ctrlSetTextColor' not in debug_ui:
+    errors.append("AI debug flowchart does not highlight traversed/current connectors")
 
 if errors:
     for e in errors:

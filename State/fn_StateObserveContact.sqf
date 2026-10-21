@@ -30,15 +30,23 @@ private _newContact = count _old isEqualTo 0;
 private _oldExact = _old getOrDefault ["exact",false];
 
 private _emplacementKey = _target getVariable ["TYR_emplacementKey",""];
-private _kind = if (_emplacementKey isNotEqualTo "") then {"emplacement"} else {
-    if (_target isKindOf "Man") then {"infantry"} else {
-        if (_target isKindOf "Air") then {"air"} else {
-            if (_target isKindOf "Ship") then {"naval"} else {"vehicle"}
+private _commandRole = _target getVariable ["TYR_commandRole",""];
+private _kind = if (_commandRole in ["commander","officer","force_commander"]) then {
+    "command"
+} else {
+    if (_emplacementKey isNotEqualTo "") then {
+        "emplacement"
+    } else {
+        if (_target isKindOf "Man") then {"infantry"} else {
+            if (_target isKindOf "Air") then {"air"} else {
+                if (_target isKindOf "Ship") then {"naval"} else {"vehicle"}
+            }
         }
     }
 };
 
 private _broadLabel = switch (_kind) do {
+    case "command": {"COMMAND PERSONNEL"};
     case "infantry": {"INFANTRY"};
     case "emplacement": {
         switch (toLower _emplacementKey) do {
@@ -71,7 +79,11 @@ private _exactObserved = _distance <= _exactRange;
 private _exact = _oldExact || {_exactObserved};
 private _displayName = getText (configFile >> "CfgVehicles" >> typeOf _target >> "displayName");
 if (_displayName isEqualTo "") then {_displayName = _broadLabel};
-private _label = if (_exact) then {_displayName} else {_broadLabel};
+private _label = if (_exact) then {
+    if (_kind isEqualTo "command") then {
+        switch (_commandRole) do {case "commander": {"MAIN COMMANDER"}; case "officer": {"COMMAND OFFICER"}; default {"FORCE COMMANDER"}}
+    } else {_displayName}
+} else {_broadLabel};
 private _pos = getPosATL _target;
 private _oldPos = _old getOrDefault ["position",_pos];
 private _oldSeenServer = _old getOrDefault ["seenServerTime",-9999];
@@ -92,6 +104,7 @@ private _record = createHashMapFromArray [
     ["observedAt",+systemTimeUTC],
     ["seenServerTime",serverTime],
     ["source",_source],
+    ["roleTag",if (_exact) then {_commandRole} else {""}],
     ["publishedAt",_previousPublish]
 ];
 _contacts set [_contactId,_record];
