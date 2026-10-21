@@ -22,5 +22,5 @@ if (_stock <= 0) exitWith {[_player,"TYR_fnc_ClientHint",["Factory stockpile is 
 private _resource = _l getOrDefault ["resource","steel"];
 _l set ["stock",0];
 [_fid,_resource,_stock,"factory-collect"] call TYR_fnc_StateChangeResource;
-[_bestId] call TYR_fnc_ServerPublishLocation;
+[_bestId,_fid] call TYR_fnc_ServerPublishLocation;
 [_player,"TYR_fnc_ClientHint",[format ["Collected %1 %2.",_stock,toUpper _resource]]] call TYR_fnc_ServerSendToPlayer;

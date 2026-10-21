@@ -8,10 +8,10 @@ private _sectors = _deployment # 2;
 private _buffer = _deployment # 1;
 if !(_sectors isEqualType [] && {count _sectors > 0}) exitWith {false};
 
-// Native local area markers are used for the colour wash instead of relying on
-// drawTriangle fills. They render on every Arma map control, including embedded
-// dialog maps, and exist only on this client while the deployment dialog is open.
-private _grid = 20;
+// This is the proven v4.0.7 deployment-colour method: local area markers render
+// reliably on Arma embedded maps. The improvement here is that the same grey
+// no-HQ corridor is calculated on BOTH sides of EVERY faction border.
+private _grid = 24;
 private _cell = worldSize / _grid;
 private _halfCell = (_cell * 0.505) max 1;
 private _centre = [worldSize * 0.5,worldSize * 0.5,0];
@@ -27,17 +27,18 @@ for "_gx" from 0 to (_grid - 1) do {
         private _bearing = ((_dx atan2 _dy) + 360) mod 360;
 
         private _bestFaction = "";
+        private _bestSector = [];
         private _bestDelta = 999;
         {
             if (_x isEqualType [] && {count _x >= 2}) then {
                 private _fid = _x # 0;
                 private _sector = _x # 1;
                 if (_sector isEqualType [] && {count _sector >= 2}) then {
-                    private _sectorCentre = _sector # 0;
-                    private _delta = abs (((_bearing - _sectorCentre + 540) mod 360) - 180);
+                    private _delta = abs (((_bearing - (_sector # 0) + 540) mod 360) - 180);
                     if (_delta < _bestDelta) then {
                         _bestDelta = _delta;
                         _bestFaction = _fid;
+                        _bestSector = _sector;
                     };
                 };
             };
@@ -49,23 +50,20 @@ for "_gx" from 0 to (_grid - 1) do {
             _name setMarkerShapeLocal "RECTANGLE";
             _name setMarkerBrushLocal "Solid";
             _name setMarkerSizeLocal [_halfCell,_halfCell];
-            _name setMarkerColorLocal ([_bestFaction,false] call TYR_fnc_FactionColor);
-            private _alpha = 0.17;
-            if (!isNil "TYR_PlayerFaction" && {_bestFaction isEqualTo TYR_PlayerFaction}) then {
-                _alpha = 0.30;
-                // Visually mute the no-HQ buffer along the two radial borders of the player's sector.
-                private _ownEntry = _sectors select {_x isEqualType [] && {count _x >= 2} && {(_x # 0) isEqualTo _bestFaction}};
-                if (count _ownEntry > 0) then {
-                    private _ownSector = (_ownEntry # 0) # 1;
-                    private _half = _ownSector # 1;
-                    private _delta = abs (((_bearing - (_ownSector # 0) + 540) mod 360) - 180);
-                    private _radius = _centre distance2D [_px,_py,0];
-                    private _marginAngle = _half - _delta;
-                    private _borderDistance = if (_half >= 179) then {1e9} else {_radius * sin _marginAngle};
-                    if (_borderDistance < _buffer) then {_alpha = 0.08};
-                };
+
+            private _radius = _centre distance2D [_px,_py,0];
+            private _half = _bestSector # 1;
+            private _marginAngle = (_half - _bestDelta) max 0;
+            private _borderDistance = if (_half >= 179) then {1e9} else {_radius * sin _marginAngle};
+            private _inBuffer = _buffer > 0 && {_borderDistance < _buffer};
+
+            if (_inBuffer) then {
+                _name setMarkerColorLocal "ColorGrey";
+                _name setMarkerAlphaLocal 0.34;
+            } else {
+                _name setMarkerColorLocal ([_bestFaction,false] call TYR_fnc_FactionColor);
+                _name setMarkerAlphaLocal (if (!isNil "TYR_PlayerFaction" && {_bestFaction isEqualTo TYR_PlayerFaction}) then {0.30} else {0.17});
             };
-            _name setMarkerAlphaLocal _alpha;
             _markers pushBack _name;
         };
     };
@@ -73,5 +71,5 @@ for "_gx" from 0 to (_grid - 1) do {
 
 missionNamespace setVariable ["TYR_DeploymentOverlayMarkers",_markers];
 missionNamespace setVariable ["TYR_DeploymentOverlayCount",count _sectors];
-diag_log format ["[TYRANTS DEPLOYMENT] Client colour overlay built: %1 region(s), %2 local cells.",count _sectors,count _markers];
+diag_log format ["[TYRANTS DEPLOYMENT] Reliable local region overlay built: %1 region(s), %2 cells, symmetric border buffer.",count _sectors,count _markers];
 true

@@ -7,10 +7,31 @@ private _locations = TYR_ClientState get "locations";
     private _kind = _l # 2;
     private _pos = _l # 3;
     private _owner = _l # 4;
-    private _color = if (_owner in ["west","east","independent"]) then {[_owner,true] call TYR_fnc_FactionColor} else {[0.6,0.6,0.6,0.8]};
+    private _current = count _l > 10 && {_l # 10};
+    private _observedAt = if (count _l > 8) then {_l # 8} else {[]};
+    private _color = [0.48,0.48,0.48,0.45];
+    if (_owner in ["west","east","independent"]) then {
+        _color = [_owner,true] call TYR_fnc_FactionColor;
+        if (!_current) then {_color set [3,0.48]};
+    };
+    if (_owner isEqualTo "neutral") then {_color=[0.62,0.62,0.62,0.55]};
     private _icon = switch (_kind) do {case "city":{"\A3\ui_f\data\map\markers\military\circle_CA.paa"};case "factory":{"\A3\ui_f\data\map\markers\nato\b_installation.paa"};default {"\A3\ui_f\data\map\markers\military\dot_CA.paa"}};
-    private _label = _l # 1;
-    if (_kind isEqualTo "factory") then {_label = format ["%1  [%2]",_label,round (_l # 5)]};
+    private _status = "UNKNOWN";
+    if (_current) then {
+        _status = "FRIENDLY CONTROL";
+    } else {
+        if (_owner isNotEqualTo "unknown") then {
+            private _stamp = "";
+            if (_observedAt isEqualType [] && {count _observedAt >= 6}) then {
+                _stamp = format [" %1:%2",[_observedAt # 3,2] call BIS_fnc_padNumber,[_observedAt # 4,2] call BIS_fnc_padNumber];
+            };
+            _status = format ["LAST OBS %1%2",toUpper _owner,_stamp];
+        };
+    };
+    private _label = format ["%1  [%2]",_l # 1,_status];
+    if (_kind isEqualTo "factory" && {_current} && {(_l # 5) >= 0}) then {
+        _label = format ["%1  [%2 // STOCK %3]",_l # 1,_status,round (_l # 5)];
+    };
     _map drawIcon [_icon,_color,_pos,20,20,0,_label,1,0.035,"PuristaMedium","right"];
 } forEach values _locations;
 
@@ -19,7 +40,6 @@ if (count _f > 4 && {_f # 2} && {count (_f # 4) >= 2}) then {
     _map drawIcon ["\A3\ui_f\data\map\markers\nato\b_hq.paa",[TYR_PlayerFaction,true] call TYR_fnc_FactionColor,_f # 4,30,30,0,format ["%1 HQ",_f # 1],1,0.04,"PuristaMedium","right"];
 };
 
-// Friendly persistent assets are already networked objects; no global campaign scan or marker objects are needed.
 {
     private _fid = _x getVariable ["TYR_factionId",""];
     if (_fid isEqualTo TYR_PlayerFaction && {alive _x}) then {

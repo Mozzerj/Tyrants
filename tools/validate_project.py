@@ -285,6 +285,20 @@ if "_viewerFaction" not in public_faction or "_viewerFaction isEqualTo _factionI
     errors.append("faction replication is not viewer-specific; enemy HQ positions could leak")
 if 'setMarkerAlpha 0' not in read(ROOT / "World/fn_ServerCreateBases.sqf"):
     errors.append("respawn HQ markers are not hidden and may leak enemy base positions")
+public_location = read(ROOT / "State/fn_StatePublicLocation.sqf")
+if "_viewerFaction" not in public_location or '"unknown"' not in public_location or "TYR_fnc_StateKnowledgeGet" not in public_location:
+    errors.append("location replication is not faction-knowledge aware")
+publish_location = read(ROOT / "Network/fn_ServerPublishLocation.sqf")
+if "TYR_fnc_StatePublicLocation" not in publish_location or "_viewer" not in publish_location:
+    errors.append("ServerPublishLocation is not viewer-specific")
+if '[_x,_viewer] call TYR_fnc_StatePublicLocation' not in request_state:
+    errors.append("ServerRequestState still sends authoritative location truth instead of viewer knowledge")
+public_faction_text = read(ROOT / "State/fn_StatePublicFaction.sqf")
+if '[-1,-1,-1,-1]' not in public_faction_text:
+    errors.append("enemy faction resources are not redacted")
+ai_objective = read(ROOT / "AI/fn_AISelectObjective.sqf")
+if "TYR_fnc_StateKnowledgeGet" not in ai_objective:
+    errors.append("AI objective selection is not connected to faction knowledge")
 
 # Map Draw event handlers pass an event array. The called functions use `params ["_map"]`,
 # so the control must be wrapped back into an array rather than called as raw `_this`.
@@ -324,15 +338,30 @@ if warnings:
     for w in warnings:
         print(f"WARN: {w}")
 
-# Deployment regions must have a native marker-overlay fallback; embedded map
-# triangle fills have proven unreliable on some Arma UI paths.
+# Deployment uses the proven local-marker colour wash because Arma embedded map
+# controls render it more reliably than filled drawTriangle geometry. The normal
+# strategic map still shares the same sector boundary/label renderer.
+deployment_draw = read(ROOT / "UI/fn_DeploymentMapDraw.sqf")
+sector_draw = read(ROOT / "UI/fn_DrawDeploymentSectors.sqf")
 overlay = read(ROOT / "UI/fn_DeploymentOverlayBuild.sqf")
-if 'createMarkerLocal' not in overlay or 'setMarkerBrushLocal "Solid"' not in overlay:
-    errors.append("deployment colour overlay is missing its native local-marker fill fallback")
+placement_click = read(ROOT / "UI/fn_DeploymentMapClick.sqf")
+placement_check = read(ROOT / "World/fn_DeploymentCheckPosition.sqf")
+if 'TYR_fnc_DrawDeploymentSectors' not in deployment_draw:
+    errors.append("deployment map is not using the shared deployment-sector renderer")
+if 'drawLine' not in sector_draw or 'DEPLOYMENT REGION' not in sector_draw:
+    errors.append("deployment-sector renderer is missing boundaries or labels")
+if 'createMarkerLocal' not in overlay or 'ColorGrey' not in overlay or '_borderDistance' not in overlay:
+    errors.append("deployment colour overlay is missing the reliable symmetric local-marker buffer rendering")
 if 'TYR_fnc_DeploymentOverlayBuild' not in read(ROOT / "UI/fn_DeploymentMenuInit.sqf"):
-    errors.append("deployment menu does not build the native region overlay")
+    errors.append("deployment menu is missing its colour overlay lifecycle hook")
 if 'TYR_fnc_DeploymentOverlayCleanup' not in read(ROOT / "Dialogs/TyrDeploymentMenu.hpp"):
-    errors.append("deployment dialog does not clean up local region overlay markers")
+    errors.append("deployment dialog does not clean up deployment overlay state")
+if 'TYR_fnc_DeploymentFindCollisions' not in placement_click or 'TYR_DeploymentCollisions' not in deployment_draw:
+    errors.append("deployment map is missing exact-footprint collision preview")
+if 'search nearby' in placement_click.lower() or 'for "_a" from' in placement_click:
+    errors.append("deployment placement is still auto-adjusting player clicks")
+if 'TYR_fnc_DeploymentFindCollisions' not in placement_check:
+    errors.append("server deployment validation is not checking the HQ footprint collisions")
 
 if errors:
     for e in errors:

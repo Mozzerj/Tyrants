@@ -4,6 +4,7 @@ if (!isServer) exitWith {};
 TYR_Runtime = createHashMapFromArray [
     ["vehicles",createHashMap],["emplacements",createHashMap],["forces",createHashMap],["bases",createHashMap],
     ["factoryParts",createHashMap],["captureSessions",createHashMap],["arsenal",createHashMap],["loadedLocations",createHashMap],
+    ["aiDecisionTraces",createHashMap],["aiObjectiveScores",createHashMap],
     ["revision",0],["saveDirty",false],["saveUrgent",false],["dirtySince",-1],["lastDirtyAt",-1],["lastSaveAt",-9999],
     ["saveGeneration",0],["saveReasons",[]],["newCampaign",false]
 ];

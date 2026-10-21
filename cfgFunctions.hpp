@@ -26,6 +26,8 @@ class TYR
         class StateMarkDirty {};
         class StateChangeResource {};
         class StateResearchUnlocked {};
+        class StateKnowledgeGet {};
+        class StateObserveLocation {};
         class StatePublicFaction {};
         class StatePublicCampaign {};
         class StatePublicLocation {};
@@ -66,6 +68,7 @@ class TYR
         file = "World";
         class ServerBuildLocations {};
         class DeploymentCheckPosition {};
+        class DeploymentFindCollisions {};
         class IsValidLandPosition {};
         class FindSafeSpawnPosition {};
         class ServerSetCombatState {};
@@ -76,6 +79,7 @@ class TYR
         class ServerCreateBases {};
         class ServerRegisterDestroyedBuilding {};
         class ServerRestoreDestroyedBuildings {};
+        class ServerObservationTick {};
         class ServerVictoryEvaluate {};
     };
 
@@ -192,6 +196,9 @@ class TYR
         file = "Debug";
         class ServerDebugAction {};
         class ClientDebugState {};
+        class ClientDebugTeleport {};
+        class ClientDebugMapData {};
+        class ClientDebugMapDraw {};
     };
 
     class Tests

@@ -1,8 +1,29 @@
-Tyrants v4.0.8 DEV
-Development baseline
+Tyrants v4.0.9 DEV
+Intelligence + Debug Operations baseline
 
-Baseline cleanup:
-- Removed pre-v4 legacy/migration files from the distributable tree.
-- Removed Python cache artefacts and added .gitignore rules.
-- Renamed the mission from the temporary deployment-fix label to the stable DEV name.
-- Retains the tested v4.0.7 deployment selection behaviour as the functional baseline.
+Current development changes:
+- Real faction-knowledge foundation: hostile truth is not automatically replicated.
+- Deployment regions use shared in-game map rendering and equal faction-border buffers.
+- Omniscient debug map is embedded directly in the full-screen Developer Operations Console.
+- Debug controls are grouped into accordion/collapsible sections on the left side.
+- AI commanders publish a structured decision-flow trace with objective scores for debugging.
+- Friendly-only spectator mode runs during the respawn delay without free-camera intelligence leaks.
+- Retains the tested v4.0.7 deployment-selection behavior as the runtime foundation.
+
+Deployment placement fine-tune update:
+- Restored the reliable v4.0.7 local-marker region colour overlay.
+- Grey no-HQ cells now use the same symmetric border-distance calculation for every faction boundary.
+- HQ selection never auto-adjusts or searches for nearby ground.
+- Every click places an exact 40 x 30 m hollow HQ footprint preview.
+- Intersecting hard obstructions such as buildings, walls, fences and rocks are shown as red hollow boxes.
+- Confirmation is enabled only when the exact clicked footprint is clear and otherwise valid.
+
+Latest placement adjustment:
+- Reduced the HQ placement footprint from 80 x 60 m to 40 x 30 m.
+- Collision validation now uses the same smaller footprint; the click remains the exact centre.
+- Added TYRANTS_METHOD_NOTES.txt to record proven/failed implementation approaches for future development.
+
+Collision filtering adjustment:
+- Roads no longer invalidate HQ placement or produce collision boxes.
+- Rail-line and power-line network terrain categories are also ignored to reduce false/annoying placement blocks.
+- Buildings, walls, fences, rocks and other substantial structures still block placement.

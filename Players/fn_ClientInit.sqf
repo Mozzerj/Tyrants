@@ -11,7 +11,8 @@ missionNamespace setVariable ["TYR_ClientStateReady",false];
 missionNamespace setVariable ["TYR_PlayerRestored",false];
 missionNamespace setVariable ["TYR_DeploymentPending",[]];
 missionNamespace setVariable ["TYR_DeploymentLastClicked",[]];
-missionNamespace setVariable ["TYR_DeploymentLastCheck",[false,"CLICK INSIDE YOUR COLOURED REGION",0,0]];
+missionNamespace setVariable ["TYR_DeploymentLastCheck",[false,"CLICK INSIDE YOUR COLOURED REGION",0,0,0]];
+missionNamespace setVariable ["TYR_DeploymentCollisions",[]];
 
 // Never expose the staging spawn as live combat. If state is slow, the client stays protected and keeps retrying.
 player allowDamage false;

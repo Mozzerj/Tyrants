@@ -14,7 +14,7 @@ private _income = createHashMap;
             private _production = 250;
             if ([_owner,"infra.factory"] call TYR_fnc_StateResearchUnlocked) then {_production = _production * 1.25};
             _l set ["stock",(_l getOrDefault ["stock",0]) + _production];
-            [_x] call TYR_fnc_ServerPublishLocation;
+            [_x,_owner] call TYR_fnc_ServerPublishLocation;
         };
     };
 } forEach keys _locations;

@@ -52,6 +52,114 @@ switch (_action) do {
         private _fid = _args param [0,""];
         [_fid] call TYR_fnc_AICommanderThink;
     };
+    case "teleport": {
+        private _fid = _args param [0,""];
+        if (_fid in ["west","east","independent"]) then {
+            private _f = [_fid] call TYR_fnc_StateGetFaction;
+            if (count _f > 0) then {
+                private _base = _f getOrDefault ["basePosition",[]];
+                private _safe = [_base,_base] call TYR_fnc_FindSafeSpawnPosition;
+                if (count _safe >= 2) then {
+                    [_player,"TYR_fnc_ClientDebugTeleport",[_safe,_fid]] call TYR_fnc_ServerSendToPlayer;
+                } else {
+                    [_player,"TYR_fnc_ClientHint",[format ["Debug teleport failed: %1 HQ is not deployed yet.",toUpper _fid]]] call TYR_fnc_ServerSendToPlayer;
+                };
+            };
+        };
+    };
+    case "debugMap": {
+        private _locations = [];
+        {
+            private _l = (TYR_State get "locations") get _x;
+            _locations pushBack [
+                _x,
+                _l getOrDefault ["name",_x],
+                _l getOrDefault ["kind","town"],
+                +(_l getOrDefault ["position",[]]),
+                _l getOrDefault ["owner","neutral"],
+                _l getOrDefault ["stock",0],
+                _l getOrDefault ["resource",""],
+                _l getOrDefault ["value",1]
+            ];
+        } forEach keys (TYR_State get "locations");
+
+        private _factions = [];
+        {
+            private _f = [_x] call TYR_fnc_StateGetFaction;
+            private _cmd = _f getOrDefault ["commander",createHashMap];
+            _factions pushBack [
+                _x,
+                _f getOrDefault ["name",toUpper _x],
+                _f getOrDefault ["active",false],
+                _f getOrDefault ["controller","disabled"],
+                +(_f getOrDefault ["basePosition",[]]),
+                _f getOrDefault ["baseConfirmed",false],
+                _f getOrDefault ["eliminated",false],
+                _cmd getOrDefault ["personality",""],
+                _cmd getOrDefault ["objective",""]
+            ];
+        } forEach ["west","east","independent"];
+
+        private _entities = [];
+        {
+            if (!isNull _x) then {
+                private _fid = _x getVariable ["TYR_factionId",[side _x] call TYR_fnc_SideFaction];
+                if (_fid in ["west","east","independent"]) then {
+                    private _display = getText (configFile >> "CfgVehicles" >> typeOf _x >> "displayName");
+                    private _extra = if (isPlayer _x) then {name _x} else {str group _x};
+                    _entities pushBack ["unit",_fid,typeOf _x,_display,getPosATL _x,getDir _x,alive _x,damage _x,_extra];
+                };
+            };
+        } forEach allUnits;
+        {
+            if (!isNull _x) then {
+                private _fid = _x getVariable ["TYR_factionId",""];
+                if (_fid in ["west","east","independent"]) then {
+                    private _key = _x getVariable ["TYR_emplacementKey",""];
+                    private _kind = if (_key isEqualTo "") then {"vehicle"} else {"emplacement"};
+                    private _display = getText (configFile >> "CfgVehicles" >> typeOf _x >> "displayName");
+                    _entities pushBack [_kind,_fid,typeOf _x,_display,getPosATL _x,getDir _x,alive _x,damage _x,_key];
+                };
+            };
+        } forEach vehicles;
+
+        private _forces = [];
+        {
+            private _rec = (TYR_State get "forces") get _x;
+            private _grp = (TYR_Runtime get "forces") getOrDefault [_x,grpNull];
+            private _pos = +(_rec getOrDefault ["position",[]]);
+            private _unitCount = 0;
+            if (!isNull _grp) then {
+                private _aliveUnits = (units _grp) select {alive _x};
+                _unitCount = count _aliveUnits;
+                if (_unitCount > 0) then {_pos = getPosATL leader _grp};
+            };
+            _forces pushBack [
+                _x,
+                _rec getOrDefault ["faction",""],
+                _rec getOrDefault ["role","unknown"],
+                _rec getOrDefault ["operation",""],
+                _pos,
+                _unitCount,
+                _rec getOrDefault ["active",true]
+            ];
+        } forEach keys (TYR_State get "forces");
+
+        private _aiTraces = [];
+        private _traceMap = TYR_Runtime getOrDefault ["aiDecisionTraces",createHashMap];
+        private _scoreMap = TYR_Runtime getOrDefault ["aiObjectiveScores",createHashMap];
+        {
+            private _traceRecord = _traceMap getOrDefault [_x,[-1,[]]];
+            _aiTraces pushBack [
+                _x,
+                _traceRecord param [0,-1],
+                _traceRecord param [1,[]],
+                +(_scoreMap getOrDefault [_x,[]])
+            ];
+        } forEach ["west","east","independent"];
+
+        [_player,"TYR_fnc_ClientDebugMapData",[[serverTime,_locations,_factions,_entities,_forces,_aiTraces]]] call TYR_fnc_ServerSendToPlayer;
+    };
     case "save": {[true] call TYR_fnc_PersistenceSave};
     case "sync": {
         {[_x,0] call TYR_fnc_ServerPublishFaction} forEach ([false] call TYR_fnc_FactionIds);

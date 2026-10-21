@@ -30,6 +30,18 @@ private _publicSectorCount = if (_publicCampaign isEqualType [] && {count _publi
 } forEach _ids;
 private _westPublicToEast = ["west","east"] call TYR_fnc_StatePublicFaction;
 ["Enemy HQ is absent from public faction replication",count _westPublicToEast > 4 && {count (_westPublicToEast # 4) isEqualTo 0}] call _check;
+["Enemy resources are redacted",count _westPublicToEast > 5 && {(_westPublicToEast # 5) isEqualTo [-1,-1,-1,-1]}] call _check;
+["Enemy research and VLS targets are redacted",count _westPublicToEast > 7 && {count (_westPublicToEast # 6) isEqualTo 0} && {count (_westPublicToEast # 7) isEqualTo 0}] call _check;
+private _unknownLocationOk = true;
+private _westKnowledge = ["west","locations",""] call TYR_fnc_StateKnowledgeGet;
+{
+    private _l = [_x] call TYR_fnc_StateGetLocation;
+    if ((_l getOrDefault ["owner","neutral"]) isNotEqualTo "west" && {!(_x in keys _westKnowledge)}) exitWith {
+        private _public = [_x,"west"] call TYR_fnc_StatePublicLocation;
+        _unknownLocationOk = count _public > 5 && {(_public # 4) isEqualTo "unknown"} && {(_public # 5) isEqualTo -1};
+    };
+} forEach keys (TYR_State get "locations");
+["Unobserved enemy/neutral location truth is hidden",_unknownLocationOk] call _check;
 ["Ocean/world-origin is rejected as player land position",!([[0,0,0]] call TYR_fnc_IsValidLandPosition)] call _check;
 private _confirmedFaction = "";
 {

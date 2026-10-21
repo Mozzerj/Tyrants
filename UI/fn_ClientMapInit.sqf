@@ -25,7 +25,8 @@ if (isNil "TYR_mapEH") then {
             private _bestD = 1e9;
             {
                 private _l = _x;
-                if ((_l # 4) isNotEqualTo TYR_PlayerFaction) then {
+                private _currentFriendly = (_l # 4) isEqualTo TYR_PlayerFaction && {count _l <= 10 || {_l # 10}};
+                if (!_currentFriendly) then {
                     private _d = player distance2D (_l # 3);
                     if (_d < 175 && {_d < _bestD}) then {_bestD=_d;_best=_l # 0};
                 };

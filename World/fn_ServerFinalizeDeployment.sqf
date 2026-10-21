@@ -24,6 +24,7 @@ private _changedLocations = [];
         if ((_l getOrDefault ["owner","neutral"]) isEqualTo "neutral") then {
             _l set ["owner",_fid];
             _changedLocations pushBackUnique _lid;
+            [_fid,_lid,"deployment-control"] call TYR_fnc_StateObserveLocation;
             _claimed = _claimed + 1;
         };
     } forEach _ranked;
@@ -33,7 +34,7 @@ _campaign set ["phase","running"];
 [true] call TYR_fnc_ServerSetCombatState;
 call TYR_fnc_ServerCreateBases;
 ["deployment-complete",true] call TYR_fnc_StateMarkDirty;
-{[_x] call TYR_fnc_ServerPublishLocation} forEach _changedLocations;
+// Starting control is published only to each owning faction by StateObserveLocation.
 call TYR_fnc_ServerPublishDeployment;
 diag_log format ["[TYRANTS DEPLOYMENT] Campaign started with %1 active factions.",count _active];
 true

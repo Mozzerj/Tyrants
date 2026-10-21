@@ -41,6 +41,20 @@ private _factions = _state get "factions";
         _f set ["research",_research];
         private _cmd = _f get "commander";
         {if (_x isEqualType [] && {count _x >= 2}) then {_cmd set [_x # 0,_x # 1]}} forEach ([_x,"commander",[]] call TYR_fnc_RecordGet);
+        private _knowledgeSaved = [_x,"knowledge",[]] call TYR_fnc_RecordGet;
+        private _knowledge = createHashMapFromArray [["locations",createHashMap],["contacts",createHashMap]];
+        private _knownLocations = _knowledge get "locations";
+        {
+            private _locationId = [_x,"id",""] call TYR_fnc_RecordGet;
+            if (_locationId isNotEqualTo "") then {
+                _knownLocations set [_locationId,createHashMapFromArray [
+                    ["owner",[_x,"owner","unknown"] call TYR_fnc_RecordGet],
+                    ["observedAt",+([_x,"observedAt",[]] call TYR_fnc_RecordGet)],
+                    ["source",[_x,"source",""] call TYR_fnc_RecordGet]
+                ]];
+            };
+        } forEach ([_knowledgeSaved,"locations",[]] call TYR_fnc_RecordGet);
+        _f set ["knowledge",_knowledge];
     };
 } forEach ([_snapshot,"factions",[]] call TYR_fnc_RecordGet);
 

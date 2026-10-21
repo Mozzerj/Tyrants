@@ -1,4 +1,4 @@
-# Tyrants v4.0.8 DEV
+# Tyrants v4.0.9 DEV
 
 Current development baseline for the three-faction Tyrants rewrite. It includes deployment sectors, human/AI commanders, the v4 save architecture, targeted replication, and the tactical UI.
 

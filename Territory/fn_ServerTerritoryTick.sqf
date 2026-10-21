@@ -43,9 +43,11 @@ private _remove = [];
                 _s set ["progress",_p];
                 if (!isNull _capturePlayer) then {[_capturePlayer,"TYR_fnc_ClientCaptureStatus",[_l get "name",_p,_required,"capturing"]] call TYR_fnc_ServerSendToPlayer};
                 if (_p >= _required) then {
+                    private _previousOwner = _l getOrDefault ["owner","neutral"];
                     _l set ["owner",_attacker];
                     _l set ["stock",0];
-                    [_id] call TYR_fnc_ServerPublishLocation;
+                    [_attacker,_id,"capture"] call TYR_fnc_StateObserveLocation;
+                    if (_previousOwner in ["west","east","independent"] && {_previousOwner isNotEqualTo _attacker}) then {[_id,_previousOwner] call TYR_fnc_ServerPublishLocation};
                     ["territory-capture",true] call TYR_fnc_StateMarkDirty;
                     if (!isNull _capturePlayer) then {[_capturePlayer,"TYR_fnc_ClientCaptureStatus",[_l get "name",_p,_required,"complete"]] call TYR_fnc_ServerSendToPlayer};
                     _remove pushBack _id;

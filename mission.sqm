@@ -35,8 +35,8 @@ randomSeed=402718;
 class ScenarioData
 {
     author="Mozzerj";
-    briefingName="Tyrants v4.0.8 DEV";
-    overviewText="Tyrants v4.0.8 DEV - three-faction strategic warfare with human and AI commanders.";
+    briefingName="Tyrants v4.0.9 DEV";
+    overviewText="Tyrants v4.0.9 DEV - three-faction strategic warfare with human and AI commanders.";
     respawn=3;
     class Header
     {

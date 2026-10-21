@@ -98,6 +98,20 @@ if ((_locations findIf {
     !(_owner in (["neutral"] + _knownFactions)) || {!(_stock isEqualType 0)} || {_stock < 0}
 }) >= 0) exitWith {false};
 
+// Faction knowledge is primitive, faction-scoped and may only reference real world-index IDs.
+if ((_factions findIf {
+    private _knowledge = [_x,"knowledge",[]] call TYR_fnc_RecordGet;
+    private _knownLocations = [_knowledge,"locations",[]] call TYR_fnc_RecordGet;
+    !(_knowledge isEqualType []) || {!(_knownLocations isEqualType [])} || {(_knownLocations findIf {
+        private _id = [_x,"id",""] call TYR_fnc_RecordGet;
+        private _owner = [_x,"owner","unknown"] call TYR_fnc_RecordGet;
+        private _observedAt = [_x,"observedAt",[]] call TYR_fnc_RecordGet;
+        private _source = [_x,"source",""] call TYR_fnc_RecordGet;
+        !(_id in _locationIds) || {!(_owner in (["unknown","neutral"] + _knownFactions))} ||
+        {!(_observedAt isEqualType [])} || {(_observedAt findIf {!(_x isEqualType 0)}) >= 0} || {!(_source isEqualType "")}
+    }) >= 0}
+}) >= 0) exitWith {false};
+
 private _players = [_snapshot,"players",[]] call TYR_fnc_RecordGet;
 if !(_players isEqualType []) exitWith {false};
 private _playerIds = _players apply {[_x,"uid",""] call TYR_fnc_RecordGet};

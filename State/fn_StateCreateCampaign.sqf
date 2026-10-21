@@ -61,7 +61,8 @@ private _factions = createHashMap;
         ["vlsTargets", []],
         ["vehiclePool", _pool],
         ["commander", _commander],
-        ["commanderPublic", []]
+        ["commanderPublic", []],
+        ["knowledge", createHashMapFromArray [["locations",createHashMap],["contacts",createHashMap]]]
     ];
     _factions set [_id, _f];
 } forEach ["west","east","independent"];
@@ -77,7 +78,7 @@ createHashMapFromArray [
         ["phase","deployment"],
         ["created",_stamp],
         ["nextId",1],
-        ["deployment",createHashMapFromArray [["rotation",0],["buffer",2500],["sectors",createHashMap]]],
+        ["deployment",createHashMapFromArray [["layoutVersion",2],["rotation",0],["buffer",2500],["sectors",createHashMap]]],
         ["settings",createHashMapFromArray [
             ["captureTime",90],
             ["captureRange",175],

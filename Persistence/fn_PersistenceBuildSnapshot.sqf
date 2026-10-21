@@ -58,6 +58,20 @@ _factionKeys sort true;
     _rk sort true;
     private _unlocked = _rk select {_research getOrDefault [_x, false]};
     private _commander = _f getOrDefault ["commander", createHashMap];
+    private _knowledge = _f getOrDefault ["knowledge",createHashMap];
+    private _knownLocations = _knowledge getOrDefault ["locations",createHashMap];
+    private _knowledgeLocationIds = keys _knownLocations;
+    _knowledgeLocationIds sort true;
+    private _knowledgeLocationsOut = [];
+    {
+        private _k = _knownLocations get _x;
+        _knowledgeLocationsOut pushBack [
+            ["id",_x],
+            ["owner",_k getOrDefault ["owner","unknown"]],
+            ["observedAt",+(_k getOrDefault ["observedAt",[]])],
+            ["source",_k getOrDefault ["source",""]]
+        ];
+    } forEach _knowledgeLocationIds;
     _factionsOut pushBack [
         ["id",_x],
         ["name",_f getOrDefault ["name",toUpper _x]],
@@ -75,7 +89,8 @@ _factionKeys sort true;
         ["research",_unlocked],
         ["vlsTargets",+(_f getOrDefault ["vlsTargets",[]])],
         ["vehiclePool",+(_f getOrDefault ["vehiclePool",[]])],
-        ["commander",[_commander] call _pairs]
+        ["commander",[_commander] call _pairs],
+        ["knowledge",[["locations",_knowledgeLocationsOut]]]
     ];
 } forEach _factionKeys;
 

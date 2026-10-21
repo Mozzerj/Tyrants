@@ -1,0 +1,118 @@
+TYRANTS DEVELOPMENT METHOD NOTES
+================================
+Purpose
+-------
+This file records implementation approaches tried in Tyrants, where they were used,
+and whether they worked in actual Arma runtime. Check this before changing a system
+that has already needed an engine-specific workaround.
+
+STATUS KEY
+----------
+PROVEN      = confirmed working in Arma by runtime testing.
+FAILED      = did not work reliably in the actual mission/runtime.
+CURRENT     = current implementation; may still need runtime confirmation.
+DESIGN RULE = deliberate architecture/gameplay rule, not an engine workaround.
+
+MAPS / EMBEDDED MAP CONTROLS
+----------------------------
+PROVEN - Embedded map config should use:
+    import RscMapControl;
+Do not replace this with only:
+    class RscMapControl;
+The class declaration caused the deployment map to render black in an earlier build.
+
+PROVEN - Map Draw event handlers must pass the event array correctly. For a Draw
+handler whose function begins with params ["_map"], use:
+    _this call TYR_fnc_DeploymentMapDraw
+A previous form that passed (_this # 0) through an extra wrapper did not behave
+correctly with the function's expected parameters.
+
+FAILED - drawTriangle was used to fill the faction deployment sectors. In the actual
+Arma deployment map the colour fill was not visible/reliable even though the math was
+valid.
+
+PROVEN - Client-local map markers are reliable for deployment-region colouring.
+The v4.0.7 coarse local-marker grid is the known-good sector-colour method and should
+be preferred over drawTriangle for this UI.
+
+FAILED - drawLine on the embedded deployment map was used for the HQ footprint and
+collision boxes. The player could see the sector colours but could not see these
+line-drawn boxes reliably.
+
+CURRENT - HQ/collision previews use client-local RECTANGLE markers (four thin marker
+rectangles for each hollow box), matching the rendering family already proven for the
+sector overlay. This replaced drawLine. Runtime visibility should be kept under test.
+
+HQ DEPLOYMENT
+-------------
+PROVEN - Never silently move the player's HQ selection. Earlier nearby-position
+searching could move the HQ a long way from the user's click and was frustrating.
+The player's click is now the exact proposed HQ centre.
+
+CURRENT - HQ placement footprint is 40 x 30 m (half extents 20 x 15 m). Both the map
+preview and server-side collision/water validation use the same dimensions. If the
+footprint changes again, update all of these together:
+    UI/fn_DeploymentMapClick.sqf
+    World/fn_DeploymentCheckPosition.sqf
+    World/fn_DeploymentFindCollisions.sqf
+    UI/fn_DeploymentMenuRefresh.sqf
+    BUILD.txt
+
+CURRENT - Placement collision preview checks hard physical obstructions only and shows
+intersecting objects as red hollow marker boxes. Roads, rail lines and power-line network
+objects are deliberately ignored so the player can choose to place an HQ across them.
+Vegetation is also ignored because trees/bushes can be cleared when the base is built.
+
+PROVEN - The v4.0.7 deployment sector colour overlay works in runtime and should be
+treated as the fallback/baseline if later sector-rendering experiments fail.
+
+DESIGN RULE - The no-HQ border buffer must be applied symmetrically between every
+active faction sector, not only one faction pair.
+
+DEBUG / TESTING
+---------------
+CURRENT - The omniscient debug map is developer-only and intentionally bypasses normal
+faction intelligence. It must never be used as the source of normal player knowledge.
+
+CURRENT - Debug teleport requests the target position from the server. Do not expose
+hostile HQ coordinates in ordinary client state just to make debug teleport work.
+
+CURRENT - AI debug output should expose structured game decision data (inputs,
+objective scores, chosen operation/decision) rather than pretending to expose private
+human-like chain-of-thought.
+
+INTELLIGENCE
+------------
+DESIGN RULE - Server truth and faction knowledge are separate. The server can know the
+real state; a faction only knows enemy information that has actually been collected.
+
+DESIGN RULE - Enemy information must come from real observation/sensors/intelligence:
+players, AI observers, UAVs, spies, satellites, radars, etc. Once contact is lost, the
+intel becomes last-known information and must not continue updating magically.
+
+DESIGN RULE - AI commanders use their faction's collected intelligence, not hidden
+server truth, when making strategic decisions.
+
+NETWORK / SECURITY
+------------------
+DESIGN RULE - Keep hostile/private state server-side. Add narrow server endpoints for
+specific debug or gameplay requests rather than restoring broad replication of faction
+state.
+
+VALIDATION / RELEASE PRACTICE
+-----------------------------
+PROVEN - Run tools/validate_project.py after structural/function/config changes.
+The clean v4 baseline is expected to pass before packaging a test build.
+
+PROVEN - Runtime testing is still required for Arma UI/map behaviour even when static
+validation passes. Map-control rendering differences have already produced multiple
+cases where syntactically valid code did not display as expected in-game.
+
+PROVEN - Keep main untouched during development. New work belongs on the dev build/
+branch until tested and explicitly promoted.
+
+MAINTENANCE RULE
+----------------
+Whenever a workaround succeeds or fails in real Arma testing, append/update this file
+with the situation, attempted method, outcome, and the known-good replacement. Do not
+mark an approach PROVEN until it has actually been observed working in runtime.
