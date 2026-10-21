@@ -20,6 +20,7 @@ class TYR
         class ClientHint {};
         class ClientEndMission {};
         class ClientShowTestReport {};
+        class DebugMenuRefresh {};
         class ServerRunAutomatedTests {};
 
         class ServerBroadcastState {};
@@ -53,6 +54,7 @@ class TYR
         class ServerLaunchVLS {};
         class ServerRestoreEmplacements {};
         class ServerEmplacementKilled {};
+        class ServerDebugAction {};
         class ClientAttachEmplacementActions {};
         class CruiseMissileLaunch {};
 

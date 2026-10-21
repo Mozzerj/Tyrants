@@ -10,10 +10,17 @@ class Params
         values[] = {0, 1};
         default = 0;
     };
+    class TYR_DebugMode
+    {
+        title = "Developer Debug Mode";
+        texts[] = {"Disabled", "Enabled"};
+        values[] = {0, 1};
+        default = 0;
+    };
 };
 
-respawn = 3; // Sets respawn type to 'BASE', which uses markers as respawn points
-respawnDelay = 30; // Delay in seconds before respawn
+respawn = 3;
+respawnDelay = 30;
 respawnDialog = 1;
 
 reviveRequiredTrait = 0;
@@ -24,10 +31,9 @@ reviveDelay = 10;
 reviveForceRespawnDelay = 5;
 reviveBleedOutDelay = 180;
 
-class CfgFunctions {
-
+class CfgFunctions
+{
     #include "functions\cfgFunctions.hpp"
-
 };
 
 import CfgRemoteExec as CfgRemoteExecDefault;
@@ -70,6 +76,7 @@ class CfgRemoteExec : CfgRemoteExecDefault
         class TYR_fnc_ClientAttachEmplacementActions { allowedTargets = 1; jip = 1; };
         class TYR_fnc_ServerRunAutomatedTests { allowedTargets = 2; };
         class TYR_fnc_ClientShowTestReport { allowedTargets = 1; };
+        class TYR_fnc_ServerDebugAction { allowedTargets = 2; };
     };
 
     class Commands
@@ -79,109 +86,75 @@ class CfgRemoteExec : CfgRemoteExecDefault
     };
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 class myMissionConfig
 {
-
-    class RscMapListbox {
+    class RscMapListbox
+    {
         access = 0;
-        type = 5;  // Type 5 for listbox
-        style = 0;  // Default style
-        idc = 1500;  // Listbox control ID
+        type = 5;
+        style = 0;
+        idc = 1500;
         font = "PuristaMedium";
-        sizeEx = 0.035;  // Text size
-        rowHeight = 0.01;  // Row height
-        period = 1;  // Required for listboxes (update rate)
-        shadow = 0;  // No shadow
-
-        colorBackground[] = {0, 0, 0, 0.7};  // Background color
-        colorText[] = {1, 1, 1, 1};  // Text color
-        colorSelect[] = {1, 1, 1, 1};  // Color when selected
-        colorSelect2[] = {1, 1, 1, 1};  // Another selection color
-        colorScrollbar[] = {0, 0, 0, 0};  // Scrollbar color
-        colorSelectBackground[] = {0, 0, 0, 0};  // Selection background color
-        colorSelectBackground2[] = {0, 0, 0, 0};  // Another selection background color
-        colorDisabled[] = {0, 0, 0, 0};  // Color when disabled
-        maxHistoryDelay = 1.0;  // Maximum delay before clearing history
-        soundSelect[] = {"", 0.1, 1};  // Selection sound
-
-        // This is the missing ListScrollBar class that needs to be defined for the listbox scrollbar
-        class ListScrollBar {
-            color[] = {1, 1, 1, 0.6};  // Scrollbar color
+        sizeEx = 0.035;
+        rowHeight = 0.01;
+        period = 1;
+        shadow = 0;
+        colorBackground[] = {0, 0, 0, 0.7};
+        colorText[] = {1, 1, 1, 1};
+        colorSelect[] = {1, 1, 1, 1};
+        colorSelect2[] = {1, 1, 1, 1};
+        colorScrollbar[] = {0, 0, 0, 0};
+        colorSelectBackground[] = {0, 0, 0, 0};
+        colorSelectBackground2[] = {0, 0, 0, 0};
+        colorDisabled[] = {0, 0, 0, 0};
+        maxHistoryDelay = 1.0;
+        soundSelect[] = {"", 0.1, 1};
+        class ListScrollBar
+        {
+            color[] = {1, 1, 1, 0.6};
             thumb = "\A3\ui_f\data\gui\cfg\scrollbar\thumb_ca.paa";
             arrowFull = "\A3\ui_f\data\gui\cfg\scrollbar\arrowFull_ca.paa";
             arrowEmpty = "\A3\ui_f\data\gui\cfg\scrollbar\arrowEmpty_ca.paa";
             border = "\A3\ui_f\data\gui\cfg\scrollbar\border_ca.paa";
         };
-
-        // Automatic scrolling (optional)
-
-        // Position and size on the screen
-        x = 0.4;  // X position (40% from the left)
-        y = 0.2;  // Y position (20% from the top)
-        w = 0.2;  // Width (20% of the screen width)
-        h = 0.4;  // Height (40% of the screen height)
+        x = 0.4;
+        y = 0.2;
+        w = 0.2;
+        h = 0.4;
     };
-    class RscBaseMapListbox {
+
+    class RscBaseMapListbox
+    {
         access = 0;
-        type = 5;  // Type 5 for listbox
-        style = 0;  // Default style
-        idc = 1500;  // Listbox control ID
+        type = 5;
+        style = 0;
+        idc = 1500;
         font = "PuristaMedium";
-        sizeEx = 0.03;  // Text size
-        rowHeight = 0.005;  // Row height
-        period = 1;  // Required for listboxes (update rate)
-        shadow = 0;  // No shadow
-
-        colorBackground[] = {0, 0, 0, 0.7};  // Background color
-        colorText[] = {1, 1, 1, 1};  // Text color
-        colorSelect[] = {1, 1, 1, 1};  // Color when selected
-        colorSelect2[] = {1, 1, 1, 1};  // Another selection color
-        colorScrollbar[] = {0, 0, 0, 0};  // Scrollbar color
-        colorSelectBackground[] = {0, 0, 0, 0};  // Selection background color
-        colorSelectBackground2[] = {0, 0, 0, 0};  // Another selection background color
-        colorDisabled[] = {0, 0, 0, 0};  // Color when disabled
-        maxHistoryDelay = 1.0;  // Maximum delay before clearing history
-        soundSelect[] = {"", 0.1, 1};  // Selection sound
-
-        // This is the missing ListScrollBar class that needs to be defined for the listbox scrollbar
-        class ListScrollBar {
-            color[] = {1, 1, 1, 0.6};  // Scrollbar color
+        sizeEx = 0.03;
+        rowHeight = 0.005;
+        period = 1;
+        shadow = 0;
+        colorBackground[] = {0, 0, 0, 0.7};
+        colorText[] = {1, 1, 1, 1};
+        colorSelect[] = {1, 1, 1, 1};
+        colorSelect2[] = {1, 1, 1, 1};
+        colorScrollbar[] = {0, 0, 0, 0};
+        colorSelectBackground[] = {0, 0, 0, 0};
+        colorSelectBackground2[] = {0, 0, 0, 0};
+        colorDisabled[] = {0, 0, 0, 0};
+        maxHistoryDelay = 1.0;
+        soundSelect[] = {"", 0.1, 1};
+        class ListScrollBar
+        {
+            color[] = {1, 1, 1, 0.6};
             thumb = "\A3\ui_f\data\gui\cfg\scrollbar\thumb_ca.paa";
             arrowFull = "\A3\ui_f\data\gui\cfg\scrollbar\arrowFull_ca.paa";
             arrowEmpty = "\A3\ui_f\data\gui\cfg\scrollbar\arrowEmpty_ca.paa";
             border = "\A3\ui_f\data\gui\cfg\scrollbar\border_ca.paa";
         };
-
-        // Automatic scrolling (optional)
-
-        // Position and size on the screen
-        x = 0.4;  // X position (40% from the left)
-        y = 0.2;  // Y position (20% from the top)
-        w = 0.2;  // Width (20% of the screen width)
-        h = 0.4;  // Height (40% of the screen height)
+        x = 0.4;
+        y = 0.2;
+        w = 0.2;
+        h = 0.4;
     };
-
 };

@@ -44,8 +44,6 @@ waitUntil {
 };
 
 [] execVM "Player\PlayerInit\PlayerMapCreation.sqf";
-
-// Register once with the authoritative server. Existing records are left untouched.
 [] remoteExecCall ["TYR_fnc_ServerRegisterPlayer", 2];
 
 waitUntil {
@@ -64,7 +62,6 @@ waitUntil {
 };
 
 private _box = if (Pside isEqualTo 0) then {WestBox} else {EastBox};
-private _accountant = if (Pside isEqualTo 0) then {WestAccountant} else {EastAccountant};
 
 if (isNil "TYR_arsenalClosedEH") then {
     TYR_arsenalClosedEH = [missionNamespace, "arsenalClosed", {
@@ -82,13 +79,7 @@ _box addAction [
         [] remoteExecCall ["TYR_fnc_ServerBeginArsenal", 2];
         ["Open", [true]] call BIS_fnc_arsenal;
     },
-    nil,
-    1.5,
-    true,
-    true,
-    "",
-    "true",
-    10
+    nil, 1.5, true, true, "", "true", 10
 ];
 
 TYR_addAccountantMoveAction = {
@@ -100,7 +91,7 @@ TYR_addAccountantMoveAction = {
             _target removeAction _actionId;
             [Pside] remoteExecCall ["TYR_fnc_ServerAttachAccountant", 2];
 
-            private _dropId = _caller addAction [
+            _caller addAction [
                 "Drop Accountant",
                 {
                     params ["_player", "_caller", "_actionId", "_accountant"];
@@ -109,26 +100,13 @@ TYR_addAccountantMoveAction = {
                     [Pside, _newPos] remoteExecCall ["TYR_fnc_ServerMoveBase", 2];
                     call TYR_addAccountantMoveAction;
                 },
-                _target,
-                1.5,
-                true,
-                true,
-                "",
-                "true",
-                10
+                _target, 1.5, true, true, "", "true", 10
             ];
         },
-        nil,
-        1.5,
-        true,
-        true,
-        "",
-        "true",
-        10
+        nil, 1.5, true, true, "", "true", 10
     ];
 };
 call TYR_addAccountantMoveAction;
-
 
 if (count GameData > 5) then {
     {
@@ -144,7 +122,7 @@ if (count GameData > 5) then {
 waitUntil {!isNull findDisplay 46};
 findDisplay 46 displayAddEventHandler ["KeyDown", {
     params ["_display", "_key"];
-    if (_key isEqualTo 21 && {isNull findDisplay 1200}) then {
+    if (_key isEqualTo 21 && {isNull findDisplay 1200} && {isNull findDisplay 1700}) then {
         createDialog "TyrPlayerMenu";
         private _menu = findDisplay 1200;
         if (!isNull _menu) then {
@@ -152,47 +130,46 @@ findDisplay 46 displayAddEventHandler ["KeyDown", {
             _menu displayCtrl 2 ctrlSetText str (TYR_playerProfileUI # 1);
             _menu displayCtrl 3 progressSetPosition (TYR_playerProfileUI # 2);
 
-            private _resourceButton = _menu displayCtrl 4;
+            private _team = GameData # 0 # (Pside + 1);
+            _menu displayCtrl 20 ctrlSetText format ["STEEL  %1", _team # 1];
+            _menu displayCtrl 21 ctrlSetText format ["AMMO  %1", _team # 2];
+            _menu displayCtrl 22 ctrlSetText format ["FUEL  %1", _team # 3];
+            _menu displayCtrl 23 ctrlSetText format ["MEN  %1", _team # 4];
+
             private _inRange = (GameData # 1 # 2) findIf {
                 player distance2D (_x # 4) < 75 && {PColor isEqualTo (_x # 3)}
             } >= 0;
-            _resourceButton ctrlSetPosition (if (_inRange) then {
-                [safeZoneX + safeZoneW * 0.01375, safeZoneY + safeZoneH * 0.29777778]
-            } else {
-                [-1, -1]
-            });
-            _resourceButton ctrlCommit 0;
-
-            private _buyButton = _menu displayCtrl 5;
-            _buyButton ctrlSetPosition (if (player distance2D (GameData # 0 # (Pside + 1) # 0) < 25) then {
-                [safeZoneX + safeZoneW * 0.01367188, safeZoneY + safeZoneH * 0.34722223]
-            } else {
-                [-1, -1]
-            });
-            _buyButton ctrlCommit 0;
-
+            (_menu displayCtrl 4) ctrlShow _inRange;
+            (_menu displayCtrl 5) ctrlShow (player distance2D (_team # 0) < 25);
+            (_menu displayCtrl 9) ctrlShow (missionNamespace getVariable ["TYR_debugMode", false]);
         };
     };
     false
 }];
 
-// Solo developer test harness. These actions are only available in Solo Test Mode.
+if (missionNamespace getVariable ["TYR_debugMode", false]) then {
+    player addAction [
+        "Open Tyrants Debug Menu",
+        {
+            createDialog "TyrDebugMenu";
+            [] call TYR_fnc_DebugMenuRefresh;
+        },
+        nil, 1.7, false, true, "", "(GameData # 0 # 0 # 0) isEqualTo 4", 5
+    ];
+};
+
 if (missionNamespace getVariable ["TYR_soloTestMode", false]) then {
     private _previousReport = profileNamespace getVariable ["TYR_LastTestReport", ""];
     if (_previousReport isNotEqualTo "") then {TYR_lastTestReportText = _previousReport};
+
     player addAction [
         "Run Tyrants Automated Tests",
         {
             [] remoteExecCall ["TYR_fnc_ServerRunAutomatedTests", 2];
             hint "Running Tyrants automated tests...";
         },
-        nil,
-        1.6,
-        false,
-        true,
-        "",
-        "(GameData # 0 # 0 # 0) isEqualTo 4 && {!(missionNamespace getVariable ['TYR_testInProgress', false])}",
-        5
+        nil, 1.6, false, true, "",
+        "(GameData # 0 # 0 # 0) isEqualTo 4 && {!(missionNamespace getVariable ['TYR_testInProgress', false])}", 5
     ];
 
     player addAction [
@@ -205,12 +182,6 @@ if (missionNamespace getVariable ["TYR_soloTestMode", false]) then {
                 hint "Tyrants test report copied to clipboard.";
             };
         },
-        nil,
-        1.5,
-        false,
-        true,
-        "",
-        "!isNil 'TYR_lastTestReportText'",
-        5
+        nil, 1.5, false, true, "", "!isNil 'TYR_lastTestReportText'", 5
     ];
 };

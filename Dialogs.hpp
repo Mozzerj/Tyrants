@@ -12,3 +12,4 @@
 #include "Dialogs\TyrEmplacementMenu.hpp"
 #include "Dialogs\TyrantsVLSMenu.hpp"
 #include "Dialogs\TyrResearchMenu.hpp"
+#include "Dialogs\TyrDebugMenu.hpp"
